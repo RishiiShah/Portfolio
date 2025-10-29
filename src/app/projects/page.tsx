@@ -1,0 +1,116 @@
+"use client";
+import { useMemo, useState, useEffect } from "react";
+import Link from "next/link";
+import { useSearchParams, useRouter } from "next/navigation";
+import { projects } from "@/data/projects";
+import type { Tag } from "@/types";
+import { Loading } from "@/components/Loading";
+
+const allTags: Tag[] = [
+  "Systems",
+  "Backend",
+  "MLOps",
+  "Research",
+  "Full-stack",
+  "Open Source",
+];
+
+export default function ProjectsPage() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isLoading, setIsLoading] = useState(true);
+  const [showContent, setShowContent] = useState(false);
+  const [active, setActive] = useState<Tag | "All">("All");
+
+  // Initialize active filter from URL on mount
+  useEffect(() => {
+    const tag = searchParams.get("tag");
+    if (tag && (tag === "All" || (allTags as string[]).includes(tag))) {
+      setActive(tag as Tag | "All");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  
+  const filtered = useMemo(
+    () => (active === "All" ? projects : projects.filter((p) => p.tags.includes(active))),
+    [active]
+  );
+
+  const handleLoadingComplete = () => {
+    setIsLoading(false);
+    // Small delay to ensure smooth transition
+    setTimeout(() => setShowContent(true), 100);
+  };
+
+  const handleLoadingFinish = () => {
+    handleLoadingComplete();
+  };
+
+  // Keep URL in sync when active changes
+  useEffect(() => {
+    if (isLoading) return; // avoid navigating during loader
+    const params = new URLSearchParams(Array.from(searchParams.entries()));
+    if (active === "All") params.delete("tag"); else params.set("tag", active);
+    router.replace(`/projects${params.toString() ? `?${params.toString()}` : ""}`);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active, isLoading]);
+
+  if (isLoading) {
+    return <Loading onComplete={handleLoadingFinish} />;
+  }
+
+  return (
+    <main className={`py-8 sm:py-12 transition-opacity duration-500 ${showContent ? 'opacity-100' : 'opacity-0'}`}>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <h1 className="text-xl sm:text-2xl font-semibold animate-fade-in-up">Projects</h1>
+        <div className="flex flex-wrap gap-2 text-xs animate-fade-in-up delay-200">
+          <button
+            onClick={() => setActive("All")}
+            className={`px-2 py-1 rounded-full border transition-all duration-300 hover:scale-105 active:scale-95 ${active === "All" ? "bg-foreground text-background" : "hover:bg-foreground/5 hover:border-foreground/30"}`}
+          >
+            All
+          </button>
+          {allTags.map((t, index) => (
+            <button
+              key={t}
+              onClick={() => setActive(t)}
+              className={`px-2 py-1 rounded-full border transition-all duration-300 hover:scale-105 active:scale-95 animate-fade-in-up ${active === t ? "bg-foreground text-background" : "hover:bg-foreground/5 hover:border-foreground/30"}`}
+              style={{animationDelay: `${0.3 + index * 0.1}s`}}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        {filtered.map((p, index) => (
+          <div key={p.slug} className="rounded-lg border p-4 sm:p-5 flex flex-col gap-3 transition-all duration-300 hover:border-foreground/30 hover:shadow-[0_8px_25px_rgba(237,237,237,0.1)] hover:-translate-y-1 animate-fade-in-up" style={{animationDelay: `${0.5 + index * 0.1}s`}}>
+            <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+              <div className="flex-1">
+                <h2 className="font-semibold text-sm sm:text-base leading-tight">{p.title}</h2>
+                <p className="text-xs sm:text-sm text-foreground/80 mt-1">{p.tagline}</p>
+              </div>
+              <Link href={`/projects/${p.slug}${active !== "All" ? `?tag=${active}` : ""}`} className="text-xs sm:text-sm underline underline-offset-4 flex-shrink-0 hover:text-foreground/80 transition-all duration-300 hover:scale-105">Details →</Link>
+            </div>
+            <div className="flex flex-wrap gap-1.5 sm:gap-2">
+              {p.tags.map((t, tagIndex) => (
+                <span key={t} className="text-xs px-2 py-1 rounded-full border cursor-pointer transition-all duration-300 hover:bg-foreground/5 hover:scale-105 hover:shadow-[0_2px_8px_rgba(237,237,237,0.1)]">{t}</span>
+              ))}
+            </div>
+            {p.impact && <div className="text-xs sm:text-sm text-foreground/70">{p.impact}</div>}
+            <div className="flex flex-wrap gap-2 sm:gap-3 text-xs">
+              {p.links?.map((l) => (
+                <a key={l.url} href={l.url} className="underline underline-offset-4 hover:text-foreground/80 transition-all duration-300 hover:scale-105" target="_blank" rel="noreferrer">
+                  {l.type}
+                </a>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </main>
+  );
+}
+
+
