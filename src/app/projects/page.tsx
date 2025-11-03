@@ -19,7 +19,6 @@ export default function ProjectsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);
-  const [showContent, setShowContent] = useState(false);
   const [active, setActive] = useState<Tag | "All">("All");
 
   // Initialize active filter from URL on mount
@@ -36,16 +35,6 @@ export default function ProjectsPage() {
     [active]
   );
 
-  const handleLoadingComplete = () => {
-    setIsLoading(false);
-    // Small delay to ensure smooth transition
-    setTimeout(() => setShowContent(true), 100);
-  };
-
-  const handleLoadingFinish = () => {
-    handleLoadingComplete();
-  };
-
   // Keep URL in sync when active changes
   useEffect(() => {
     if (isLoading) return; // avoid navigating during loader
@@ -56,11 +45,11 @@ export default function ProjectsPage() {
   }, [active, isLoading]);
 
   if (isLoading) {
-    return <Loading onComplete={handleLoadingFinish} />;
+    return <Loading onComplete={() => setIsLoading(false)} />;
   }
 
   return (
-    <main className={`py-8 sm:py-12 transition-opacity duration-500 ${showContent ? 'opacity-100' : 'opacity-0'}`}>
+    <main className="py-8 sm:py-12">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <h1 className="text-xl sm:text-2xl font-semibold animate-fade-in-up">Projects</h1>
         <div className="flex flex-wrap gap-2 text-xs animate-fade-in-up delay-200">

@@ -4,16 +4,9 @@ import { Loading } from "@/components/Loading";
 
 export default function AboutPage() {
   const [isLoading, setIsLoading] = useState(true);
-  const [showContent, setShowContent] = useState(false);
-
-  const handleLoadingComplete = () => {
-    setIsLoading(false);
-    // Small delay to ensure smooth transition
-    setTimeout(() => setShowContent(true), 100);
-  };
 
   const handleLoadingFinish = () => {
-    handleLoadingComplete();
+    setIsLoading(false);
   };
 
   if (isLoading) {
@@ -21,7 +14,7 @@ export default function AboutPage() {
   }
 
   return (
-    <main className={`py-8 sm:py-12 transition-opacity duration-500 ${showContent ? 'opacity-100' : 'opacity-0'}`}>
+    <main className="py-8 sm:py-12">
       <h1 className="text-xl sm:text-2xl font-semibold animate-fade-in-up">About / CV</h1>
       <div className="mt-6 grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 lg:gap-8 items-start">
         <aside className="space-y-3 lg:space-y-4 animate-fade-in-up delay-200">

@@ -36,6 +36,7 @@ export function SmartBackButton({ fallbackUrl = "/projects", className = "" }: S
     <button
       onClick={handleBack}
       className={`inline-flex items-center gap-2 text-xs sm:text-sm font-medium transition-all duration-300 hover:scale-105 hover:text-foreground/80 active:scale-95 animate-fade-in-up delay-100 ${className}`}
+      aria-label="Go back to projects"
     >
       <svg 
         className="w-4 h-4 transition-transform duration-300 group-hover:-translate-x-1" 

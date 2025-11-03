@@ -10,25 +10,14 @@ interface ProjectDetailClientProps {
 
 export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
   const [isLoading, setIsLoading] = useState(true);
-  const [showContent, setShowContent] = useState(false);
   const isFromProjects = typeof document !== "undefined" && document.referrer.includes("/projects");
 
-  const handleLoadingComplete = () => {
-    setIsLoading(false);
-    // Small delay to ensure smooth transition
-    setTimeout(() => setShowContent(true), 100);
-  };
-
-  const handleLoadingFinish = () => {
-    handleLoadingComplete();
-  };
-
   if (isLoading) {
-    return <Loading onComplete={handleLoadingFinish} minDurationMs={isFromProjects ? 1300 : 2200} />;
+    return <Loading onComplete={() => setIsLoading(false)} minDurationMs={isFromProjects ? 800 : 1300} />;
   }
 
   return (
-    <main className={`py-8 sm:py-12 transition-opacity duration-500 ${showContent ? 'opacity-100' : 'opacity-0'}`}>
+    <main className="py-8 sm:py-12">
       <SmartBackButton className="mb-6" />
       <h1 className="text-xl sm:text-2xl font-semibold leading-tight animate-fade-in-up">{project.title}</h1>
       <p className="mt-2 text-sm sm:text-base text-foreground/80 animate-fade-in-up delay-200">{project.tagline}</p>

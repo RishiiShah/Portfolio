@@ -9,15 +9,15 @@ interface LoadingProps {
 export function Loading({ onComplete, minDurationMs }: LoadingProps) {
   const [progress, setProgress] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
-  const startRef = useRef<number | null>(null);
+  const startRef = useRef<number | null>(null); 
 
   // Minimum duration to keep the loader visible for a pleasant experience
-  const MIN_DURATION_MS = typeof minDurationMs === "number" ? minDurationMs : 2200; // ~2.2s default
-  const FADE_OUT_MS = 500;
+  const MIN_DURATION_MS = typeof minDurationMs === "number" ? minDurationMs : 1200; // 0.9s default
+  const FADE_OUT_MS = 100;
 
   useEffect(() => {
     startRef.current = Date.now();
-    // Simulate loading progress with smaller steps for smoother animation
+    // Simulate loading progress - faster increments for quicker completion
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -31,11 +31,11 @@ export function Loading({ onComplete, minDurationMs }: LoadingProps) {
           }, remaining);
           return 100;
         }
-        // Random increment between 3–9% per tick to stretch duration a bit
-        const next = prev + (Math.random() * 6 + 3);
+        // Faster increment: 8–15% per tick to finish quicker
+        const next = prev + (Math.random() * 7 + 8);
         return next > 100 ? 100 : next;
       });
-    }, 120);
+    }, 80);
 
     return () => clearInterval(interval);
   }, [onComplete]);

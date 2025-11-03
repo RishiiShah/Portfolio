@@ -5,23 +5,12 @@ import { Loading } from "@/components/Loading";
 
 export default function PublicationsPage() {
   const [isLoading, setIsLoading] = useState(true);
-  const [showContent, setShowContent] = useState(false);
-
-  const handleLoadingComplete = () => {
-    setIsLoading(false);
-    // Small delay to ensure smooth transition
-    setTimeout(() => setShowContent(true), 100);
-  };
-
-  const handleLoadingFinish = () => {
-    handleLoadingComplete();
-  };
 
   if (isLoading) {
-    return <Loading onComplete={handleLoadingFinish} />;
+    return <Loading onComplete={() => setIsLoading(false)} />;
   }
   return (
-    <main className={`py-[clamp(1rem,4vh,3rem)] transition-opacity duration-500 ${showContent ? 'opacity-100' : 'opacity-0'}`}>
+    <main className="py-[clamp(1rem,4vh,3rem)]">
       <h1 className="text-xl sm:text-2xl font-semibold animate-fade-in-up">Publications / Research</h1>
       {publications.length === 0 ? (
         <p className="mt-4 text-xs sm:text-sm text-foreground/70 animate-fade-in-up delay-200">No publications added yet.</p>
