@@ -7,19 +7,12 @@ import { Loading } from "@/components/Loading";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
-  const [showContent, setShowContent] = useState(false);
   
   const featured = projects.find((p) => p.featured);
   const featuredPublication = publications.find((p) => p.featured);
 
-  const handleLoadingComplete = () => {
-    setIsLoading(false);
-    // Small delay to ensure smooth transition
-    setTimeout(() => setShowContent(true), 100);
-  };
-
   const handleLoadingFinish = () => {
-    handleLoadingComplete();
+    setIsLoading(false);
   };
 
   if (isLoading) {
@@ -27,7 +20,7 @@ export default function Home() {
   }
 
   return (
-    <main className={`py-8 sm:py-12 lg:py-16 transition-opacity duration-500 ${showContent ? 'opacity-100' : 'opacity-0'}`}>
+    <main className="py-8 sm:py-12 lg:py-16">
       <section className="mb-8 sm:mb-10">
         <p className="text-xs sm:text-sm uppercase tracking-widest text-foreground/60 animate-fade-in">MSCS &ndash; Rutgers University &ndash; New Brunswick &ndash; Software/Systems track</p>
         <h1 className="mt-2 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight animate-fade-in-up leading-tight">Hi — I'm Rishabh. I build scalable systems and ML &ndash; Enabled applications.</h1>

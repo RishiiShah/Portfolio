@@ -41,8 +41,28 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: "Rishabh Shah",
+    description: "Master's student in Computer Science (Software & Systems) focused on scalable backend systems and ML-enabled applications",
+    url: "https://example.dev",
+    email: "rishabhshah203@gmail.com",
+    jobTitle: "Graduate Student",
+    alumniOf: {
+      "@type": "CollegeOrUniversity",
+      name: "Rutgers University"
+    }
+  };
+
   return (
     <html lang="en">
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-svh flex flex-col`}>
         <ThemeProvider>
           <Nav />
