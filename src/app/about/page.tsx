@@ -35,7 +35,7 @@ export default function AboutPage() {
               <li>Focus: Software, Systems, AI/ML, Full-stack, AR/VR</li>
             </ul>
           </div>
-          <a href="/resume.pdf" className="block text-center text-xs sm:text-sm font-medium px-3 py-2 rounded-md bg-foreground text-background transition-all duration-300 hover:scale-105 hover:shadow-[0_8px_25px_rgba(237,237,237,0.3)] hover:-translate-y-1 active:scale-95">Download résumé</a>
+          <a href="/resume.pdf" download = "rishabh-shah-resume.pdf" target = "_blank" rel = "noopener noreferrer" className="block text-center text-xs sm:text-sm font-medium px-3 py-2 rounded-md bg-foreground text-background transition-all duration-300 hover:scale-105 hover:shadow-[0_8px_25px_rgba(237,237,237,0.3)] hover:-translate-y-1 active:scale-95">Download résumé</a>
         </aside>
         <section className="space-y-6 sm:space-y-8 animate-fade-in-up delay-300">
           <p className="text-sm sm:text-base text-foreground/90 max-w-2xl">Passionate about computer science and software development, aiming to build efficient and scalable solutions to real-world challenges through innovation. I'm a Master's student at Rutgers University focused on building scalable systems and ML enabled applications.</p>

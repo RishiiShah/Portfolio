@@ -65,9 +65,9 @@ export default function RootLayout({
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-svh flex flex-col`}>
         <ThemeProvider>
-          <Nav />
-          <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 flex-1 w-full">{children}</div>
-          <Footer />
+        <Nav />
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 flex-1 w-full">{children}</div>
+        <Footer />
         </ThemeProvider>
       </body>
     </html>
