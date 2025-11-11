@@ -34,6 +34,9 @@ export default function Home() {
           </Link>
           <a 
             href="/resume.pdf" 
+            download = "rishabh-shah-resume.pdf"
+            target = "_blank"
+            rel = "noopener noreferrer"
             className="px-4 py-2.5 rounded-md border text-sm font-medium transition-all duration-300 hover:bg-foreground/5 hover:border-foreground/30 hover:scale-105 active:scale-95 text-center"
           >
             Download résumé
