@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { projects } from "@/data/projects";
@@ -15,7 +15,7 @@ const allTags: Tag[] = [
   "Open Source",
 ];
 
-export default function ProjectsPage() {
+function ProjectsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(true);
@@ -74,20 +74,23 @@ export default function ProjectsPage() {
 
       <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {filtered.map((p, index) => (
-          <div key={p.slug} className="rounded-lg border p-4 sm:p-5 flex flex-col gap-3 transition-all duration-300 hover:border-foreground/30 hover:shadow-[0_8px_25px_rgba(237,237,237,0.1)] hover:-translate-y-1 animate-fade-in-up" style={{animationDelay: `${0.5 + index * 0.1}s`}}>
+          <div key={p.slug} className="rounded-lg border p-4 sm:p-5 flex flex-col gap-3 transition-all duration-300 hover:border-foreground/30 hover:bg-foreground/5 hover:scale-[1.02] hover:shadow-lg group animate-fade-in-up" style={{animationDelay: `${0.5 + index * 0.1}s`}}>
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
               <div className="flex-1">
-                <h2 className="font-semibold text-sm sm:text-base leading-tight">{p.title}</h2>
-                <p className="text-xs sm:text-sm text-foreground/80 mt-1">{p.tagline}</p>
+                <h2 className="font-semibold text-sm sm:text-base leading-tight group-hover:text-foreground transition-colors duration-300">{p.title}</h2>
+                <p className="text-xs sm:text-sm text-foreground/80 mt-1 group-hover:text-foreground/90 transition-colors duration-300">{p.tagline}</p>
               </div>
-              <Link href={`/projects/${p.slug}${active !== "All" ? `?tag=${active}` : ""}`} className="text-xs sm:text-sm underline underline-offset-4 flex-shrink-0 hover:text-foreground/80 transition-all duration-300 hover:scale-105">Details →</Link>
+              <Link href={`/projects/${p.slug}${active !== "All" ? `?tag=${active}` : ""}`} className="relative group/link text-xs sm:text-sm font-medium flex-shrink-0 transition-all duration-300 hover:scale-105 inline-block">
+                Details →
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-foreground transition-all duration-300 group-hover/link:w-full"></span>
+              </Link>
             </div>
             <div className="flex flex-wrap gap-1.5 sm:gap-2">
-              {p.tags.map((t, tagIndex) => (
-                <span key={t} className="text-xs px-2 py-1 rounded-full border cursor-pointer transition-all duration-300 hover:bg-foreground/5 hover:scale-105 hover:shadow-[0_2px_8px_rgba(237,237,237,0.1)]">{t}</span>
+              {p.tags.map((t) => (
+                <span key={t} className="text-xs px-2 py-1 rounded-full border cursor-pointer transition-all duration-300 hover:bg-foreground/10 hover:border-foreground/30 hover:scale-105">{t}</span>
               ))}
             </div>
-            {p.impact && <div className="text-xs sm:text-sm text-foreground/70">{p.impact}</div>}
+            {p.impact && <div className="text-xs sm:text-sm text-foreground/70 group-hover:text-foreground/80 transition-colors duration-300">{p.impact}</div>}
             <div className="flex flex-wrap gap-2 sm:gap-3 text-xs">
               {p.links?.map((l) => (
                 <a key={l.url} href={l.url} className="underline underline-offset-4 hover:text-foreground/80 transition-all duration-300 hover:scale-105" target="_blank" rel="noreferrer">
@@ -99,6 +102,14 @@ export default function ProjectsPage() {
         ))}
       </div>
     </main>
+  );
+}
+
+export default function ProjectsPage() {
+  return (
+    <Suspense fallback={<Loading onComplete={() => {}} />}>
+      <ProjectsContent />
+    </Suspense>
   );
 }
 

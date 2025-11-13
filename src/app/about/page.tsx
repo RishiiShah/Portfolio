@@ -1,5 +1,6 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { experiences } from "@/data/experience";
 import { Loading } from "@/components/Loading";
 
 export default function AboutPage() {
@@ -20,7 +21,7 @@ export default function AboutPage() {
         <aside className="space-y-3 lg:space-y-4 animate-fade-in-up delay-200">
           <div className="rounded-lg border p-3 sm:p-4 transition-all duration-300 hover:border-foreground/30 hover:shadow-[0_4px_12px_rgba(237,237,237,0.1)]">
             <div className="text-sm font-medium">Contact</div>
-            <div className="text-xs sm:text-sm text-foreground/80 mt-1 break-all">rishabhshah2193@gmail.com</div>
+            <div className="text-xs sm:text-sm text-foreground/80 mt-1 break-all">rishabh.shah033@djsce.edu.in</div>
             <div className="text-xs text-foreground/60 mt-1 flex flex-wrap gap-1">
               <a href="https://github.com/RishiiShah" target="_blank" rel="noreferrer" className="underline hover:text-foreground/80 transition-all duration-300 hover:scale-105">GitHub</a> • 
               <a href="https://www.linkedin.com/in/rishabh-shah1/" target="_blank" rel="noreferrer" className="underline hover:text-foreground/80 transition-all duration-300 hover:scale-105">LinkedIn</a>
@@ -35,10 +36,10 @@ export default function AboutPage() {
               <li>Focus: Software, Systems, AI/ML, Full-stack, AR/VR</li>
             </ul>
           </div>
-          <a href="/resume.pdf" download = "rishabh-shah-resume.pdf" target = "_blank" rel = "noopener noreferrer" className="block text-center text-xs sm:text-sm font-medium px-3 py-2 rounded-md bg-foreground text-background transition-all duration-300 hover:scale-105 hover:shadow-[0_8px_25px_rgba(237,237,237,0.3)] hover:-translate-y-1 active:scale-95">Download résumé</a>
+          <a href="/resume.pdf" download = "rishabh-shah-resume.pdf" target = "_blank" rel = "noopener noreferrer" className="block text-center text-xs sm:text-sm font-medium px-3 py-2 rounded-md border transition-all duration-300 hover:bg-foreground/5 hover:border-foreground/30 hover:scale-[1.02] hover:shadow-lg active:scale-95">Download résumé</a>
         </aside>
         <section className="space-y-6 sm:space-y-8 animate-fade-in-up delay-300">
-          <p className="text-sm sm:text-base text-foreground/90 max-w-2xl">Passionate about computer science and software development, aiming to build efficient and scalable solutions to real-world challenges through innovation. I'm a Master's student at Rutgers University focused on building scalable systems and ML enabled applications.</p>
+          <p className="text-sm sm:text-base text-foreground/90 max-w-2xl">Passionate about computer science and software development, aiming to build efficient and scalable solutions to real-world challenges through innovation. I&apos;m a Master&apos;s student at Rutgers University focused on building scalable systems and ML enabled applications.</p>
 
           <div>
             <h2 className="font-semibold text-sm sm:text-base">Education</h2>
@@ -64,37 +65,64 @@ export default function AboutPage() {
           </div>
 
           <div>
+            <h2 className="font-semibold text-sm sm:text-base">Experience</h2>
+            <ul className="mt-2 space-y-2 text-xs sm:text-sm">
+              {experiences.map((exp) => (
+                <li key={`${exp.organization}-${exp.start}`}>
+                  <div className="font-medium text-xs sm:text-sm">{exp.role}</div>
+                  <div className="text-foreground/70 text-xs sm:text-sm">
+                    {exp.organization}{exp.location ? `, ${exp.location}` : ""} • {exp.start} – {exp.end}
+                  </div>
+                  {exp.summary && (
+                    <div className="text-foreground/60 text-xs sm:text-sm">
+                      {exp.summary}
+                    </div>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
             <h2 className="font-semibold text-sm sm:text-base">Technical Skills</h2>
             <div className="mt-2 space-y-3 sm:space-y-4">
               <div>
-                <div className="text-xs sm:text-sm font-medium">Languages</div>
+                <div className="text-xs sm:text-sm font-medium">Programming & Scripting</div>
                 <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-1">
-                  {["Python", "Java", "C", "HTML", "CSS", "JavaScript"].map((lang, index) => (
+                  {["Python", "Java", "C++", "C", "SQL"].map((lang, index) => (
                     <span key={lang} className="text-xs px-2 py-1 rounded-full border cursor-pointer transition-all duration-300 hover:bg-foreground/5 hover:scale-105 hover:shadow-[0_2px_8px_rgba(237,237,237,0.1)] animate-fade-in-up" style={{animationDelay: `${0.4 + index * 0.1}s`}}>{lang}</span>
                   ))}
                 </div>
               </div>
               <div>
-                <div className="text-xs sm:text-sm font-medium">Frameworks & Databases</div>
+                <div className="text-xs sm:text-sm font-medium">Full-Stack Development</div>
                 <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-1">
-                  {["Django", "NextJS", "Streamlit", "MySQL", "SQLite"].map((tool, index) => (
+                  {["Next.js", "Flask", "Django", "FastAPI", "REST APIs", "Microservices", "Authentication (JWT)"].map((tool, index) => (
                     <span key={tool} className="text-xs px-2 py-1 rounded-full border cursor-pointer transition-all duration-300 hover:bg-foreground/5 hover:scale-105 hover:shadow-[0_2px_8px_rgba(237,237,237,0.1)] animate-fade-in-up" style={{animationDelay: `${0.5 + index * 0.1}s`}}>{tool}</span>
                   ))}
                 </div>
               </div>
               <div>
-                <div className="text-xs sm:text-sm font-medium">Tools & Platforms</div>
+                <div className="text-xs sm:text-sm font-medium">Databases & Data Handling</div>
                 <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-1">
-                  {["Git", "GitHub", "Docker", "Azure", "VS Code", "MS Office"].map((tool, index) => (
+                  {["MySQL", "PostgreSQL", "MongoDB", "Schema Design", "Query Optimization", "Data Modeling"].map((tool, index) => (
                     <span key={tool} className="text-xs px-2 py-1 rounded-full border cursor-pointer transition-all duration-300 hover:bg-foreground/5 hover:scale-105 hover:shadow-[0_2px_8px_rgba(237,237,237,0.1)] animate-fade-in-up" style={{animationDelay: `${0.6 + index * 0.1}s`}}>{tool}</span>
                   ))}
                 </div>
               </div>
               <div>
-                <div className="text-xs sm:text-sm font-medium">AI/ML Technologies</div>
+                <div className="text-xs sm:text-sm font-medium">Cloud & DevOps</div>
                 <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-1">
-                  {["TensorFlow", "YOLO11s", "NLP", "LLM", "Computer Vision", "Librosa", "Scikit-learn", "Google PaLM 2"].map((tech, index) => (
-                    <span key={tech} className="text-xs px-2 py-1 rounded-full border cursor-pointer transition-all duration-300 hover:bg-foreground/5 hover:scale-105 hover:shadow-[0_2px_8px_rgba(237,237,237,0.1)] animate-fade-in-up" style={{animationDelay: `${0.7 + index * 0.1}s`}}>{tech}</span>
+                  {["AWS (EC2, S3, Lambda)", "Docker", "CI/CD (GitHub Actions)", "Git", "Linux/Unix", "System Monitoring"].map((tool, index) => (
+                    <span key={tool} className="text-xs px-2 py-1 rounded-full border cursor-pointer transition-all duration-300 hover:bg-foreground/5 hover:scale-105 hover:shadow-[0_2px_8px_rgba(237,237,237,0.1)] animate-fade-in-up" style={{animationDelay: `${0.7 + index * 0.1}s`}}>{tool}</span>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <div className="text-xs sm:text-sm font-medium">Additional Technologies</div>
+                <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-1">
+                  {["TensorFlow", "PyTorch", "YOLOv12", "OpenCV", "OCR/ANPR"].map((tech, index) => (
+                    <span key={tech} className="text-xs px-2 py-1 rounded-full border cursor-pointer transition-all duration-300 hover:bg-foreground/5 hover:scale-105 hover:shadow-[0_2px_8px_rgba(237,237,237,0.1)] animate-fade-in-up" style={{animationDelay: `${0.8 + index * 0.1}s`}}>{tech}</span>
                   ))}
                 </div>
               </div>

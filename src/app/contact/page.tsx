@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Loading } from "@/components/Loading";
 
 export default function ContactPage() {
@@ -46,7 +46,7 @@ export default function ContactPage() {
     
     const data = new FormData(e.currentTarget);
     try {
-      const res = await fetch("https://formspree.io/f/mayvlwzz", {
+      const res = await fetch("https://formspree.io/f/movyqpkr", {
         method: "POST",
         headers: { Accept: "application/json" },
         body: data,
@@ -66,11 +66,11 @@ export default function ContactPage() {
   return (
     <main className="py-[clamp(1rem,4vh,3rem)]">
       <h1 className="text-xl sm:text-2xl font-semibold animate-fade-in-up">Contact</h1>
-      <p className="mt-2 text-xs sm:text-sm text-foreground/80 animate-fade-in-up delay-200">Tell me what you're working on — name, role, and a 1–2 sentence note about collaboration.</p>
+      <p className="mt-2 text-xs sm:text-sm text-foreground/80 animate-fade-in-up delay-200">Tell me what you&apos;re working on — name, role, and a 1–2 sentence note about collaboration.</p>
       <form onSubmit={onSubmit} className="mt-6 max-w-md space-y-3 sm:space-y-4">
         <div className="animate-fade-in-up delay-300">
           <input 
-            className="w-full border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 transition-all duration-300 hover:border-foreground/30" 
+            className="w-full border border-foreground/20 rounded-md px-3 py-2.5 text-sm bg-background text-foreground placeholder:text-foreground/50 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/40 transition-all duration-300 hover:border-foreground/30" 
             name="name" 
             placeholder="Name" 
             required 
@@ -78,7 +78,7 @@ export default function ContactPage() {
         </div>
         <div className="animate-fade-in-up delay-400">
           <input 
-            className={`w-full border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 transition-all duration-300 hover:border-foreground/30 ${errors.email ? 'border-red-500 focus:ring-red-500/50' : ''}`}
+            className={`w-full border rounded-md px-3 py-2.5 text-sm bg-background text-foreground placeholder:text-foreground/50 focus:outline-none focus:ring-2 focus:ring-foreground/20 transition-all duration-300 hover:border-foreground/30 ${errors.email ? 'border-red-500 focus:ring-red-500/50' : 'border-foreground/20 focus:border-foreground/40'}`}
             type="email" 
             name="email" 
             placeholder="Email" 
@@ -99,14 +99,14 @@ export default function ContactPage() {
         </div>
         <div className="animate-fade-in-up delay-500">
           <input 
-            className="w-full border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 transition-all duration-300 hover:border-foreground/30" 
+            className="w-full border border-foreground/20 rounded-md px-3 py-2.5 text-sm bg-background text-foreground placeholder:text-foreground/50 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/40 transition-all duration-300 hover:border-foreground/30" 
             name="role" 
             placeholder="Role (e.g., Recruiter, Researcher)" 
           />
         </div>
         <div className="animate-fade-in-up delay-600">
           <textarea 
-            className={`w-full border rounded-md px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-foreground/20 transition-all duration-300 hover:border-foreground/30 resize-none ${errors.message ? 'border-red-500 focus:ring-red-500/50' : ''}`}
+            className={`w-full border rounded-md px-3 py-2.5 text-sm bg-background text-foreground placeholder:text-foreground/50 focus:outline-none focus:ring-2 focus:ring-foreground/20 transition-all duration-300 hover:border-foreground/30 resize-none ${errors.message ? 'border-red-500 focus:ring-red-500/50' : 'border-foreground/20 focus:border-foreground/40'}`}
             name="message" 
             placeholder="Your message" 
             rows={5} 
@@ -129,7 +129,7 @@ export default function ContactPage() {
         {status && <div className="text-xs sm:text-sm text-foreground/80 animate-fade-in delay-800">{status}</div>}
       </form>
       <div className="mt-6 text-xs sm:text-sm animate-fade-in-up delay-900">
-        <a className="underline underline-offset-4 hover:text-foreground/80 transition-all duration-300 hover:scale-105 break-all" href="mailto:rishabhshah203@gmail.com">rishabhshah203@gmail.com</a>
+        <a className="underline underline-offset-4 hover:text-foreground/80 transition-all duration-300 hover:scale-105 break-all" href="mailto:rishabh.shah033@djsce.edu.in">rishabh.shah033@djsce.edu.in</a>
       </div>
     </main>
   );

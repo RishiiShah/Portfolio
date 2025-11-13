@@ -12,16 +12,41 @@
   --font-mono: var(--font-geist-mono);
 }
 
+html {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Theme-aware transitions - apply only to color properties for theme switching */
+/* Do NOT apply to width, height, transform, opacity - these are used for animations */
+nav,
+footer,
+main,
+header,
+aside {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+/* Section and article - but exclude those with animations */
+section:not([class*="animate"]),
+article:not([class*="animate"]) {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}
+
+button, a, input, textarea, select {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 
 /* Light theme support via data-theme */
 [data-theme="light"] {
-  --background: #ffffff;
-  --foreground: #0a0a0a;
+  --background: #FAFAFA;
+  --foreground: #1a1a1a;
 }
 
 /* Custom animations */

@@ -35,6 +35,7 @@ export interface ExperienceItem {
   start: string;
   end: string;
   location?: string;
+  summary?: string;
   bullets: string[];
   links?: { label: string; url: string }[];
 }

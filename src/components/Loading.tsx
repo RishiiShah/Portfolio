@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useMemo } from "react";
 
 interface LoadingProps {
   onComplete: () => void;
@@ -12,7 +12,7 @@ export function Loading({ onComplete, minDurationMs }: LoadingProps) {
   const startRef = useRef<number | null>(null); 
 
   // Minimum duration to keep the loader visible for a pleasant experience
-  const MIN_DURATION_MS = typeof minDurationMs === "number" ? minDurationMs : 1200; // 0.9s default
+  const MIN_DURATION_MS = useMemo(() => typeof minDurationMs === "number" ? minDurationMs : 1200, [minDurationMs]); // 0.9s default
   const FADE_OUT_MS = 100;
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export function Loading({ onComplete, minDurationMs }: LoadingProps) {
     }, 80);
 
     return () => clearInterval(interval);
-  }, [onComplete]);
+  }, [onComplete, MIN_DURATION_MS]);
 
   if (!isVisible) return null;
 
@@ -58,7 +58,7 @@ export function Loading({ onComplete, minDurationMs }: LoadingProps) {
         {/* Progress Bar */}
         <div className="w-64 sm:w-80 h-1 bg-foreground/10 rounded-full overflow-hidden">
           <div 
-            className="h-full bg-foreground rounded-full transition-all duration-300 ease-out"
+            className="h-full bg-foreground rounded-full transition-[width] duration-75 ease-linear"
             style={{ width: `${progress}%` }}
           />
         </div>
