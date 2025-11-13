@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { projects } from "@/data/projects";
 import { publications } from "@/data/publications";
 import { Loading } from "@/components/Loading";
@@ -23,7 +23,7 @@ export default function Home() {
     <main className="py-8 sm:py-12 lg:py-16">
       <section className="mb-8 sm:mb-10">
         <p className="text-xs sm:text-sm uppercase tracking-widest text-foreground/60 animate-fade-in">MSCS &ndash; Rutgers University &ndash; New Brunswick &ndash; Software/Systems track</p>
-        <h1 className="mt-2 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight animate-fade-in-up leading-tight">Hi — I'm Rishabh. I build scalable systems and ML &ndash; Enabled applications.</h1>
+        <h1 className="mt-2 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight animate-fade-in-up leading-tight">Hi — I&apos;m Rishabh. I build scalable systems and ML &ndash; Enabled applications.</h1>
         <p className="mt-3 sm:mt-4 text-foreground/80 max-w-2xl text-sm sm:text-base animate-fade-in-up delay-200">Systems engineer with a B.Tech in Artificial Intelligence & Data Science — I design backend systems, distributed pipelines, and ML &ndash; Powered tools that scale to real users.</p>
         <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row gap-2 sm:gap-3 animate-fade-in-up delay-300">
           <Link 
@@ -37,7 +37,7 @@ export default function Home() {
             download = "rishabh-shah-resume.pdf"
             target = "_blank"
             rel = "noopener noreferrer"
-            className="px-4 py-2.5 rounded-md border text-sm font-medium transition-all duration-300 hover:bg-foreground/5 hover:border-foreground/30 hover:scale-105 active:scale-95 text-center"
+            className="px-4 py-2.5 rounded-md border text-sm font-medium transition-all duration-300 hover:bg-foreground/5 hover:border-foreground/30 hover:scale-[1.02] hover:shadow-lg active:scale-95 text-center"
           >
             Download résumé
           </a>
@@ -61,7 +61,7 @@ export default function Home() {
       {featured && (
         <section className="mt-6 sm:mt-8 animate-fade-in-up delay-500">
           <h2 className="text-lg sm:text-xl font-semibold mb-3">Featured Project</h2>
-          <div className="rounded-lg border p-4 sm:p-5 transition-all duration-300 hover:border-foreground/30 hover:bg-foreground/5 hover:shadow-lg group">
+          <div className="rounded-lg border p-4 sm:p-5 transition-all duration-300 hover:border-foreground/30 hover:bg-foreground/5 hover:scale-[1.02] hover:shadow-lg group">
             <div className="flex items-start justify-between gap-3 sm:gap-4 flex-col lg:flex-row">
               <div className="flex-1">
                 <h3 className="text-base sm:text-lg font-semibold group-hover:text-foreground transition-colors duration-300 leading-tight">{featured.title}</h3>
@@ -97,7 +97,7 @@ export default function Home() {
       {featuredPublication && (
         <section className="mt-6 sm:mt-8 animate-fade-in-up delay-600">
           <h2 className="text-lg sm:text-xl font-semibold mb-3">Featured Publication</h2>
-          <div className="rounded-lg border p-4 sm:p-5 transition-all duration-300 hover:border-foreground/30 hover:bg-foreground/5 hover:shadow-lg group">
+          <div className="rounded-lg border p-4 sm:p-5 transition-all duration-300 hover:border-foreground/30 hover:bg-foreground/5 hover:scale-[1.02] hover:shadow-lg group">
             <div className="flex items-start justify-between gap-3 sm:gap-4 flex-col lg:flex-row">
               <div className="flex-1">
                 <h3 className="text-base sm:text-lg font-semibold group-hover:text-foreground transition-colors duration-300 leading-tight">{featuredPublication.title}</h3>

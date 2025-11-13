@@ -1,55 +1,88 @@
 "use client";
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 
 type Theme = "light" | "dark";
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("dark");
+interface ThemeContextType {
+  theme: Theme;
+  toggleTheme: () => void;
+}
 
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
+
+export function ThemeProvider({ children }: { children: ReactNode }) {
+  const [theme, setTheme] = useState<Theme>("dark");
+  const [mounted, setMounted] = useState(false);
+
+  // Initialize theme immediately on mount
   useEffect(() => {
     const stored = typeof window !== "undefined" ? (localStorage.getItem("theme") as Theme | null) : null;
+    let initialTheme: Theme;
+    
     if (stored) {
-      setTheme(stored);
-      document.documentElement.setAttribute("data-theme", stored);
-      return;
+      initialTheme = stored;
+    } else {
+      const prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
+      initialTheme = prefersLight ? "light" : "dark";
     }
-    const prefersLight = window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches;
-    const next = prefersLight ? "light" : "dark";
-    setTheme(next);
-    document.documentElement.setAttribute("data-theme", next);
+    
+    // Apply theme to HTML element immediately
+    document.documentElement.setAttribute("data-theme", initialTheme);
+    setTheme(initialTheme);
+    setMounted(true);
   }, []);
 
+  // Update theme when it changes
   useEffect(() => {
+    if (!mounted) return;
     document.documentElement.setAttribute("data-theme", theme);
-    try { localStorage.setItem("theme", theme); } catch {}
-  }, [theme]);
+    try { 
+      localStorage.setItem("theme", theme); 
+    } catch {}
+  }, [theme, mounted]);
+
+  const toggleTheme = () => {
+    setTheme((prev) => {
+      const next = prev === "dark" ? "light" : "dark";
+      // Apply immediately for instant feedback
+      document.documentElement.setAttribute("data-theme", next);
+      try { 
+        localStorage.setItem("theme", next); 
+      } catch {}
+      return next;
+    });
+  };
 
   return (
-    <div data-theme={theme}>
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
       {children}
-    </div>
+    </ThemeContext.Provider>
   );
 }
 
 export function ThemeToggle({ className = "" }: { className?: string }) {
-  const [current, setCurrent] = useState<Theme>("dark");
+  const context = useContext(ThemeContext);
+  
+  if (!context) {
+    // Fallback if used outside provider
+    return (
+      <button className={`relative group transition-all duration-300 hover:scale-105 ${className}`} aria-label="Toggle theme">
+        Light
+        <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-foreground transition-all duration-300 group-hover:w-full"></span>
+      </button>
+    );
+  }
 
-  useEffect(() => {
-    const stored = typeof window !== "undefined" ? (localStorage.getItem("theme") as Theme | null) : null;
-    const initial = stored ?? (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
-    setCurrent(initial);
-  }, []);
-
-  const toggle = () => {
-    const next = current === "dark" ? "light" : "dark";
-    setCurrent(next);
-    document.documentElement.setAttribute("data-theme", next);
-    try { localStorage.setItem("theme", next); } catch {}
-  };
+  const { theme, toggleTheme } = context;
 
   return (
-    <button onClick={toggle} className={`text-xs sm:text-sm px-2 py-1 rounded-md border transition-all duration-300 hover:scale-105 ${className}`} aria-label="Toggle theme">
-      {current === "dark" ? "Light" : "Dark"}
+    <button 
+      onClick={toggleTheme} 
+      className={`relative group transition-all duration-300 hover:scale-105 ${className}`} 
+      aria-label="Toggle theme"
+    >
+      {theme === "dark" ? "Light" : "Dark"}
+      <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-foreground transition-all duration-300 group-hover:w-full"></span>
     </button>
   );
 }
