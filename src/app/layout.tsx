@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     default: "Rishabh Shah — MS CS (Software & Systems) | Scalable systems & ML-enabled apps",
     template: "%s — Rishabh Shah",
   },
-  description: "I build scalable backend systems and ML-enabled applications. MS CS (Software & Systems) at Rutgers University; B.Tech in AI & Data Science.",
+  description: "I build scalable backend systems and ML-enabled applications. MS CS (Software & Systems) at Rutgers University; B.Tech in AI & Data Science at Dwarkadas J. Sanghvi College of Engineering, University of Mumbai.",
   keywords: [
     "Rishabh Shah",
     "Software Engineer",
@@ -68,12 +68,21 @@ export const metadata: Metadata = {
     url: siteUrl,
     siteName: "Rishabh Shah — Portfolio",
     title: "Rishabh Shah — MS CS (Software & Systems)",
-    description: "I build scalable backend systems and ML-enabled applications. MS CS (Software & Systems) at Rutgers University; B.Tech in AI & Data Science.",
+    description: "I build scalable backend systems and ML-enabled applications. MS CS (Software & Systems) at Rutgers University; B.Tech in AI & Data Science at Dwarkadas J. Sanghvi College of Engineering, University of Mumbai.",
+    images: [
+      {
+        url: `${siteUrl}/og-image.png`,
+        width: 1200,
+        height: 630,
+        alt: "Rishabh Shah — Portfolio",
+      },
+    ],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Rishabh Shah — MS CS (Software & Systems)",
     description: "I build scalable backend systems and ML-enabled applications.",
+    images: [`${siteUrl}/og-image.png`],
   },
   robots: {
     index: true,

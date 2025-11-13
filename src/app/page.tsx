@@ -4,6 +4,7 @@ import { useState } from "react";
 import { projects } from "@/data/projects";
 import { publications } from "@/data/publications";
 import { Loading } from "@/components/Loading";
+import { downloadResume } from "@/utils/downloadResume";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
@@ -34,10 +35,8 @@ export default function Home() {
           </Link>
           <a 
             href="/resume.pdf" 
-            download = "rishabh-shah-resume.pdf"
-            target = "_blank"
-            rel = "noopener noreferrer"
-            className="px-4 py-2.5 rounded-md border text-sm font-medium transition-all duration-300 hover:bg-foreground/5 hover:border-foreground/30 hover:scale-[1.02] hover:shadow-lg active:scale-95 text-center"
+            onClick={downloadResume}
+            className="px-4 py-2.5 rounded-md border text-sm font-medium transition-all duration-300 hover:bg-foreground/5 hover:border-foreground/30 hover:scale-[1.02] hover:shadow-lg active:scale-95 text-center cursor-pointer"
           >
             Download résumé
           </a>
