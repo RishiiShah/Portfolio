@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ThemeToggle } from "@/components/ThemeProvider";
+import { downloadResume } from "@/utils/downloadResume";
 
 const links = [
   { href: "/", label: "Home" },
@@ -49,10 +50,8 @@ export function Nav() {
           <ThemeToggle />
           <a 
             href="/resume.pdf" 
-            download = "rishabh-shah-resume.pdf"
-            target = "_blank"
-            rel = "noopener noreferrer"
-            className="relative group transition-all duration-300 hover:scale-105"
+            onClick={downloadResume}
+            className="relative group transition-all duration-300 hover:scale-105 cursor-pointer"
           >
             Résumé
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-foreground transition-all duration-300 group-hover:w-full"></span>
@@ -89,8 +88,11 @@ export function Nav() {
             ))}
             <a 
               href="/resume.pdf" 
-              className="text-sm font-medium transition-all duration-300 hover:text-foreground/80 py-2"
-              onClick={() => setIsMenuOpen(false)}
+              onClick={(e) => {
+                downloadResume(e);
+                setIsMenuOpen(false);
+              }}
+              className="text-sm font-medium transition-all duration-300 hover:text-foreground/80 py-2 cursor-pointer"
             >
               Résumé
             </a>

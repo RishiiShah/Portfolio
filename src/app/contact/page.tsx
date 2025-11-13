@@ -6,7 +6,9 @@ export default function ContactPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [status, setStatus] = useState<string | null>(null);
   const [errors, setErrors] = useState<{email?: string; message?: string}>({});
+  const [nameValue, setNameValue] = useState("");
   const [emailValue, setEmailValue] = useState("");
+  const [roleValue, setRoleValue] = useState("");
   const [messageValue, setMessageValue] = useState("");
 
   if (isLoading) {
@@ -43,6 +45,7 @@ export default function ContactPage() {
     }
     
     setErrors({});
+    setStatus(null);
     
     const data = new FormData(e.currentTarget);
     try {
@@ -51,14 +54,43 @@ export default function ContactPage() {
         headers: { Accept: "application/json" },
         body: data,
       });
+      
+      // Formspree returns 200 OK on success, even if there are validation errors
+      // Check for both status and response data
       if (res.ok) {
-        setStatus("Thanks — I'll get back to you.");
-        // Reset form
-        setEmailValue("");
-        setMessageValue("");
-        e.currentTarget.reset();
-      } else setStatus("Something went wrong. Please email me.");
-    } catch {
+        try {
+          const responseData = await res.json();
+          // Formspree success responses typically have a 'next' field or are just 200 OK
+          if (responseData.next || responseData.ok !== false) {
+            setStatus("Thanks — I'll get back to you.");
+            // Reset form and all state values
+            setNameValue("");
+            setEmailValue("");
+            setRoleValue("");
+            setMessageValue("");
+            e.currentTarget.reset();
+          } else {
+            setStatus("Something went wrong. Please email me.");
+          }
+        } catch (jsonError) {
+          // If response is not JSON but status is OK, assume success
+          if (res.status === 200 || res.status === 302) {
+            setStatus("Thanks — I'll get back to you.");
+            // Reset form and all state values
+            setNameValue("");
+            setEmailValue("");
+            setRoleValue("");
+            setMessageValue("");
+            e.currentTarget.reset();
+          } else {
+            setStatus("Something went wrong. Please email me.");
+          }
+        }
+      } else {
+        setStatus("Something went wrong. Please email me.");
+      }
+    } catch (error) {
+      console.error("Form submission error:", error);
       setStatus("Network error. Please email me.");
     }
   }
@@ -73,7 +105,9 @@ export default function ContactPage() {
             className="w-full border border-foreground/20 rounded-md px-3 py-2.5 text-sm bg-background text-foreground placeholder:text-foreground/50 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/40 transition-all duration-300 hover:border-foreground/30" 
             name="name" 
             placeholder="Name" 
-            required 
+            required
+            value={nameValue}
+            onChange={(e) => setNameValue(e.target.value)}
           />
         </div>
         <div className="animate-fade-in-up delay-400">
@@ -101,7 +135,9 @@ export default function ContactPage() {
           <input 
             className="w-full border border-foreground/20 rounded-md px-3 py-2.5 text-sm bg-background text-foreground placeholder:text-foreground/50 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/40 transition-all duration-300 hover:border-foreground/30" 
             name="role" 
-            placeholder="Role (e.g., Recruiter, Researcher)" 
+            placeholder="Role (e.g., Recruiter, Researcher)"
+            value={roleValue}
+            onChange={(e) => setRoleValue(e.target.value)}
           />
         </div>
         <div className="animate-fade-in-up delay-600">

@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { experiences } from "@/data/experience";
 import { Loading } from "@/components/Loading";
+import { downloadResume } from "@/utils/downloadResume";
 
 export default function AboutPage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -36,7 +37,7 @@ export default function AboutPage() {
               <li>Focus: Software, Systems, AI/ML, Full-stack, AR/VR</li>
             </ul>
           </div>
-          <a href="/resume.pdf" download = "rishabh-shah-resume.pdf" target = "_blank" rel = "noopener noreferrer" className="block text-center text-xs sm:text-sm font-medium px-3 py-2 rounded-md border transition-all duration-300 hover:bg-foreground/5 hover:border-foreground/30 hover:scale-[1.02] hover:shadow-lg active:scale-95">Download résumé</a>
+          <a href="/resume.pdf" onClick={downloadResume} className="block text-center text-xs sm:text-sm font-medium px-3 py-2 rounded-md border transition-all duration-300 hover:bg-foreground/5 hover:border-foreground/30 hover:scale-[1.02] hover:shadow-lg active:scale-95 cursor-pointer">Download résumé</a>
         </aside>
         <section className="space-y-6 sm:space-y-8 animate-fade-in-up delay-300">
           <p className="text-sm sm:text-base text-foreground/90 max-w-2xl">Passionate about computer science and software development, aiming to build efficient and scalable solutions to real-world challenges through innovation. I&apos;m a Master&apos;s student at Rutgers University focused on building scalable systems and ML enabled applications.</p>
@@ -81,6 +82,9 @@ export default function AboutPage() {
                 </li>
               ))}
             </ul>
+            <p className="mt-2 text-xs sm:text-sm text-foreground/60">
+              <a href="/experience" className="underline hover:text-foreground/80 transition-colors duration-300">View detailed experience →</a>
+            </p>
           </div>
 
           <div>
