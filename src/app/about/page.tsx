@@ -82,9 +82,6 @@ export default function AboutPage() {
                 </li>
               ))}
             </ul>
-            <p className="mt-2 text-xs sm:text-sm text-foreground/60">
-              <a href="/experience" className="underline hover:text-foreground/80 transition-colors duration-300">View detailed experience →</a>
-            </p>
           </div>
 
           <div>

@@ -72,7 +72,7 @@ export default function ContactPage() {
           } else {
             setStatus("Something went wrong. Please email me.");
           }
-        } catch (jsonError) {
+        } catch {
           // If response is not JSON but status is OK, assume success
           if (res.status === 200 || res.status === 302) {
             setStatus("Thanks — I'll get back to you.");
