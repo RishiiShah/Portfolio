@@ -48,14 +48,14 @@ export function Nav() {
             </Link>
           ))}
           <ThemeToggle />
-          <a 
+          {/* <a 
             href="/resume.pdf" 
             onClick={downloadResume}
             className="relative group transition-all duration-300 hover:scale-105 cursor-pointer"
           >
             Résumé
             <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-foreground transition-all duration-300 group-hover:w-full"></span>
-          </a>
+          </a> */}
         </div>
 
         {/* Mobile Menu Button */}
