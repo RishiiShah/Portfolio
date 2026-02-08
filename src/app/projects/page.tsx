@@ -23,9 +23,13 @@ function ProjectsContent() {
 
   // Initialize active filter from URL on mount
   useEffect(() => {
-    const tag = searchParams.get("tag");
+    try {
+      const tag = searchParams?.get("tag");
     if (tag && (tag === "All" || (allTags as string[]).includes(tag))) {
       setActive(tag as Tag | "All");
+      }
+    } catch (e) {
+      // If searchParams is not ready, keep default "All"
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -38,9 +42,18 @@ function ProjectsContent() {
   // Keep URL in sync when active changes
   useEffect(() => {
     if (isLoading) return; // avoid navigating during loader
-    const params = new URLSearchParams(Array.from(searchParams.entries()));
+    const params = new URLSearchParams();
+    // Safely copy existing search params
+    try {
+      searchParams.forEach((value, key) => {
+        params.set(key, value);
+      });
+    } catch (e) {
+      // If searchParams is not ready, just continue with empty params
+    }
     if (active === "All") params.delete("tag"); else params.set("tag", active);
-    router.replace(`/projects${params.toString() ? `?${params.toString()}` : ""}`);
+    const newUrl = `/projects${params.toString() ? `?${params.toString()}` : ""}`;
+    router.replace(newUrl);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [active, isLoading]);
 
@@ -55,7 +68,7 @@ function ProjectsContent() {
         <div className="flex flex-wrap gap-2 text-xs animate-fade-in-up delay-200">
           <button
             onClick={() => setActive("All")}
-            className={`px-2 py-1 rounded-full border transition-all duration-300 hover:scale-105 active:scale-95 ${active === "All" ? "bg-foreground text-background" : "hover:bg-foreground/5 hover:border-foreground/30"}`}
+            className={`px-2 py-1 rounded-xl border transition-all duration-300 hover:scale-105 active:scale-95 ${active === "All" ? "bg-foreground text-background" : "hover:bg-foreground/5 hover:border-foreground/30"}`}
           >
             All
           </button>
@@ -63,7 +76,7 @@ function ProjectsContent() {
             <button
               key={t}
               onClick={() => setActive(t)}
-              className={`px-2 py-1 rounded-full border transition-all duration-300 hover:scale-105 active:scale-95 animate-fade-in-up ${active === t ? "bg-foreground text-background" : "hover:bg-foreground/5 hover:border-foreground/30"}`}
+              className={`px-2 py-1 rounded-xl border transition-all duration-300 hover:scale-105 active:scale-95 animate-fade-in-up ${active === t ? "bg-foreground text-background" : "hover:bg-foreground/5 hover:border-foreground/30"}`}
               style={{animationDelay: `${0.3 + index * 0.1}s`}}
             >
               {t}
@@ -80,14 +93,14 @@ function ProjectsContent() {
                 <h2 className="font-semibold text-sm sm:text-base leading-tight group-hover:text-foreground transition-colors duration-300">{p.title}</h2>
                 <p className="text-xs sm:text-sm text-foreground/80 mt-1 group-hover:text-foreground/90 transition-colors duration-300">{p.tagline}</p>
               </div>
-              <Link href={`/projects/${p.slug}${active !== "All" ? `?tag=${active}` : ""}`} className="relative group/link text-xs sm:text-sm font-medium flex-shrink-0 transition-all duration-300 hover:scale-105 inline-block">
+              <Link href={`/projects/${p.slug}${active !== "All" ? `?tag=${active}` : ""}`} className="relative group/link text-xs sm:text-sm font-medium shrink-0 transition-all duration-300 hover:scale-105 inline-block">
                 Details →
                 <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-foreground transition-all duration-300 group-hover/link:w-full"></span>
               </Link>
             </div>
             <div className="flex flex-wrap gap-1.5 sm:gap-2">
               {p.tags.map((t) => (
-                <span key={t} className="text-xs px-2 py-1 rounded-full border cursor-pointer transition-all duration-300 hover:bg-foreground/10 hover:border-foreground/30 hover:scale-105">{t}</span>
+                <span key={t} className="text-xs px-2 py-1 rounded-md border cursor-pointer transition-all duration-300 hover:bg-foreground/10 hover:border-foreground/30 hover:scale-105">{t}</span>
               ))}
             </div>
             {p.impact && <div className="text-xs sm:text-sm text-foreground/70 group-hover:text-foreground/80 transition-colors duration-300">{p.impact}</div>}

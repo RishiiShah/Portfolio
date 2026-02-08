@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Loading } from "@/components/Loading";
 import { SmartBackButton } from "@/components/SmartBackButton";
+import { TechPills } from "@/components/TechPills";
 import type { Project } from "@/types";
 
 interface ProjectDetailClientProps {
@@ -78,15 +79,7 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
           <div className="rounded-lg border p-3 sm:p-4 transition-all duration-300 hover:border-foreground/30 hover:shadow-[0_4px_12px_rgba(237,237,237,0.1)]">
             <div className="text-sm font-medium">Tech</div>
             <div className="mt-2 flex flex-wrap gap-1.5 sm:gap-2">
-              {project.tech.map((t, index) => (
-                <span
-                  key={t}
-                  className="text-xs px-2 py-1 rounded-full border cursor-pointer transition-all duration-300 hover:bg-foreground/5 hover:scale-105 hover:shadow-[0_2px_8px_rgba(237,237,237,0.1)] animate-fade-in-up"
-                  style={{animationDelay: `${0.6 + index * 0.1}s`}}
-                >
-                  {t}
-                </span>
-              ))}
+              <TechPills techs={project.tech} animationDelay={0.6} />
             </div>
           </div>
           {project.metrics?.length ? (

@@ -77,7 +77,7 @@ export const projects: Project[] = [
     tags: ["MLOps", "Systems", "Research"],
     impact: "Automated violation detection for speeding and red-light running with optimized accuracy and reduced false positives.",
     links: [
-      { type: "source", url: "https://github.com/RishiiShah/traffic-violation-detection" },
+      { type: "source", url: "https://github.com/RishiiShah/Traffic-Violation-Detection-Automated-Ticketing-System" },
     ],
     featured: true,
     problem:

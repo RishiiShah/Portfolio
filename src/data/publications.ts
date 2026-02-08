@@ -23,7 +23,7 @@ export const publications: PublicationItem[] = [
     title: "JARVIS: Voice Assistant with Smart Home Automation",
     venue: "International Conference on STEM for Sustainable Development 2025",
     year: 2025,
-    authors: ["Rishabh Shah", "Alan George", "Yukta Saraf", "Rujuta Jariwala", "Lakshmi Kurup", "Nikita Raichada"],
+    authors: ["Rishabh Shah", "Alan George", "Yukta Saraf", "Rujuta Jariwala"],
     abstract: "Designed and deployed a voice-controlled IoT automation system using LLMs and Raspberry Pi to simplify daily routines.",
     featured: false,
     links: [

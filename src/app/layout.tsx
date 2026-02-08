@@ -4,6 +4,7 @@ import "./globals.css";
 import { Nav } from "@/components/Nav";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Footer } from "@/components/Footer";
+import { ThreeBackground } from "@/components/ThreeBackground";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
@@ -127,18 +128,20 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-svh flex flex-col`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col relative`}>
         <ThemeProvider>
-        <Nav />
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 flex-1 w-full">{children}</div>
-        <Footer />
+          <ThreeBackground />
+          <Nav />
+          {/* <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 flex-1 w-full relative z-10">{children}</div> */}
+          <div className="mx-auto w-full flex-1 relative z-10 max-w-5xl xl:max-w-6xl 2xl:max-w-7xl px-4 sm:px-6 lg:px-8">{children}</div>
+          <Footer />
         </ThemeProvider>
         <Analytics />
         <SpeedInsights />
