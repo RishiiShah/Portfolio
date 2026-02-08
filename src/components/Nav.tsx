@@ -32,7 +32,8 @@ export function Nav() {
 
   return (
     <nav className="sticky top-0 z-50 backdrop-blur bg-background/70 border-b border-foreground/10">
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
+      {/* <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between"> */}
+      <div className="mx-auto w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
         <Link href="/" className="font-semibold tracking-tight transition-all duration-300 hover:scale-105 text-lg sm:text-base">Rishabh</Link>
         
         {/* Desktop Navigation */}

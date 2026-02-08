@@ -4,6 +4,7 @@ import { useState } from "react";
 import { projects } from "@/data/projects";
 import { publications } from "@/data/publications";
 import { Loading } from "@/components/Loading";
+import { TechPills } from "@/components/TechPills";
 import { downloadResume } from "@/utils/downloadResume";
 
 export default function Home() {
@@ -44,7 +45,7 @@ export default function Home() {
         <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 animate-fade-in-up delay-400">
           <div className="rounded-lg border p-3 sm:p-4 transition-all duration-300 hover:border-foreground/30 hover:bg-foreground/5 hover:scale-[1.02] hover:shadow-lg group cursor-pointer">
             <div className="font-medium text-sm sm:text-base group-hover:text-foreground transition-colors duration-300">AI/ML</div>
-            <p className="text-xs sm:text-sm text-foreground/70 mt-1 group-hover:text-foreground/80 transition-colors duration-300">Computer vision, NLP, deep learning, 98.73% accuracy in music genre detection, YOLO11s for traffic violation detection.</p>
+            <p className="text-xs sm:text-sm text-foreground/70 mt-1 group-hover:text-foreground/80 transition-colors duration-300">Computer vision, NLP, Deep learning, 98.73% accuracy in music genre detection, YOLO11s for traffic violation detection.</p>
           </div>
           <div className="rounded-lg border p-3 sm:p-4 transition-all duration-300 hover:border-foreground/30 hover:bg-foreground/5 hover:scale-[1.02] hover:shadow-lg group cursor-pointer">
             <div className="font-medium text-sm sm:text-base group-hover:text-foreground transition-colors duration-300">Full-stack & AR/VR</div>
@@ -69,17 +70,10 @@ export default function Home() {
                   <p className="text-xs sm:text-sm text-foreground/70 mt-2 group-hover:text-foreground/80 transition-colors duration-300">{featured.impact}</p>
                 )}
                 <div className="mt-3 flex flex-wrap gap-1.5 sm:gap-2 cursor-default">
-                  {featured.tech.map((t) => (
-                    <span 
-                      key={t} 
-                      className="text-xs px-2 py-1 rounded-full border transition-all duration-300 hover:bg-foreground/10 hover:border-foreground/30 hover:scale-105 cursor-pointer"
-                    >
-                      {t}
-                    </span>
-                  ))}
+                  <TechPills techs={featured.tech} />
                 </div>
               </div>
-              <div className="flex-shrink-0 mt-3 lg:mt-0">
+              <div className="shrink-0 mt-3 lg:mt-0">
                 <Link 
                   href={`/projects/${featured.slug}`} 
                   className="relative group/link text-sm font-medium transition-all duration-300 hover:scale-105 inline-block"
@@ -106,7 +100,7 @@ export default function Home() {
                   <p className="text-xs sm:text-sm text-foreground/70 mt-2 group-hover:text-foreground/80 transition-colors duration-300">{featuredPublication.abstract}</p>
                 )}
               </div>
-              <div className="flex-shrink-0 mt-3 lg:mt-0">
+              <div className="shrink-0 mt-3 lg:mt-0">
                 <Link 
                   href="/publications" 
                   className="relative group/link text-sm font-medium transition-all duration-300 hover:scale-105 inline-block"
