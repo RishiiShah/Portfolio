@@ -2,6 +2,8 @@
 import { useState } from "react";
 import { publications } from "@/data/publications";
 import { Loading } from "@/components/Loading";
+import { IconLinkButton } from "@/components/ui/IconLinkButton";
+import { formatLinkLabel, getKnownLinkIcon } from "@/utils/linkIcons";
 
 export default function PublicationsPage() {
   const [isLoading, setIsLoading] = useState(true);
@@ -17,18 +19,42 @@ export default function PublicationsPage() {
       ) : (
         <ul className="mt-6 space-y-4 sm:space-y-6">
           {publications.map((p, index) => (
-            <li key={p.title} className="rounded-lg border p-4 sm:p-5 transition-all duration-300 hover:border-foreground/30 hover:bg-foreground/5 hover:scale-[1.02] hover:shadow-lg group animate-fade-in-up" style={{animationDelay: `${0.3 + index * 0.1}s`}}>
-              <div className="font-medium text-sm sm:text-base leading-tight group-hover:text-foreground transition-colors duration-300">{p.title}</div>
-              <div className="text-xs sm:text-sm text-foreground/70 mt-1 group-hover:text-foreground/80 transition-colors duration-300">{p.venue} • {p.year}</div>
+            <li key={p.title} className="card rounded-xl p-4 sm:p-5 group animate-fade-in-up hover:shadow-[0_12px_28px_rgba(0,0,0,0.28)]" style={{ animationDelay: `${0.3 + index * 0.1}s` }}>
+              <div className="font-medium text-sm sm:text-base leading-tight group-hover:text-accent transition-colors duration-300">{p.title}</div>
+              <div className="text-xs sm:text-sm text-foreground/70 mt-1 group-hover:text-foreground/80 transition-colors duration-300">{p.venue} • {p.publishedAt ?? p.year}</div>
               {p.authors && (
                 <div className="text-xs text-foreground/60 mt-1 group-hover:text-foreground/70 transition-colors duration-300">{p.authors.join(", ")}</div>
               )}
               {p.abstract && <p className="text-xs sm:text-sm text-foreground/80 mt-2 group-hover:text-foreground/80 transition-colors duration-300">{p.abstract}</p>}
               {p.links && p.links.length > 0 && (
                 <div className="mt-3 flex flex-wrap gap-2 sm:gap-3 text-xs">
-                  {p.links.map((l) => (
-                    <a key={l.url} href={l.url} className="underline underline-offset-4 hover:text-foreground/80 transition-all duration-300 hover:scale-105" target="_blank" rel="noreferrer">{l.label}</a>
-                  ))}
+                  {p.links.map((l) => {
+                    const Icon = getKnownLinkIcon(l.type);
+
+                    if (Icon) {
+                      return (
+                        <IconLinkButton
+                          key={l.url}
+                          href={l.url}
+                          label={formatLinkLabel(l.type)}
+                          icon={Icon}
+                          className="px-2.5 py-1 text-[11px]"
+                        />
+                      );
+                    }
+
+                    return (
+                      <a
+                        key={l.url}
+                        href={l.url}
+                        className="underline underline-offset-4 hover:text-foreground/80 transition-colors duration-300"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        {formatLinkLabel(l.type)}
+                      </a>
+                    );
+                  })}
                 </div>
               )}
             </li>

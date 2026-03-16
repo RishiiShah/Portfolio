@@ -40,12 +40,15 @@ export interface ExperienceItem {
   links?: { label: string; url: string }[];
 }
 
+export type PublicationLinkType = "paper" | "journal" | "source" | "demo";
+
 export interface PublicationItem {
   title: string;
   venue: string;
   year: number;
+  publishedAt?: string;
   authors: string[];
-  links?: { label: string; url: string }[];
+  links?: { type: PublicationLinkType; url: string }[];
   abstract?: string;
   featured?: boolean;
 }

@@ -14,7 +14,7 @@ export function Footer() {
               href="https://www.linkedin.com/in/rishabh-shah1/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-foreground/70 hover:text-foreground transition-colors p-2 hover:scale-110"
+              className="rounded-md text-foreground/70 hover:text-accent transition-[transform,color] duration-300 p-2 hover:scale-105"
               aria-label="LinkedIn"
             >
               <FaLinkedin size={18} className="sm:w-5 sm:h-5" />
@@ -23,7 +23,7 @@ export function Footer() {
               href="https://github.com/RishiiShah"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-foreground/70 hover:text-foreground transition-colors p-2 hover:scale-110"
+              className="rounded-md text-foreground/70 hover:text-accent transition-[transform,color] duration-300 p-2 hover:scale-105"
               aria-label="GitHub"
             >
               <FaGithub size={18} className="sm:w-5 sm:h-5" />

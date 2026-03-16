@@ -28,23 +28,28 @@ function ParticleLayer({
   const light = theme === "light";
 
   const particles = useMemo(() => {
+    const seeded = (seed: number) => {
+      const value = Math.sin(seed * 12.9898) * 43758.5453;
+      return value - Math.floor(value);
+    };
+
     const positions = new Float32Array(count * 3);
     const velocities = new Float32Array(count * 3);
 
     for (let i = 0; i < count; i++) {
       // Even distribution in a sphere
-      const theta = Math.random() * Math.PI * 2;
-      const phi = Math.acos(2 * Math.random() - 1);
-      const r = radius * (0.6 + Math.random() * 0.4);
+      const theta = seeded(i + 1) * Math.PI * 2;
+      const phi = Math.acos(2 * seeded(i + 97) - 1);
+      const r = radius * (0.6 + seeded(i + 193) * 0.4);
 
       positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
       positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
       positions[i * 3 + 2] = r * Math.cos(phi);
 
       // Very slow drift velocities
-      velocities[i * 3] = (Math.random() - 0.5) * 0.004;
-      velocities[i * 3 + 1] = (Math.random() - 0.5) * 0.004;
-      velocities[i * 3 + 2] = (Math.random() - 0.5) * 0.004;
+      velocities[i * 3] = (seeded(i + 17) - 0.5) * 0.004;
+      velocities[i * 3 + 1] = (seeded(i + 37) - 0.5) * 0.004;
+      velocities[i * 3 + 2] = (seeded(i + 59) - 0.5) * 0.004;
     }
 
     return { positions, velocities };
@@ -76,11 +81,11 @@ function ParticleLayer({
     mesh.current.geometry.attributes.position.needsUpdate = true;
   });
 
-  // Theme-aware neutral colors - subtle grays/whites
-  const colors = light 
-    ? ["#CCCCCC", "#BBBBBB", "#AAAAAA"]  // Light mode: soft grays
+  // Theme-aware neutral colors
+  const colors = light
+    ? ["#555555", "#666666", "#777777"]  // Light mode: darker grays (visible on white)
     : ["#888888", "#777777", "#666666"];  // Dark mode: slightly brighter grays
-  
+
   const color = colors[layerIndex % colors.length];
 
   return (
@@ -97,7 +102,7 @@ function ParticleLayer({
         sizeAttenuation={true}
         depthWrite={false}
         opacity={opacity}
-        blending={THREE.AdditiveBlending}
+        blending={light ? THREE.NormalBlending : THREE.AdditiveBlending}
       />
     </Points>
   );
@@ -144,14 +149,14 @@ function BackgroundCanvas() {
       dpr={[1, 1.5]}
     >
       <CameraFloat />
-      
+
       {/* Far layer - subtle background */}
       <ParticleLayer
         count={Math.floor(particleCount * 0.4)}
         radius={18}
-        speed={0.12}
-        size={0.04}
-        opacity={isLight ? 0.15 : 0.25}
+        speed={0.138}
+        size={0.048}
+        opacity={isLight ? 0.35 : 0.25}
         theme={resolvedTheme}
         layerIndex={0}
       />
@@ -160,9 +165,9 @@ function BackgroundCanvas() {
       <ParticleLayer
         count={Math.floor(particleCount * 0.5)}
         radius={14}
-        speed={0.17}
-        size={0.05}
-        opacity={isLight ? 0.25 : 0.40}
+        speed={0.196}
+        size={0.06}
+        opacity={isLight ? 0.45 : 0.40}
         theme={resolvedTheme}
         layerIndex={1}
       />
@@ -171,9 +176,9 @@ function BackgroundCanvas() {
       <ParticleLayer
         count={Math.floor(particleCount * 0.3)}
         radius={10}
-        speed={0.23}
-        size={0.06}
-        opacity={isLight ? 0.30 : 0.50}
+        speed={0.265}
+        size={0.072}
+        opacity={isLight ? 0.55 : 0.50}
         theme={resolvedTheme}
         layerIndex={2}
       />

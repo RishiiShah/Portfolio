@@ -6,10 +6,12 @@ import { publications } from "@/data/publications";
 import { Loading } from "@/components/Loading";
 import { TechPills } from "@/components/TechPills";
 import { downloadResume } from "@/utils/downloadResume";
+import { DepthButton } from "@/components/ui/DepthButton";
+import { FiArrowRight, FiDownload } from "react-icons/fi";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
-  
+
   const featured = projects.find((p) => p.featured);
   const featuredPublication = publications.find((p) => p.featured);
 
@@ -28,31 +30,36 @@ export default function Home() {
         <h1 className="mt-2 text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold tracking-tight animate-fade-in-up leading-tight">Hi — I&apos;m Rishabh. I build scalable systems and ML &ndash; Enabled applications.</h1>
         <p className="mt-3 sm:mt-4 text-foreground/80 max-w-2xl text-sm sm:text-base animate-fade-in-up delay-200">Systems engineer with a B.Tech in Artificial Intelligence & Data Science — I design backend systems, distributed pipelines, and ML &ndash; Powered tools that scale to real users.</p>
         <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row gap-2 sm:gap-3 animate-fade-in-up delay-300">
-          <Link 
-            href="/projects" 
-            className="px-4 py-2.5 rounded-md bg-foreground text-background text-sm font-medium transition-all duration-300 hover:scale-105 hover:shadow-[0_8px_25px_rgba(237,237,237,0.3)] hover:-translate-y-1 active:scale-95 text-center"
+          <DepthButton
+            href="/projects"
+            iconRight={<FiArrowRight className="h-4 w-4 shrink-0 transition-transform duration-300 group-hover:translate-x-0.5" aria-hidden="true" />}
+            className="group"
+            aria-label="View projects"
           >
             View projects
-          </Link>
-          <a 
-            href="/resume.pdf" 
+          </DepthButton>
+          <DepthButton
+            href="/resume.pdf"
             onClick={downloadResume}
-            className="px-4 py-2.5 rounded-md border text-sm font-medium transition-all duration-300 hover:bg-foreground/5 hover:border-foreground/30 hover:scale-[1.02] hover:shadow-lg active:scale-95 text-center cursor-pointer"
+            variant="secondary"
+            iconLeft={<FiDownload className="h-4 w-4 shrink-0" aria-hidden="true" />}
+            className="group cursor-pointer"
+            aria-label="Download résumé"
           >
             Download résumé
-          </a>
+          </DepthButton>
         </div>
         <div className="mt-6 sm:mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 animate-fade-in-up delay-400">
-          <div className="rounded-lg border p-3 sm:p-4 transition-all duration-300 hover:border-foreground/30 hover:bg-foreground/5 hover:scale-[1.02] hover:shadow-lg group cursor-pointer">
-            <div className="font-medium text-sm sm:text-base group-hover:text-foreground transition-colors duration-300">AI/ML</div>
+          <div className="card p-3 sm:p-4 group cursor-pointer">
+            <div className="font-medium text-sm sm:text-base group-hover:text-accent transition-colors duration-300">AI/ML</div>
             <p className="text-xs sm:text-sm text-foreground/70 mt-1 group-hover:text-foreground/80 transition-colors duration-300">Computer vision, NLP, Deep learning, 98.73% accuracy in music genre detection, YOLO11s for traffic violation detection.</p>
           </div>
-          <div className="rounded-lg border p-3 sm:p-4 transition-all duration-300 hover:border-foreground/30 hover:bg-foreground/5 hover:scale-[1.02] hover:shadow-lg group cursor-pointer">
-            <div className="font-medium text-sm sm:text-base group-hover:text-foreground transition-colors duration-300">Full-stack & AR/VR</div>
+          <div className="card p-3 sm:p-4 group cursor-pointer">
+            <div className="font-medium text-sm sm:text-base group-hover:text-accent transition-colors duration-300">Full-stack & AR/VR</div>
             <p className="text-xs sm:text-sm text-foreground/70 mt-1 group-hover:text-foreground/80 transition-colors duration-300">Django, NextJS, Streamlit, AR interaction platforms, voice assistants, IoT integration with Raspberry Pi.</p>
           </div>
-          <div className="rounded-lg border p-3 sm:p-4 transition-all duration-300 hover:border-foreground/30 hover:bg-foreground/5 hover:scale-[1.02] hover:shadow-lg group cursor-pointer sm:col-span-2 lg:col-span-1">
-            <div className="font-medium text-sm sm:text-base group-hover:text-foreground transition-colors duration-300">Systems & Tools</div>
+          <div className="card p-3 sm:p-4 group cursor-pointer sm:col-span-2 lg:col-span-1">
+            <div className="font-medium text-sm sm:text-base group-hover:text-accent transition-colors duration-300">Systems & Tools</div>
             <p className="text-xs sm:text-sm text-foreground/70 mt-1 group-hover:text-foreground/80 transition-colors duration-300">Real-time processing, automated systems, Docker, Azure cloud, Git workflow, VS Code development.</p>
           </div>
         </div>
@@ -61,10 +68,10 @@ export default function Home() {
       {featured && (
         <section className="mt-6 sm:mt-8 animate-fade-in-up delay-500">
           <h2 className="text-lg sm:text-xl font-semibold mb-3">Featured Project</h2>
-          <div className="rounded-lg border p-4 sm:p-5 transition-all duration-300 hover:border-foreground/30 hover:bg-foreground/5 hover:scale-[1.02] hover:shadow-lg group">
+          <div className="card p-4 sm:p-5 group">
             <div className="flex items-start justify-between gap-3 sm:gap-4 flex-col lg:flex-row">
               <div className="flex-1">
-                <h3 className="text-base sm:text-lg font-semibold group-hover:text-foreground transition-colors duration-300 leading-tight">{featured.title}</h3>
+                <h3 className="text-base sm:text-lg font-semibold group-hover:text-accent transition-colors duration-300 leading-tight">{featured.title}</h3>
                 <p className="text-sm text-foreground/80 mt-1 group-hover:text-foreground/90 transition-colors duration-300">{featured.tagline}</p>
                 {featured.impact && (
                   <p className="text-xs sm:text-sm text-foreground/70 mt-2 group-hover:text-foreground/80 transition-colors duration-300">{featured.impact}</p>
@@ -74,12 +81,12 @@ export default function Home() {
                 </div>
               </div>
               <div className="shrink-0 mt-3 lg:mt-0">
-                <Link 
-                  href={`/projects/${featured.slug}`} 
-                  className="relative group/link text-sm font-medium transition-all duration-300 hover:scale-105 inline-block"
+                <Link
+                  href={`/projects/${featured.slug}`}
+                  className="relative group/link text-sm font-medium transition-all duration-300 hover:scale-105 hover:text-accent inline-block"
                 >
                   Details →
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-foreground transition-all duration-300 group-hover/link:w-full"></span>
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover/link:w-full"></span>
                 </Link>
               </div>
             </div>
@@ -90,23 +97,23 @@ export default function Home() {
       {featuredPublication && (
         <section className="mt-6 sm:mt-8 animate-fade-in-up delay-600">
           <h2 className="text-lg sm:text-xl font-semibold mb-3">Featured Publication</h2>
-          <div className="rounded-lg border p-4 sm:p-5 transition-all duration-300 hover:border-foreground/30 hover:bg-foreground/5 hover:scale-[1.02] hover:shadow-lg group">
+          <div className="card p-4 sm:p-5 group">
             <div className="flex items-start justify-between gap-3 sm:gap-4 flex-col lg:flex-row">
               <div className="flex-1">
-                <h3 className="text-base sm:text-lg font-semibold group-hover:text-foreground transition-colors duration-300 leading-tight">{featuredPublication.title}</h3>
-                <p className="text-sm text-foreground/80 mt-1 group-hover:text-foreground/90 transition-colors duration-300">{featuredPublication.venue} ({featuredPublication.year})</p>
+                <h3 className="text-base sm:text-lg font-semibold group-hover:text-accent transition-colors duration-300 leading-tight">{featuredPublication.title}</h3>
+                <p className="text-sm text-foreground/80 mt-1 group-hover:text-foreground/90 transition-colors duration-300">{featuredPublication.venue} ({featuredPublication.publishedAt ?? featuredPublication.year})</p>
                 <p className="text-xs sm:text-sm text-foreground/70 mt-1 group-hover:text-foreground/80 transition-colors duration-300">Authors: {featuredPublication.authors.join(", ")}</p>
                 {featuredPublication.abstract && (
                   <p className="text-xs sm:text-sm text-foreground/70 mt-2 group-hover:text-foreground/80 transition-colors duration-300">{featuredPublication.abstract}</p>
                 )}
               </div>
               <div className="shrink-0 mt-3 lg:mt-0">
-                <Link 
-                  href="/publications" 
-                  className="relative group/link text-sm font-medium transition-all duration-300 hover:scale-105 inline-block"
+                <Link
+                  href="/publications"
+                  className="relative group/link text-sm font-medium transition-all duration-300 hover:scale-105 hover:text-accent inline-block"
                 >
                   View all publications →
-                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-foreground transition-all duration-300 group-hover/link:w-full"></span>
+                  <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-accent transition-all duration-300 group-hover/link:w-full"></span>
                 </Link>
               </div>
             </div>
