@@ -1,13 +1,19 @@
 "use client";
 import { useState } from "react";
+import { Loading } from "@/components/Loading";
 
 export default function ContactPage() {
+  const [isLoading, setIsLoading] = useState(true);
   const [status, setStatus] = useState<string | null>(null);
   const [errors, setErrors] = useState<{ email?: string; message?: string }>({});
   const [nameValue, setNameValue] = useState("");
   const [emailValue, setEmailValue] = useState("");
   const [roleValue, setRoleValue] = useState("");
   const [messageValue, setMessageValue] = useState("");
+
+  if (isLoading) {
+    return <Loading onComplete={() => setIsLoading(false)} />;
+  }
 
   const validateEmail = (email: string): string | undefined => {
     if (!email) return undefined;

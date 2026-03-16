@@ -1,13 +1,19 @@
 "use client";
 import { useState } from "react";
 import { experiences } from "@/data/experience";
+import { Loading } from "@/components/Loading";
 import { Modal } from "@/components/ui/Modal";
 import { FiBriefcase, FiCalendar, FiMapPin, FiArrowRight } from "react-icons/fi";
 
 export default function ExperiencePage() {
+  const [isLoading, setIsLoading] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const selectedExperience = selectedIndex !== null ? experiences[selectedIndex] : null;
+
+  if (isLoading) {
+    return <Loading onComplete={() => setIsLoading(false)} />;
+  }
 
   return (
     <main className="py-8 sm:py-12">
