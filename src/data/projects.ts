@@ -1,41 +1,80 @@
 import { Project } from "@/types";
 
 export const projects: Project[] = [
-  
+  {
+    slug: "traffic-violation-detection",
+    title: "Traffic Violation Detection & Automated Ticketing System",
+    tagline:
+      "YOLO-based vision system for five-rule enforcement with OCR/ANPR and automated challan workflows.",
+    tech: ["Python", "YOLO11s", "Computer Vision", "OpenCV", "OCR", "ANPR", "Django", "Twilio", "AWS S3"],
+    tags: ["MLOps", "Systems", "Research"],
+    impact: "Automated end-to-end traffic enforcement with 93.76% test accuracy, five violation classes, and 90% lower manual effort.",
+    links: [
+      { type: "source", url: "https://github.com/RishiiShah/Traffic-Violation-Detection-Automated-Ticketing-System" },
+      { type: "paper", url: "https://ieeexplore.ieee.org/document/11371065/" },
+    ],
+    featured: true,
+    problem:
+      "Detect and validate multiple traffic violations from live feeds, then automatically generate and deliver evidence-backed challans at scale.",
+    role: "Developed the YOLO vision pipeline and engineered end-to-end challan generation with AWS S3 storage and Twilio-based notification delivery.",
+    architectureNotes: [
+      "Developed a YOLO-based computer vision pipeline detecting five traffic violations with vehicle tracking, speed estimation, and rule-based logic",
+      "Integrated OCR-based ANPR for license-plate recognition with frame selection and regex-based validation for Indian number plate formats",
+      "Engineered backend automation for challan generation and delivery using AWS S3 for evidence-backed PDF reports and Twilio API for SMS notifications",
+      "Implemented latency-aware preprocessing (tripwire logic and frame handling) to reduce inference time",
+    ],
+    challenges: [
+      "Reducing false positives in noisy traffic scenes and inconsistent camera angles",
+      "Maintaining low-latency inference with tripwire and frame-handling constraints",
+      "Making automated notices reliable with verifiable image/video evidence",
+    ],
+    metrics: [
+      { label: "Accuracy", value: "93.76%" },
+      { label: "Violation Types", value: "5" },
+      { label: "Inference Speed", value: "+30%" },
+      { label: "Manual Effort", value: "-90%" },
+    ],
+    lessons: [
+      "Production ANPR systems need strong validation beyond raw OCR output",
+      "Notification and evidence pipelines are as critical as detection quality",
+      "Latency-aware preprocessing improves reliability in real-world traffic feeds",
+    ],
+  },
   {
     slug: "jarvis-voice-assistant",
-    title: "JARVIS — Virtual Voice Assistant with Smart Home Automation",
+    title: "JARVIS: Voice Assistant with Smart Home Automation",
     tagline:
-      "Python-based voice assistant with home automation capabilities and Microsoft IoT Hub integration.",
-    tech: ["Python", "Django", "NLP", "LLM", "SQLite", "Raspberry Pi", "Speech Recognition", "Microsoft IoT Hub"],
+      "Full-stack smart home automation with Django, Azure IoT Hub, Raspberry Pi, and sub-300ms LLM responses.",
+    tech: ["Python", "Django", "NLP", "LLM", "Groq API", "SQLite", "Raspberry Pi", "Speech Recognition", "Azure IoT Hub"],
     tags: ["Full-stack", "Systems", "Research"],
-    impact: "Voice-controlled home automation with remote management capabilities.",
+    impact: "Real-time voice-controlled home automation with sub-300ms latency and high-throughput concurrent handling.",
     links: [
       { type: "source", url: "https://github.com/RishiiShah/Jarvis-Voice-Assistant" },
       { type: "paper", url: "https://www.researchgate.net/profile/Vijay-Shelake/publication/393335295_Next-Gen_Predictive_Maintenancepage310_320/links/686616a5e4632b045dc9754a/Next-Gen-Predictive-Maintenancepage310-320.pdf#page=141" },
     ],
-    problem: "Create a voice-controlled home automation system with remote management capabilities.",
-    role: "Full-stack development: voice recognition, NLP processing, web interface, IoT integration.",
+    problem: "Create a voice-controlled smart home platform with secure cloud-to-device control and natural language command understanding.",
+    role: "Developed voice and web control flows, integrated Llama-3 70B via Groq API, and implemented secure real-time cloud-to-device synchronization.",
     architectureNotes: [
-      "Voice recognition and NLP processing pipeline",
-      "Django web interface for home automation control",
-      "Microsoft IoT Hub integration for remote management",
-      "Raspberry Pi deployment for edge computing",
+      "Developed a full-stack smart home automation system with voice and web control using Django, Azure IoT Hub, and Raspberry Pi",
+      "Integrated Llama-3 (70B) via Groq API with asynchronous request handling, prompt filtering, and multi-threading",
+      "Designed REST APIs for secure device communication and state management",
+      "Implemented cloud-to-device messaging with GPIO-based hardware actuation for reliable appliance control",
     ],
     challenges: [
-      "Integrating multiple technologies (voice, NLP, IoT, web)",
-      "Ensuring reliable voice recognition in different environments",
-      "Remote device management through IoT Hub",
+      "Balancing low-latency LLM responses with reliable command execution",
+      "Synchronizing cloud and edge device states under intermittent network conditions",
+      "Securing device control paths while preserving responsive voice UX",
     ],
     metrics: [
-      { label: "Platform", value: "Raspberry Pi" },
-      { label: "Integration", value: "Microsoft IoT Hub" },
-      { label: "Control", value: "Voice + Web" },
+      { label: "Latency", value: "<300 ms" },
+      { label: "LLM", value: "Llama-3 70B" },
+      { label: "IoT", value: "Azure IoT Hub" },
+      { label: "State Consistency", value: "99.9%" },
     ],
     lessons: [
-      "Multi-technology integration requires careful system design",
-      "Edge computing with Raspberry Pi enables local processing",
-      "IoT integration enables scalable remote management",
+      "Asynchronous orchestration is key for conversational IoT systems",
+      "Cloud-edge state synchronization needs explicit fault-tolerance design",
+      "LLM guardrails improve both safety and action reliability",
     ],
   },
   {
@@ -69,104 +108,43 @@ export const projects: Project[] = [
     ],
   },
   {
-    slug: "traffic-violation-detection",
-    title: "Traffic Violation Detection & Automated Ticket Generation",
-    tagline:
-      "YOLO11s-based system for real-time traffic violation detection with automated ticket generation.",
-    tech: ["Python", "YOLO11s", "Computer Vision", "OpenCV", "Django"],
-    tags: ["MLOps", "Systems", "Research"],
-    impact: "Automated violation detection for speeding and red-light running with optimized accuracy and reduced false positives.",
-    links: [
-      { type: "source", url: "https://github.com/RishiiShah/Traffic-Violation-Detection-Automated-Ticketing-System" },
-    ],
-    featured: true,
-    problem:
-      "Detect traffic violations (speeding, red-light running) from live camera feeds and automatically generate tickets to improve traffic law enforcement efficiency.",
-    role: "Trained YOLO11s model, integrated with automated ticketing system, optimized for accuracy and false positive reduction.",
-    architectureNotes: [
-      "Real-time video processing pipeline with YOLO11s",
-      "Automated ticket generation system integration",
-      "False positive reduction through model optimization",
-      "Live camera feed processing for real-time detection",
-    ],
-    challenges: [
-      "Optimizing model accuracy while reducing false positives",
-      "Real-time processing of live camera feeds",
-      "Integration with existing ticketing infrastructure",
-    ],
-    metrics: [
-      { label: "Model", value: "YOLO11s" },
-      { label: "Processing", value: "Real-time" },
-      { label: "Violations", value: "Speeding, Red-light" },
-    ],
-    lessons: [
-      "Computer vision models require careful optimization for production use",
-      "Integration with existing systems is crucial for real-world deployment",
-      "Real-time processing demands efficient pipeline design",
-    ],
-  },
-  {
-    slug: "banking-system-bluej",
-    title: "Banking System (Early Project)",
-    tagline:
-      "First major project built in BlueJ: runtime-only accounts, auth, and core banking ops.",
-    tech: ["Java", "BlueJ"],
-    tags: ["Systems", "Backend"],
-    impact:
-      "User-friendly experience for creating/managing accounts entirely in-memory with safe defaults for minors.",
-    problem:
-      "Design a simple banking application without a database that supports account creation, authentication, and management.",
-    role:
-      "Sole developer: implemented runtime data model, auth flow, and account operations.",
-    architectureNotes: [
-      "In-memory store for users and accounts (no database)",
-      "Input validation and confirmation prompts for password setup",
-      "Age-aware logic restricting users under 18 to savings accounts",
-      "Menu-driven CLI for balance checks and listing existing accounts",
-    ],
-    challenges: [
-      "Ensuring safe authentication without persistent storage",
-      "Designing intuitive runtime-only account management flows",
-    ],
-    lessons: [
-      "Strong validation and confirmations improve UX in CLI apps",
-      "Explicit business rules (age-based account types) reduce user error",
-    ],
-  },
-  {
     slug: "music-genre-detection",
     title: "Music Genre Detection System",
     tagline:
-      "Achieved 98.73% accuracy in music genre classification using MFCC and Chroma features.",
-    tech: ["Python", "TensorFlow", "Librosa", "NumPy", "Pandas", "Scikit-learn", "Streamlit"],
+      "Bi-LSTM ML pipeline using Librosa features with 98.73% accuracy and lightweight inference deployment.",
+    tech: ["Python", "TensorFlow", "Bi-LSTM", "Librosa", "NumPy", "Pandas", "Scikit-learn", "Streamlit"],
     tags: ["MLOps"],
-    impact: "High-accuracy music genre classification with interactive visualization.",
+    impact: "High-accuracy genre classification with efficient real-time tagging in low-compute environments.",
     links: [
       { type: "source", url: "https://github.com/RishiiShah/Music-Genre-Detection" },
-      { type: "demo", url: "#" },
+      // { type: "demo", url: "#" },
     ],
-    problem: "Classify music genres from audio files with high accuracy using machine learning.",
-    role: "Feature engineering, model development, and interactive web application creation.",
+    problem: "Build an accurate yet efficient music genre classifier for real-time audio tagging workflows.",
+    role: "Implemented feature engineering, Bi-LSTM model training, and lightweight inference-serving pipeline.",
     architectureNotes: [
-      "MFCC and Chroma feature extraction from audio",
-      "TensorFlow-based classification model",
-      "Streamlit web app for interactive visualization",
-      "GTZAN dataset for training and validation",
+      "Implemented a Bi-LSTM based audio classification model using Librosa for MFCC, Chroma, and Mel features",
+      "Streamlined data preprocessing and training pipelines in Python",
+      "Deployed a quantized model as a lightweight inference API for real-time genre tagging",
+      "Built supporting evaluation workflows for high-accuracy low-overhead predictions",
+      "Trained and validated on GTZAN dataset",
     ],
     challenges: [
-      "Feature engineering for audio classification",
-      "Achieving high accuracy across multiple genres",
-      "Creating intuitive user interface for visualization",
+      "Balancing sequence-model quality with inference efficiency",
+      "Generalizing across genre overlap and noisy clips",
+      "Serving low-latency predictions with constrained compute",
     ],
     metrics: [
       { label: "Accuracy", value: "98.73%" },
+      { label: "Training Efficiency", value: "+22%" },
+      { label: "Memory Usage", value: "-15%" },
       { label: "Features", value: "MFCC + Chroma" },
+      { label: "Model", value: "Bi-LSTM" },
       { label: "Dataset", value: "GTZAN" },
     ],
     lessons: [
-      "Feature engineering is crucial for audio classification success",
-      "Interactive visualization enhances user understanding",
-      "High accuracy requires careful model tuning and feature selection",
+      "Sequence models capture temporal audio patterns better than shallow baselines",
+      "Model quantization can preserve quality while reducing inference cost",
+      "Feature quality and data normalization strongly drive classification robustness",
     ],
   },
   {
@@ -240,6 +218,34 @@ export const projects: Project[] = [
       "AR and AI integration creates powerful user experiences",
       "Responsive design is crucial for AR applications",
       "Chatbot integration enhances user engagement and support",
+    ],
+  },
+  {
+    slug: "banking-system-bluej",
+    title: "Banking System (Early Project)",
+    tagline:
+      "First major project built in BlueJ: runtime-only accounts, auth, and core banking ops.",
+    tech: ["Java", "BlueJ"],
+    tags: ["Systems", "Backend"],
+    impact:
+      "User-friendly experience for creating/managing accounts entirely in-memory with safe defaults for minors.",
+    problem:
+      "Design a simple banking application without a database that supports account creation, authentication, and management.",
+    role:
+      "Sole developer: implemented runtime data model, auth flow, and account operations.",
+    architectureNotes: [
+      "In-memory store for users and accounts (no database)",
+      "Input validation and confirmation prompts for password setup",
+      "Age-aware logic restricting users under 18 to savings accounts",
+      "Menu-driven CLI for balance checks and listing existing accounts",
+    ],
+    challenges: [
+      "Ensuring safe authentication without persistent storage",
+      "Designing intuitive runtime-only account management flows",
+    ],
+    lessons: [
+      "Strong validation and confirmations improve UX in CLI apps",
+      "Explicit business rules (age-based account types) reduce user error",
     ],
   },
 ];

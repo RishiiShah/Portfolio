@@ -5,7 +5,7 @@ import { Loading } from "@/components/Loading";
 export default function ContactPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [status, setStatus] = useState<string | null>(null);
-  const [errors, setErrors] = useState<{email?: string; message?: string}>({});
+  const [errors, setErrors] = useState<{ email?: string; message?: string }>({});
   const [nameValue, setNameValue] = useState("");
   const [emailValue, setEmailValue] = useState("");
   const [roleValue, setRoleValue] = useState("");
@@ -34,19 +34,19 @@ export default function ContactPage() {
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    
+
     // Validate
     const emailError = validateEmail(emailValue);
     const messageError = validateMessage(messageValue);
-    
+
     if (emailError || messageError) {
       setErrors({ email: emailError, message: messageError });
       return;
     }
-    
+
     setErrors({});
     setStatus(null);
-    
+
     const data = new FormData(e.currentTarget);
     try {
       const res = await fetch("https://formspree.io/f/movyqpkr", {
@@ -54,7 +54,7 @@ export default function ContactPage() {
         headers: { Accept: "application/json" },
         body: data,
       });
-      
+
       // Formspree returns 200 OK on success, even if there are validation errors
       // Check for both status and response data
       if (res.ok) {
@@ -101,62 +101,62 @@ export default function ContactPage() {
       <p className="mt-2 text-xs sm:text-sm text-foreground/80 animate-fade-in-up delay-200">Tell me what you&apos;re working on — name, role, and a 1–2 sentence note about collaboration.</p>
       <form onSubmit={onSubmit} className="mt-6 max-w-md space-y-3 sm:space-y-4">
         <div className="animate-fade-in-up delay-300">
-          <input 
-            className="w-full border border-foreground/20 rounded-md px-3 py-2.5 text-sm bg-background text-foreground placeholder:text-foreground/50 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/40 transition-all duration-300 hover:border-foreground/30" 
-            name="name" 
-            placeholder="Name" 
+          <input
+            className="w-full border border-foreground/20 rounded-md px-3 py-2.5 text-sm bg-background text-foreground placeholder:text-foreground/50 focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent/50 transition-all duration-300 hover:border-foreground/30"
+            name="name"
+            placeholder="Name"
             required
             value={nameValue}
             onChange={(e) => setNameValue(e.target.value)}
           />
         </div>
         <div className="animate-fade-in-up delay-400">
-          <input 
-            className={`w-full border rounded-md px-3 py-2.5 text-sm bg-background text-foreground placeholder:text-foreground/50 focus:outline-none focus:ring-2 focus:ring-foreground/20 transition-all duration-300 hover:border-foreground/30 ${errors.email ? 'border-red-500 focus:ring-red-500/50' : 'border-foreground/20 focus:border-foreground/40'}`}
-            type="email" 
-            name="email" 
-            placeholder="Email" 
+          <input
+            className={`w-full border rounded-md px-3 py-2.5 text-sm bg-background text-foreground placeholder:text-foreground/50 focus:outline-none focus:ring-2 focus:ring-accent/30 transition-all duration-300 hover:border-foreground/30 ${errors.email ? 'border-red-500 focus:ring-red-500/50' : 'border-foreground/20 focus:border-accent/50'}`}
+            type="email"
+            name="email"
+            placeholder="Email"
             required
             value={emailValue}
             onChange={(e) => {
               setEmailValue(e.target.value);
               if (errors.email) {
-                setErrors({...errors, email: undefined});
+                setErrors({ ...errors, email: undefined });
               }
             }}
             onBlur={(e) => {
               const error = validateEmail(e.target.value);
-              if (error) setErrors({...errors, email: error});
+              if (error) setErrors({ ...errors, email: error });
             }}
           />
           {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
         </div>
         <div className="animate-fade-in-up delay-500">
-          <input 
-            className="w-full border border-foreground/20 rounded-md px-3 py-2.5 text-sm bg-background text-foreground placeholder:text-foreground/50 focus:outline-none focus:ring-2 focus:ring-foreground/20 focus:border-foreground/40 transition-all duration-300 hover:border-foreground/30" 
-            name="role" 
+          <input
+            className="w-full border border-foreground/20 rounded-md px-3 py-2.5 text-sm bg-background text-foreground placeholder:text-foreground/50 focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent/50 transition-all duration-300 hover:border-foreground/30"
+            name="role"
             placeholder="Role (e.g., Recruiter, Researcher)"
             value={roleValue}
             onChange={(e) => setRoleValue(e.target.value)}
           />
         </div>
         <div className="animate-fade-in-up delay-600">
-          <textarea 
-            className={`w-full border rounded-md px-3 py-2.5 text-sm bg-background text-foreground placeholder:text-foreground/50 focus:outline-none focus:ring-2 focus:ring-foreground/20 transition-all duration-300 hover:border-foreground/30 resize-none ${errors.message ? 'border-red-500 focus:ring-red-500/50' : 'border-foreground/20 focus:border-foreground/40'}`}
-            name="message" 
-            placeholder="Your message" 
-            rows={5} 
+          <textarea
+            className={`w-full border rounded-md px-3 py-2.5 text-sm bg-background text-foreground placeholder:text-foreground/50 focus:outline-none focus:ring-2 focus:ring-accent/30 transition-all duration-300 hover:border-foreground/30 resize-none ${errors.message ? 'border-red-500 focus:ring-red-500/50' : 'border-foreground/20 focus:border-accent/50'}`}
+            name="message"
+            placeholder="Your message"
+            rows={5}
             required
             value={messageValue}
             onChange={(e) => {
               setMessageValue(e.target.value);
               if (errors.message) {
-                setErrors({...errors, message: undefined});
+                setErrors({ ...errors, message: undefined });
               }
             }}
             onBlur={(e) => {
               const error = validateMessage(e.target.value);
-              if (error) setErrors({...errors, message: error});
+              if (error) setErrors({ ...errors, message: error });
             }}
           />
           {errors.message && <p className="text-xs text-red-500 mt-1">{errors.message}</p>}
