@@ -9,30 +9,41 @@ interface LoadingProps {
 export function Loading({ onComplete, minDurationMs }: LoadingProps) {
   const [progress, setProgress] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
-  const startRef = useRef<number | null>(null); 
+  const [isFadingOut, setIsFadingOut] = useState(false);
+  const startRef = useRef<number | null>(null);
 
   // Minimum duration to keep the loader visible for a pleasant experience
-  const MIN_DURATION_MS = useMemo(() => typeof minDurationMs === "number" ? minDurationMs : 1200, [minDurationMs]); // 0.9s default
-  const FADE_OUT_MS = 100;
+  const MIN_DURATION_MS = useMemo(() => typeof minDurationMs === "number" ? minDurationMs : 2200, [minDurationMs]);
+  const FADE_OUT_MS = 320;
 
   useEffect(() => {
     startRef.current = Date.now();
-    // Simulate loading progress - faster increments for quicker completion
+
+    // Progress-based staged increments: fast enough to feel alive, slow enough to feel intentional.
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
           const elapsed = startRef.current ? Date.now() - startRef.current : 0;
           const remaining = Math.max(0, MIN_DURATION_MS - elapsed);
-          // Ensure loader stays up for at least MIN_DURATION_MS, then fade out
+
           setTimeout(() => {
-            setIsVisible(false);
-            setTimeout(onComplete, FADE_OUT_MS);
+            setIsFadingOut(true);
+            setTimeout(() => {
+              setIsVisible(false);
+              onComplete();
+            }, FADE_OUT_MS);
           }, remaining);
+
           return 100;
         }
-        // Faster increment: 8–15% per tick to finish quicker
-        const next = prev + (Math.random() * 7 + 8);
+
+        let step = 0.4;
+        if (prev < 70) step = 4.0;
+        else if (prev < 90) step = 2.0;
+        else if (prev < 98) step = 0.8;
+
+        const next = prev + step;
         return next > 100 ? 100 : next;
       });
     }, 80);
@@ -43,7 +54,9 @@ export function Loading({ onComplete, minDurationMs }: LoadingProps) {
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-background flex flex-col items-center justify-center">
+    <div
+      className={`fixed inset-0 z-50 bg-background flex flex-col items-center justify-center transition-opacity duration-300 ${isFadingOut ? "opacity-0" : "opacity-100"}`}
+    >
       <div className="text-center">
         {/* Logo/Name Animation */}
         <div className="mb-8">
@@ -58,7 +71,7 @@ export function Loading({ onComplete, minDurationMs }: LoadingProps) {
         {/* Progress Bar */}
         <div className="w-64 sm:w-80 h-1 bg-foreground/10 rounded-full overflow-hidden">
           <div 
-            className="h-full bg-foreground rounded-full transition-[width] duration-75 ease-linear"
+            className="h-full bg-foreground rounded-full transition-[width] duration-150 ease-out"
             style={{ width: `${progress}%` }}
           />
         </div>

@@ -1,16 +1,9 @@
 "use client";
-import { useState } from "react";
 import { publications } from "@/data/publications";
-import { Loading } from "@/components/Loading";
 import { IconLinkButton } from "@/components/ui/IconLinkButton";
 import { formatLinkLabel, getKnownLinkIcon } from "@/utils/linkIcons";
 
 export default function PublicationsPage() {
-  const [isLoading, setIsLoading] = useState(true);
-
-  if (isLoading) {
-    return <Loading onComplete={() => setIsLoading(false)} />;
-  }
   return (
     <main className="py-[clamp(1rem,4vh,3rem)]">
       <h1 className="text-xl sm:text-2xl font-semibold animate-fade-in-up">Publications / Research</h1>
