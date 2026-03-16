@@ -3,7 +3,6 @@ import { useMemo, useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { projects } from "@/data/projects";
 import type { Tag } from "@/types";
-import { Loading } from "@/components/Loading";
 import { DepthButton } from "@/components/ui/DepthButton";
 import { IconLinkButton } from "@/components/ui/IconLinkButton";
 import { formatLinkLabel, getKnownLinkIcon } from "@/utils/linkIcons";
@@ -21,7 +20,6 @@ const allTags: Tag[] = [
 function ProjectsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [isLoading, setIsLoading] = useState(true);
   const [active, setActive] = useState<Tag | "All">("All");
 
   // Initialize active filter from URL on mount
@@ -40,16 +38,11 @@ function ProjectsContent() {
 
   // Keep URL in sync when active changes
   useEffect(() => {
-    if (isLoading) return; // avoid navigating during loader
     const params = new URLSearchParams(Array.from(searchParams.entries()));
     if (active === "All") params.delete("tag"); else params.set("tag", active);
     router.replace(`/projects${params.toString() ? `?${params.toString()}` : ""}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active, isLoading]);
-
-  if (isLoading) {
-    return <Loading onComplete={() => setIsLoading(false)} />;
-  }
+  }, [active]);
 
   return (
     <main className="py-8 sm:py-12">
@@ -139,7 +132,7 @@ function ProjectsContent() {
 
 export default function ProjectsPage() {
   return (
-    <Suspense fallback={<Loading onComplete={() => { }} />}>
+    <Suspense fallback={<div>Loading...</div>}>
       <ProjectsContent />
     </Suspense>
   );
