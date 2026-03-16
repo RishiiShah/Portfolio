@@ -12,12 +12,12 @@ export function Loading({ onComplete, minDurationMs }: LoadingProps) {
   const startRef = useRef<number | null>(null); 
 
   // Minimum duration to keep the loader visible for a pleasant experience
-  const MIN_DURATION_MS = useMemo(() => typeof minDurationMs === "number" ? minDurationMs : 2500, [minDurationMs]); // 2.5s default
-  const FADE_OUT_MS = 150;
+  const MIN_DURATION_MS = useMemo(() => typeof minDurationMs === "number" ? minDurationMs : 1200, [minDurationMs]); // 0.9s default
+  const FADE_OUT_MS = 100;
 
   useEffect(() => {
     startRef.current = Date.now();
-    // Simulate loading progress - slower increments for longer, more deliberate feeling
+    // Simulate loading progress - faster increments for quicker completion
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -31,11 +31,11 @@ export function Loading({ onComplete, minDurationMs }: LoadingProps) {
           }, remaining);
           return 100;
         }
-        // Slower increment: 4–7% per tick for longer, more graceful loading feel
-        const next = prev + (Math.random() * 3 + 4);
+        // Faster increment: 8–15% per tick to finish quicker
+        const next = prev + (Math.random() * 7 + 8);
         return next > 100 ? 100 : next;
       });
-    }, 120);
+    }, 80);
 
     return () => clearInterval(interval);
   }, [onComplete, MIN_DURATION_MS]);
@@ -58,7 +58,7 @@ export function Loading({ onComplete, minDurationMs }: LoadingProps) {
         {/* Progress Bar */}
         <div className="w-64 sm:w-80 h-1 bg-foreground/10 rounded-full overflow-hidden">
           <div 
-            className="h-full bg-foreground rounded-full transition-[width] duration-300 ease-in-out"
+            className="h-full bg-foreground rounded-full transition-[width] duration-75 ease-linear"
             style={{ width: `${progress}%` }}
           />
         </div>

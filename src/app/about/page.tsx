@@ -1,10 +1,22 @@
 "use client";
+import { useState } from "react";
 import { experiences } from "@/data/experience";
+import { Loading } from "@/components/Loading";
 import { downloadResume } from "@/utils/downloadResume";
 import { TechPills } from "@/components/TechPills";
 import { techCategories } from "@/data/techstack";
 
 export default function AboutPage() {
+  const [isLoading, setIsLoading] = useState(true);
+
+  const handleLoadingFinish = () => {
+    setIsLoading(false);
+  };
+
+  if (isLoading) {
+    return <Loading onComplete={handleLoadingFinish} />;
+  }
+
   return (
     <main className="py-8 sm:py-12">
       <h1 className="text-xl sm:text-2xl font-semibold animate-fade-in-up">About / CV</h1>

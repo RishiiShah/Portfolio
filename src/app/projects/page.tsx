@@ -21,6 +21,7 @@ const allTags: Tag[] = [
 function ProjectsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [isLoading, setIsLoading] = useState(true);
   const [active, setActive] = useState<Tag | "All">("All");
 
   // Initialize active filter from URL on mount
@@ -39,11 +40,16 @@ function ProjectsContent() {
 
   // Keep URL in sync when active changes
   useEffect(() => {
+    if (isLoading) return; // avoid navigating during loader
     const params = new URLSearchParams(Array.from(searchParams.entries()));
     if (active === "All") params.delete("tag"); else params.set("tag", active);
     router.replace(`/projects${params.toString() ? `?${params.toString()}` : ""}`);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active]);
+  }, [active, isLoading]);
+
+  if (isLoading) {
+    return <Loading onComplete={() => setIsLoading(false)} />;
+  }
 
   return (
     <main className="py-8 sm:py-12">
