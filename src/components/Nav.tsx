@@ -2,7 +2,6 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { ThemeToggle } from "@/components/ThemeProvider";
 
 const links = [
   { href: "/", label: "Home" },
@@ -55,7 +54,6 @@ export function Nav() {
                 </Link>
               );
             })}
-            <ThemeToggle />
           </div>
 
           {/* Mobile Menu Button */}
@@ -86,9 +84,6 @@ export function Nav() {
                   {l.label}
                 </Link>
               ))}
-              <div className="flex items-center justify-end pt-2">
-                <ThemeToggle />
-              </div>
             </div>
           </div>
         </div>
