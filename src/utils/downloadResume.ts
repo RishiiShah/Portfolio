@@ -13,13 +13,17 @@ export async function downloadResume(e: React.MouseEvent<HTMLAnchorElement>) {
     window.URL.revokeObjectURL(url);
   } catch (error) {
     console.error('Error downloading resume:', error);
-    // Fallback to direct download
-    const link = document.createElement('a');
-    link.href = '/resume.pdf';
-    link.download = 'rishabh-shah-resume.pdf';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    try {
+      // Fallback to direct download
+      const link = document.createElement('a');
+      link.href = '/resume.pdf';
+      link.download = 'rishabh-shah-resume.pdf';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } catch (fallbackError) {
+      throw fallbackError;
+    }
   }
 }
 

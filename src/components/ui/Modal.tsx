@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, type ReactNode } from "react";
 
 interface ModalProps {
   isOpen: boolean;
@@ -11,43 +11,9 @@ interface ModalProps {
 
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
-const EXIT_ANIMATION_MS = 400;
-
 export function Modal({ isOpen, onClose, title, children }: ModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
-  const [shouldRender, setShouldRender] = useState(isOpen);
-  const [isClosing, setIsClosing] = useState(false);
-  const [renderTitle, setRenderTitle] = useState(title);
-  const [renderChildren, setRenderChildren] = useState(children);
-
-  useEffect(() => {
-    if (!isOpen) {
-      return;
-    }
-
-    setRenderTitle(title);
-    setRenderChildren(children);
-  }, [children, isOpen, title]);
-
-  useEffect(() => {
-    if (isOpen) {
-      setShouldRender(true);
-      setIsClosing(false);
-      return;
-    }
-
-    if (!shouldRender) {
-      return;
-    }
-
-    setIsClosing(true);
-    const timeoutId = window.setTimeout(() => {
-      setShouldRender(false);
-      setIsClosing(false);
-    }, EXIT_ANIMATION_MS);
-
-    return () => window.clearTimeout(timeoutId);
-  }, [isOpen, shouldRender]);
+  const shouldRender = isOpen;
 
   useEffect(() => {
     if (!shouldRender) {
@@ -102,7 +68,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
 
   return (
     <div
-      className={`fixed inset-0 z-70 flex items-center justify-center p-4 ${isClosing ? "animate-fade-out" : "animate-fade-in"}`}
+      className="fixed inset-0 z-70 flex items-center justify-center p-4 animate-fade-in"
       aria-hidden={!isOpen}
     >
       <button
@@ -115,11 +81,11 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
         ref={dialogRef}
         role="dialog"
         aria-modal="true"
-        aria-label={renderTitle}
-        className={`relative z-71 w-full max-w-2xl rounded-xl border border-foreground/15 bg-background/95 p-5 sm:p-6 shadow-[0_20px_60px_rgba(0,0,0,0.45)] ${isClosing ? "animate-fade-out-down" : "animate-fade-in-up"}`}
+        aria-label={title}
+        className="relative z-71 w-full max-w-2xl rounded-xl border border-foreground/15 bg-background/95 p-5 sm:p-6 shadow-[0_20px_60px_rgba(0,0,0,0.45)] animate-fade-in-up"
       >
         <div className="mb-4 flex items-center justify-between gap-3 border-b border-foreground/10 pb-3">
-          <h3 className="text-base sm:text-lg font-semibold">{renderTitle}</h3>
+          <h3 className="text-base sm:text-lg font-semibold">{title}</h3>
           <button
             type="button"
             onClick={onClose}
@@ -128,7 +94,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
             Close
           </button>
         </div>
-        <div className="max-h-[70vh] overflow-y-auto pr-1">{renderChildren}</div>
+        <div className="max-h-[70vh] overflow-y-auto pr-1">{children}</div>
       </div>
     </div>
   );

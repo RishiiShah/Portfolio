@@ -3,76 +3,79 @@ import { experiences } from "@/data/experience";
 import { downloadResume } from "@/utils/downloadResume";
 import { TechPills } from "@/components/TechPills";
 import { techCategories } from "@/data/techstack";
+import { FiMail, FiGithub, FiLinkedin, FiDownload, FiTerminal, FiBriefcase, FiBookOpen, FiAward, FiActivity } from "react-icons/fi";
 
 export default function AboutPage() {
   return (
-    <main className="py-8 sm:py-12">
-      <h1 className="text-xl sm:text-2xl font-semibold animate-fade-in-up">About / CV</h1>
-      <div className="mt-6 grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6 lg:gap-8 items-start">
-        <aside className="space-y-3 lg:space-y-4 animate-fade-in-up delay-200">
-          <div className="card p-3 sm:p-4">
-            <div className="text-sm font-medium">Contact</div>
-            <div className="text-xs sm:text-sm text-foreground/80 mt-1 break-all">rishabh.shah033@djsce.edu.in</div>
-            <div className="text-xs text-foreground/60 mt-1 flex flex-wrap gap-1">
-              <a href="https://github.com/RishiiShah" target="_blank" rel="noreferrer" className="underline hover:text-foreground/80 transition-all duration-300 hover:scale-105">GitHub</a> •
-              <a href="https://www.linkedin.com/in/rishabh-shah1/" target="_blank" rel="noreferrer" className="underline hover:text-foreground/80 transition-all duration-300 hover:scale-105">LinkedIn</a>
+    <main className="pb-12 sm:pb-16 lg:pb-20">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 sm:mb-12">
+        <h1 className="text-xl sm:text-2xl font-semibold animate-fade-in-up md:w-[28%]">How I Work</h1>
+        <div className="hidden md:block flex-1 border-b border-foreground/10 animate-fade-in-up" />
+      </div>
+
+      <div className="flex flex-col lg:flex-row gap-10 lg:gap-16 items-start relative">
+        
+        {/* Left Sidebar (Sticky Terminal Pane) */}
+        <aside className="w-full lg:w-[28%] lg:sticky lg:top-32 space-y-8 animate-fade-in-up delay-200">
+          
+            {/* Identity Block */}
+            <div className="flex flex-col gap-2">
+            <h2 className="text-2xl font-bold tracking-tight text-foreground">Rishabh Shah</h2>
+            <div className="text-[10px] font-mono tracking-widest text-accent uppercase flex items-center gap-2 mt-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse shadow-[0_0_5px_var(--accent-glow)]" />
+              Runtime Active
+            </div>
+            </div>
+
+          {/* Network Connection Block */}
+          <div className="space-y-4">
+            <div className="text-[10px] uppercase tracking-widest text-foreground/40 font-mono border-b border-foreground/10 pb-2 flex items-center gap-2">
+              <FiTerminal className="w-3 h-3" />
+              Network Links
+            </div>
+            <div className="space-y-3 text-xs sm:text-sm text-foreground/70 font-mono">
+              <a href="mailto:rishabh.shah033@djsce.edu.in" className="flex items-center gap-3 hover:text-accent transition-colors group">
+                <FiMail className="w-4 h-4 text-foreground/30 group-hover:text-accent transition-colors shrink-0" /> 
+                <span className="truncate">rishabh.shah033@...</span>
+              </a>
+              <a href="https://github.com/RishiiShah" target="_blank" rel="noreferrer" className="flex items-center gap-3 hover:text-accent transition-colors group">
+                <FiGithub className="w-4 h-4 text-foreground/30 group-hover:text-accent transition-colors shrink-0" /> 
+                <span className="truncate">github.com/RishiiShah</span>
+              </a>
+              <a href="https://www.linkedin.com/in/rishabh-shah1/" target="_blank" rel="noreferrer" className="flex items-center gap-3 hover:text-accent transition-colors group">
+                <FiLinkedin className="w-4 h-4 text-foreground/30 group-hover:text-accent transition-colors shrink-0" /> 
+                <span className="truncate">linkedin.com/in/rishabh</span>
+              </a>
             </div>
           </div>
-          <div className="card p-3 sm:p-4">
-            <div className="text-sm font-medium">Key facts</div>
-            <ul className="text-xs sm:text-sm text-foreground/80 mt-1 space-y-1 list-disc pl-4">
-              <li>MS in Computer Science &ndash; Rutgers University &ndash; New Brunswick (GPA: 3.83/4.0)</li>
-              <li>B.Tech in AI &amp; Data Science with Honors in Computational Biology &ndash; University of Mumbai (GPA: 3.25/4.0)</li>
-              <li>Focus: Software Engineering, Systems, AI/ML, and Full-stack Development</li>
-            </ul>
+
+          {/* Resume Protocol */}
+          <div className="pt-2">
+            <a href="/resume.pdf" onClick={downloadResume} className="w-full flex items-center justify-between card px-4 py-3.5 border-l-[3px] border-l-accent/40 hover:border-l-accent transition-all duration-300 text-[11px] font-mono uppercase tracking-widest text-foreground/80 hover:text-accent group cursor-pointer shadow-sm hover:shadow-md">
+              <span>Fetch Resume.pdf</span>
+              <FiDownload className="w-4 h-4 text-foreground/40 group-hover:text-accent group-hover:-translate-y-0.5 transition-all" />
+            </a>
           </div>
-          <a href="/resume.pdf" onClick={downloadResume} className="block text-center text-xs sm:text-sm font-medium px-3 py-2 rounded-md border transition-all duration-300 hover:bg-foreground/5 hover:border-accent/40 hover:scale-[1.02] hover:shadow-lg active:scale-95 cursor-pointer">Download résumé</a>
         </aside>
-        <section className="space-y-6 sm:space-y-8 animate-fade-in-up delay-300">
-          <p className="text-sm sm:text-base text-foreground/90 max-w-2xl">Passionate about computer science and software development, aiming to build efficient and scalable solutions to real-world challenges through innovation. I&apos;m a Master&apos;s student at Rutgers University focused on building scalable systems and ML enabled applications.</p>
 
-          <div>
-            <h2 className="font-semibold text-sm sm:text-base">Education</h2>
-            <ul className="mt-2 space-y-2 text-xs sm:text-sm">
-              <li>
-                <div className="font-medium text-xs sm:text-sm">Master of Science (MS) in Computer Science</div>
-                <div className="text-foreground/70 text-xs sm:text-sm">Rutgers University &ndash; New Brunswick • Sep. 2025 &ndash; May. 2027</div>
-                <div className="text-foreground/60 text-xs sm:text-sm">GPA: 3.83 / 4.0</div>
-              </li>
-              <li>
-                <div className="font-medium text-xs sm:text-sm">Bachelor of Technology in Artificial Intelligence &amp; Data Science, Honors in Computational Biology</div>
-                <div className="text-foreground/70 text-xs sm:text-sm">University of Mumbai • Dec. 2021 &ndash; May. 2025</div>
-                <div className="text-foreground/60 text-xs sm:text-sm">GPA: 3.25 / 4.0</div>
-              </li>
-            </ul>
+        {/* Right Main Content (Data Stream) */}
+        <section className="flex-1 w-full space-y-12 animate-fade-in-up delay-300">
+          
+          {/* Initialization Prose */}
+          <div className="text-sm sm:text-base text-foreground/80 leading-relaxed text-left border-l-2 border-foreground/10 pl-4 lg:pl-6 max-w-3xl">
+            I optimize for end-to-end ownership: define the problem clearly, ship quickly, instrument early, then iterate until the system is stable and genuinely useful. The projects in this portfolio are selected to show decision quality and outcomes, not just responsibilities.
           </div>
 
+          {/* Technical Scope (Skills) */}
           <div>
-            <h2 className="font-semibold text-sm sm:text-base">Experience</h2>
-            <ul className="mt-2 space-y-2 text-xs sm:text-sm">
-              {experiences.map((exp) => (
-                <li key={`${exp.organization}-${exp.start}`}>
-                  <div className="font-medium text-xs sm:text-sm">{exp.role}</div>
-                  <div className="text-foreground/70 text-xs sm:text-sm">
-                    {exp.organization}{exp.location ? `, ${exp.location}` : ""} • {exp.start} – {exp.end}
-                  </div>
-                  {exp.summary && (
-                    <div className="text-foreground/60 text-xs sm:text-sm">
-                      {exp.summary}
-                    </div>
-                  )}
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <h2 className="font-semibold text-sm sm:text-base">Technical Skills</h2>
-            <div className="mt-2 space-y-3 sm:space-y-4">
+            <div className="flex items-center gap-3 text-sm uppercase tracking-widest text-foreground/60 font-mono border-b border-foreground/10 pb-3 mb-6">
+              <FiActivity className="w-4 h-4" /> Technical Scope
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
               {techCategories.map((category, categoryIndex) => (
-                <div key={category.name}>
-                  <div className="text-xs sm:text-sm font-medium">{category.name}</div>
-                  <div className="flex flex-wrap gap-1.5 sm:gap-2 mt-1">
+                <div key={category.name} className="space-y-3">
+                  <div className="text-xs font-mono uppercase tracking-widest text-foreground/50">{category.name}</div>
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
                     <TechPills
                       techs={category.techs}
                       animationDelay={0.4 + categoryIndex * 0.1}
@@ -83,25 +86,87 @@ export default function AboutPage() {
             </div>
           </div>
 
+          {/* Core Architecture (Education) */}
           <div>
-            <h2 className="font-semibold text-sm sm:text-base">Certifications & Programs</h2>
-            <ul className="mt-2 space-y-1 text-xs sm:text-sm text-foreground/80">
-              <li className="animate-fade-in-up delay-400">• Stanford Code in Place — Introductory programming course in Python</li>
-              <li className="animate-fade-in-up delay-500">• Google AI-ML Virtual Internship — AI & ML applications</li>
-              <li className="animate-fade-in-up delay-600">• Google Cloud Generative AI Virtual Internship — Generative AI with Google Cloud</li>
-              <li className="animate-fade-in-up delay-700">• Govt. Certificate Course in Digital Marketing — IDEMI</li>
+            <div className="flex items-center gap-3 text-sm uppercase tracking-widest text-foreground/60 font-mono border-b border-foreground/10 pb-3 mb-6">
+              <FiBookOpen className="w-4 h-4" /> Core Architecture
+            </div>
+            <ul className="space-y-6">
+              <li className="group flex flex-col md:flex-row gap-2 md:gap-6 justify-between items-start">
+                <div className="flex-1">
+                  <div className="font-semibold text-base text-foreground/90 group-hover:text-accent transition-colors">Master of Science (MS) in Computer Science</div>
+                  <div className="text-foreground/70 text-sm mt-1">Rutgers University &ndash; New Brunswick</div>
+                </div>
+                <div className="flex flex-col items-start md:items-end shrink-0">
+                  <div className="text-[10px] font-mono uppercase tracking-widest text-accent/90 border border-accent/20 bg-accent/10 px-2.5 py-1 rounded shadow-[0_0_10px_var(--accent-glow)]">Sep 2025 &ndash; May 2027</div>
+                  <div className="text-foreground/50 text-xs font-mono mt-2">GPA: 3.83 / 4.0</div>
+                </div>
+              </li>
+              <li className="group flex flex-col md:flex-row gap-2 md:gap-6 justify-between items-start">
+                <div className="flex-1">
+                  <div className="font-semibold text-base text-foreground/90 group-hover:text-accent transition-colors">B.Tech in AI &amp; Data Science, Honors in Computational Biology</div>
+                  <div className="text-foreground/70 text-sm mt-1">University of Mumbai</div>
+                </div>
+                <div className="flex flex-col items-start md:items-end shrink-0">
+                  <div className="text-[10px] font-mono uppercase tracking-widest text-accent/90 border border-accent/20 bg-accent/10 px-2.5 py-1 rounded shadow-[0_0_10px_var(--accent-glow)]">Dec 2021 &ndash; May 2025</div>
+                  <div className="text-foreground/50 text-xs font-mono mt-2">CGPA: 7.76 / 10.0</div>
+                </div>
+              </li>
             </ul>
           </div>
 
+          {/* Operational Logs (Experience Preview) */}
           <div>
-            <h2 className="font-semibold text-sm sm:text-base">Extra-Curricular Activities</h2>
-            <ul className="mt-2 space-y-1 text-xs sm:text-sm text-foreground/80">
-              <li className="animate-fade-in-up delay-800">• Participated in Synergy Hackathon, developed InterActiQ</li>
-              <li className="animate-fade-in-up delay-900">• Designed and developed portfolio website using NextJS</li>
-              <li className="animate-fade-in-up delay-1000">• Helped peers debug coding issues to improve their skills</li>
-              <li className="animate-fade-in-up delay-1100">• Strengthened problem-solving by practicing LeetCode challenges</li>
+            <div className="flex items-center gap-3 text-sm uppercase tracking-widest text-foreground/60 font-mono border-b border-foreground/10 pb-3 mb-6">
+              <FiBriefcase className="w-4 h-4" /> Operational Logs
+            </div>
+            <ul className="space-y-6">
+              {experiences.map((exp) => (
+                <li key={`${exp.organization}-${exp.start}`} className="group relative pl-4 border-l-2 border-foreground/10 hover:border-accent/40 transition-colors">
+                  <div className="font-semibold text-base text-foreground/90 group-hover:text-accent transition-colors">{exp.role}</div>
+                  <div className="text-foreground/70 text-sm mt-0.5 mb-2">
+                    {exp.organization}{exp.location ? `, ${exp.location}` : ""}
+                  </div>
+                  <div className="text-[10px] font-mono uppercase tracking-widest text-accent/90 bg-accent/10 border border-accent/20 px-2.5 py-1 rounded shadow-[0_0_10px_var(--accent-glow)] shadow-accent/5 mb-3 inline-block">
+                    {exp.start} – {exp.end}
+                  </div>
+                  {exp.summary && (
+                    <div className="text-foreground/60 text-sm leading-relaxed max-w-2xl">
+                      {exp.summary}
+                    </div>
+                  )}
+                </li>
+              ))}
             </ul>
           </div>
+          
+          {/* Output Modules (Extracurricular & Certs) */}
+          <div>
+            <div className="flex items-center gap-3 text-sm uppercase tracking-widest text-foreground/60 font-mono border-b border-foreground/10 pb-3 mb-6">
+              <FiAward className="w-4 h-4" /> Output Modules
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
+              <div>
+                <h3 className="text-xs font-mono uppercase tracking-widest text-foreground/50 mb-4">Certifications</h3>
+                <ul className="space-y-3 text-sm text-foreground/80">
+                  <li className="flex items-start gap-2 group"><span className="text-foreground/35 group-hover:text-accent transition-colors">▸</span> Stanford Code in Place — Python course</li>
+                  <li className="flex items-start gap-2 group"><span className="text-foreground/35 group-hover:text-accent transition-colors">▸</span> Google AI-ML Virtual Internship</li>
+                  <li className="flex items-start gap-2 group"><span className="text-foreground/35 group-hover:text-accent transition-colors">▸</span> Google Gen AI Virtual Internship</li>
+                  <li className="flex items-start gap-2 group"><span className="text-foreground/35 group-hover:text-accent transition-colors">▸</span> Govt. Certification in Digital Marketing</li>
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-xs font-mono uppercase tracking-widest text-foreground/50 mb-4">Extracurriculars</h3>
+                <ul className="space-y-3 text-sm text-foreground/80">
+                  <li className="flex items-start gap-2 group"><span className="text-foreground/35 group-hover:text-accent transition-colors">▸</span> Synergy Hackathon (InterActiQ)</li>
+                  <li className="flex items-start gap-2 group"><span className="text-foreground/35 group-hover:text-accent transition-colors">▸</span> Peer Mentorship & Code Debugging</li>
+                  <li className="flex items-start gap-2 group"><span className="text-foreground/35 group-hover:text-accent transition-colors">▸</span> Competitive Algorithmic Challenges</li>
+                  <li className="flex items-start gap-2 group"><span className="text-foreground/35 group-hover:text-accent transition-colors">▸</span> Open Source UI Engineering (Portfolio)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
         </section>
       </div>
     </main>

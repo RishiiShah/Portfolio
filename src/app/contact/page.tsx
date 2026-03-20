@@ -90,10 +90,13 @@ export default function ContactPage() {
   }
 
   return (
-    <main className="py-[clamp(1rem,4vh,3rem)]">
-      <h1 className="text-xl sm:text-2xl font-semibold animate-fade-in-up">Contact</h1>
+    <main className="pb-12 sm:pb-16 lg:pb-20">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-2">
+        <h1 className="text-xl sm:text-2xl font-semibold animate-fade-in-up md:w-[28%]">Contact</h1>
+        <div className="hidden md:block flex-1 border-b border-foreground/10 animate-fade-in-up" />
+      </div>
       <p className="mt-2 text-xs sm:text-sm text-foreground/80 animate-fade-in-up delay-200">Tell me what you&apos;re working on — name, role, and a 1–2 sentence note about collaboration.</p>
-      <form onSubmit={onSubmit} className="mt-6 max-w-md space-y-3 sm:space-y-4">
+      <form onSubmit={onSubmit} className="mt-6 w-full lg:max-w-[40vw] space-y-3 sm:space-y-4">
         <div className="animate-fade-in-up delay-300">
           <input
             className="w-full border border-foreground/20 rounded-md px-3 py-2.5 text-sm bg-background text-foreground placeholder:text-foreground/50 focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent/50 transition-all duration-300 hover:border-foreground/30"
@@ -155,7 +158,7 @@ export default function ContactPage() {
           />
           {errors.message && <p className="text-xs text-red-500 mt-1">{errors.message}</p>}
         </div>
-        <button className="px-4 py-2.5 rounded-md bg-foreground text-background text-sm font-medium transition-all duration-300 hover:scale-105 hover:shadow-[0_8px_25px_rgba(237,237,237,0.3)] hover:-translate-y-1 active:scale-95 animate-fade-in-up delay-700">Send</button>
+        <button className="px-6 py-2.5 rounded-md border border-accent/50 bg-accent/10 text-accent text-[11px] font-mono uppercase tracking-widest transition-all duration-300 hover:bg-accent/20 hover:border-accent/70 hover:shadow-[0_0_20px_var(--accent-glow)] active:scale-95 animate-fade-in-up delay-700">Send</button>
         {status && <div className="text-xs sm:text-sm text-foreground/80 animate-fade-in delay-800">{status}</div>}
       </form>
       <div className="mt-6 text-xs sm:text-sm animate-fade-in-up delay-900">

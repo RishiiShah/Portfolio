@@ -1,6 +1,4 @@
 "use client";
-import { useState } from "react";
-import { Loading } from "@/components/Loading";
 import { SmartBackButton } from "@/components/SmartBackButton";
 import { TechPills } from "@/components/TechPills";
 import { SectionHeader } from "@/components/ui/SectionHeader";
@@ -8,23 +6,17 @@ import { IconLinkButton } from "@/components/ui/IconLinkButton";
 import type { Project } from "@/types";
 import { categorizeTech } from "@/utils/categorizeTech";
 import { formatLinkLabel, getKnownLinkIcon } from "@/utils/linkIcons";
-import { FiArrowRight } from "react-icons/fi";
+import { FiArrowRight, FiTarget, FiUser, FiGrid, FiAlertTriangle, FiBookOpen } from "react-icons/fi";
 
 interface ProjectDetailClientProps {
   project: Project;
 }
 
 export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
-  const [isLoading, setIsLoading] = useState(true);
-  const isFromProjects = typeof document !== "undefined" && document.referrer.includes("/projects");
   const groupedTech = categorizeTech(project.tech);
 
-  if (isLoading) {
-    return <Loading onComplete={() => setIsLoading(false)} minDurationMs={isFromProjects ? 800 : 1300} />;
-  }
-
   return (
-    <main className="py-8 sm:py-12">
+    <main className="pb-12 sm:pb-16 lg:pb-20">
       <SmartBackButton className="mb-6" />
       <h1 className="text-xl sm:text-2xl font-semibold leading-tight animate-fade-in-up">{project.title}</h1>
       <p className="mt-2 text-sm sm:text-base text-foreground/80 animate-fade-in-up delay-200">{project.tagline}</p>
@@ -34,11 +26,13 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
         </p>
       )}
 
-      <div className="mt-6 grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 lg:gap-8">
+      <div className="mt-6 grid grid-cols-1 lg:grid-cols-[65%_35%] gap-6 lg:gap-8">
         <section className="space-y-6 animate-fade-in-up delay-400">
           {project.problem && (
             <div>
-              <h2 className="font-semibold">Problem</h2>
+              <div className="flex items-center gap-3 text-sm uppercase tracking-widest text-foreground/60 font-mono border-b border-foreground/10 pb-3 mb-4">
+                <FiTarget className="w-4 h-4" /> Problem
+              </div>
               <p className="text-sm mt-1 text-foreground/80">
                 {project.problem}
               </p>
@@ -46,13 +40,17 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
           )}
           {project.role && (
             <div>
-              <h2 className="font-semibold">Role</h2>
+              <div className="flex items-center gap-3 text-sm uppercase tracking-widest text-foreground/60 font-mono border-b border-foreground/10 pb-3 mb-4">
+                <FiUser className="w-4 h-4" /> Role
+              </div>
               <p className="text-sm mt-1 text-foreground/80">{project.role}</p>
             </div>
           )}
           {project.architectureNotes?.length ? (
             <div>
-              <h2 className="font-semibold">Architecture</h2>
+              <div className="flex items-center gap-3 text-sm uppercase tracking-widest text-foreground/60 font-mono border-b border-foreground/10 pb-3 mb-4">
+                <FiGrid className="w-4 h-4" /> Architecture
+              </div>
               <ul className="mt-2 space-y-2">
                 {project.architectureNotes.map((n, index) => (
                   <li key={n} className="text-sm text-foreground/80 leading-relaxed flex items-start gap-2.5 animate-fade-in-up" style={{ animationDelay: `${0.5 + index * 0.1}s` }}>
@@ -65,7 +63,9 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
           ) : null}
           {project.challenges?.length ? (
             <div>
-              <h2 className="font-semibold">Challenges & solutions</h2>
+              <div className="flex items-center gap-3 text-sm uppercase tracking-widest text-foreground/60 font-mono border-b border-foreground/10 pb-3 mb-4">
+                <FiAlertTriangle className="w-4 h-4" /> Challenges & Solutions
+              </div>
               <ul className="mt-2 space-y-2">
                 {project.challenges.map((n, index) => (
                   <li key={n} className="text-sm text-foreground/80 leading-relaxed flex items-start gap-2.5 animate-fade-in-up" style={{ animationDelay: `${0.6 + index * 0.1}s` }}>
@@ -78,7 +78,9 @@ export function ProjectDetailClient({ project }: ProjectDetailClientProps) {
           ) : null}
           {project.lessons?.length ? (
             <div>
-              <h2 className="font-semibold">Lessons / next steps</h2>
+              <div className="flex items-center gap-3 text-sm uppercase tracking-widest text-foreground/60 font-mono border-b border-foreground/10 pb-3 mb-4">
+                <FiBookOpen className="w-4 h-4" /> Lessons / Next Steps
+              </div>
               <ul className="mt-2 space-y-2">
                 {project.lessons.map((n, index) => (
                   <li key={n} className="text-sm text-foreground/80 leading-relaxed flex items-start gap-2.5 animate-fade-in-up" style={{ animationDelay: `${0.7 + index * 0.1}s` }}>
