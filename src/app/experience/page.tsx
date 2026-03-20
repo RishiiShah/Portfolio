@@ -53,7 +53,7 @@ export default function ExperiencePage() {
   return (
     <main className="pb-12 sm:pb-16 lg:pb-20">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8 sm:mb-12">
-        <h1 className="text-xl sm:text-2xl font-semibold animate-fade-in-up md:w-[28%]">Experience</h1>
+        <h1 className="text-xl sm:text-2xl font-semibold animate-fade-in-up md:w-[28%]">Professional Experience</h1>
         <div className="hidden md:block flex-1 border-b border-foreground/10 animate-fade-in-up" />
       </div>
 
