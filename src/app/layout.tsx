@@ -18,6 +18,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+import { JetBrains_Mono } from "next/font/google";
+
+const jetbrainsMono = JetBrains_Mono({
+  variable: "--font-jetbrains-mono",
+  subsets: ["latin"],
+});
+
 // Get site URL from environment variable or use default
 // Vercel automatically provides VERCEL_URL for deployments
 // Set NEXT_PUBLIC_SITE_URL in Vercel environment variables if you want to override with your custom domain
@@ -135,12 +142,12 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col relative`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} ${jetbrainsMono.variable} antialiased min-h-screen flex flex-col relative`}>
         <ThemeProvider>
           <ThreeBackground />
           <Nav />
           {/* <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 flex-1 w-full relative z-10">{children}</div> */}
-          <div className="mx-auto w-full flex-1 relative z-10 max-w-5xl xl:max-w-6xl 2xl:max-w-7xl px-4 sm:px-6 lg:px-8">{children}</div>
+          <div className="mx-auto w-full flex-1 relative z-10 px-[4vw] sm:px-[5vw] lg:px-[6vw] pt-20 sm:pt-24 lg:pt-28">{children}</div>
           <Footer />
         </ThemeProvider>
         <Analytics />

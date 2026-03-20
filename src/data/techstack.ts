@@ -92,10 +92,16 @@ export const techIcons: Record<string, React.ComponentType<{ className?: string 
   PyTorch: SiPytorch,
   YOLO: SiDatabricks,
   OpenCV: SiOpencv,
+  OCR: SiOpencv,
+  ANPR: SiDatabricks,
   
   // Other
   "discord.js": SiDiscord,
   Discord: SiDiscord,
+  GitHub: SiGithubactions,
+  "REST APIs": SiFastapi,
+  "JWT Authentication": SiNextdotjs,
+  Linux: SiLinux,
 };
 
 // Tech stack categories for the about page
@@ -106,24 +112,20 @@ export interface TechCategory {
 
 export const techCategories: TechCategory[] = [
   {
-    name: "Programming & Scripting",
-    techs: ["Python", "C++", "Java", "C", "SQL", "TypeScript"],
+    name: "Programming Languages",
+    techs: ["Python", "C++", "Java", "TypeScript", "SQL", "C"],
   },
   {
-    name: "Full-Stack Development",
-    techs: ["Next.js", "Flask", "Django", "FastAPI", "REST APIs", "Microservices", "JWT Authentication"],
+    name: "Frameworks & Tools",
+    techs: ["Django", "Flask", "Next.js", "REST APIs", "JWT Authentication", "Docker", "Git", "GitHub", "GitHub Actions", "Linux"],
   },
   {
-    name: "Databases & Data Handling",
-    techs: ["MySQL", "PostgreSQL", "MongoDB", "Schema Design", "Query Optimization", "Data Modeling"],
+    name: "Databases & Cloud Platforms",
+    techs: ["PostgreSQL", "MySQL", "MongoDB", "AWS", "Azure", "GCP"],
   },
   {
-    name: "Cloud & DevOps",
-    techs: ["AWS (EC2, S3, Lambda)", "Docker", "Azure", "GCP", "GitHub Actions", "Git", "Linux & Unix", "System Monitoring"],
-  },
-  {
-    name: "Additional Technologies",
-    techs: ["NumPy", "Pandas", "Scikit-learn", "TensorFlow", "Keras", "PyTorch", "YOLO", "OpenCV", "OCR & ANPR"],
+    name: "AI/ML & Computer Vision",
+    techs: ["TensorFlow", "PyTorch", "Scikit-learn", "Keras", "Pandas", "NumPy", "OpenCV", "YOLO", "OCR", "ANPR"],
   },
 ];
 

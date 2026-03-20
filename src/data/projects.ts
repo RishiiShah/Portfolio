@@ -18,10 +18,9 @@ export const projects: Project[] = [
       "Detect and validate multiple traffic violations from live feeds, then automatically generate and deliver evidence-backed challans at scale.",
     role: "Developed the YOLO vision pipeline and engineered end-to-end challan generation with AWS S3 storage and Twilio-based notification delivery.",
     architectureNotes: [
-      "Developed a YOLO-based computer vision pipeline detecting five traffic violations with vehicle tracking, speed estimation, and rule-based logic",
-      "Integrated OCR-based ANPR for license-plate recognition with frame selection and regex-based validation for Indian number plate formats",
-      "Engineered backend automation for challan generation and delivery using AWS S3 for evidence-backed PDF reports and Twilio API for SMS notifications",
-      "Implemented latency-aware preprocessing (tripwire logic and frame handling) to reduce inference time",
+      "Fine-tuned YOLOv12x on a custom dataset through comparative analysis against YOLOv11x to detect 5 traffic violations in real time, achieving 93.76% end-to-end accuracy, 97.56% vehicle type detection and 93.26% helmet detection",
+      "Designed a license plate recognition pipeline using Groq Llama-4 Scout vision model for OCR with Indian number plate regex validation, achieving 92.7% OCR accuracy and 98% localization accuracy",
+      "Automated challan generation with violation metadata, storing evidence frames on AWS S3 and delivering notifications to offenders via Twilio SMS for end-to-end enforcement",
     ],
     challenges: [
       "Reducing false positives in noisy traffic scenes and inconsistent camera angles",
@@ -55,10 +54,9 @@ export const projects: Project[] = [
     problem: "Create a voice-controlled smart home platform with secure cloud-to-device control and natural language command understanding.",
     role: "Developed voice and web control flows, integrated Llama-3 70B via Groq API, and implemented secure real-time cloud-to-device synchronization.",
     architectureNotes: [
-      "Developed a full-stack smart home automation system with voice and web control using Django, Azure IoT Hub, and Raspberry Pi",
-      "Integrated Llama-3 (70B) via Groq API with asynchronous request handling, prompt filtering, and multi-threading",
-      "Designed REST APIs for secure device communication and state management",
-      "Implemented cloud-to-device messaging with GPIO-based hardware actuation for reliable appliance control",
+      "Built a 4-module voice assistant on Raspberry Pi 3B+ using Groq hosted Llama 3.1 8B for NLP query processing across deterministic task, math and reminder, LLM query and home automation modules",
+      "Implemented wake word detection, spectral noise filtering, noise gating and multi-threading for concurrent task handling, with prompt engineering to filter harmful queries and protect user privacy",
+      "Engineered the IoT backend using Azure IoT Hub to relay voice commands to Raspberry Pi GPIO pins for real-time appliance control, backed by a Django and Django-Allauth web interface for secure device registration and state management",
     ],
     challenges: [
       "Balancing low-latency LLM responses with reliable command execution",

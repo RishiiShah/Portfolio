@@ -1,9 +1,8 @@
 "use client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ThemeToggle } from "@/components/ThemeProvider";
-import { downloadResume } from "@/utils/downloadResume";
 
 const links = [
   { href: "/", label: "Home" },
@@ -17,8 +16,8 @@ const links = [
 export function Nav() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
 
-  // Prefetch key routes for faster navigation
   useEffect(() => {
     router.prefetch("/");
     router.prefetch("/experience");
@@ -26,83 +25,74 @@ export function Nav() {
     router.prefetch("/contact");
   }, [router]);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
   return (
-    <nav className="sticky top-0 z-50 backdrop-blur bg-background/70 border-b border-foreground/10">
-      {/* <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between"> */}
-      <div className="mx-auto w-full max-w-5xl xl:max-w-6xl 2xl:max-w-7xl px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
-        <Link href="/" className="font-semibold tracking-tight transition-[transform,color] duration-300 hover:scale-105 hover:text-accent text-lg sm:text-base">Rishabh</Link>
+    <div className="fixed top-0 left-0 w-full z-50 px-[2vw] sm:px-[3vw] lg:px-[4vw] py-[1.5vh] sm:py-[3vh] pointer-events-none flex justify-center">
+      <nav className="pointer-events-auto w-full md:w-fit rounded-xl md:rounded-2xl backdrop-blur-md bg-background/40 border border-white/10 shadow-lg shadow-black/20 transition-all duration-300 overflow-hidden">
+        <div className="px-5 sm:px-6 md:px-8 py-2.5 sm:py-3 flex items-center justify-between md:justify-center md:gap-[2vw] lg:gap-[3vw]">
 
+          {/* Logo: <Rishi /> */}
+          <Link href="/" className="group flex items-center gap-0.5 font-mono font-bold text-sm uppercase tracking-tighter transition-all duration-300">
+            <span className="text-accent/60 group-hover:text-accent transition-colors duration-200">&lt;</span>
+            <span className="text-foreground group-hover:text-accent transition-colors duration-200">Rishi</span>
+            <span className="text-accent/60 group-hover:text-accent transition-colors duration-200">/&gt;</span>
+          </Link>
 
-        {/* Desktop Navigation */}
-        <div className="hidden md:flex gap-4 text-sm items-center">
-          {links.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className="relative group transition-[transform,color] duration-300 hover:scale-105 hover:text-accent"
-            >
-              {l.label}
-              <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-accent transition-[width] duration-300 group-hover:w-full"></span>
-            </Link>
-          ))}
-          <ThemeToggle />
-          {/* <a 
-            href="/resume.pdf" 
-            onClick={downloadResume}
-            className="relative group transition-all duration-300 hover:scale-105 cursor-pointer"
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex gap-8 text-[10px] font-mono uppercase tracking-[0.25em] items-center">
+            {links.map((l) => {
+              const isActive = pathname === l.href;
+              return (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className={`relative py-1 group transition-colors duration-200 ${isActive ? "text-accent" : "text-foreground/40 hover:text-foreground"}`}
+                >
+                  {l.label}
+                  {/* Animated underline */}
+                  <span
+                    className={`absolute bottom-0 left-0 h-[1px] bg-accent transition-all duration-300 ${isActive ? "w-full" : "w-0 group-hover:w-full"}`}
+                  />
+                </Link>
+              );
+            })}
+            <ThemeToggle />
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="md:hidden p-2 rounded-md transition-colors duration-300 hover:bg-foreground/5 mr-1"
+            aria-label="Toggle menu"
           >
-            Résumé
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-foreground transition-all duration-300 group-hover:w-full"></span>
-          </a> */}
+            <div className="w-5 h-5 flex flex-col justify-center items-center gap-1">
+              <span className={`block w-4 h-0.5 bg-foreground transition-all duration-300 ${isMenuOpen ? "rotate-45 translate-y-1.5" : ""}`} />
+              <span className={`block w-4 h-0.5 bg-foreground transition-all duration-300 ${isMenuOpen ? "opacity-0" : ""}`} />
+              <span className={`block w-4 h-0.5 bg-foreground transition-all duration-300 ${isMenuOpen ? "-rotate-45 -translate-y-1.5" : ""}`} />
+            </div>
+          </button>
         </div>
 
-        {/* Mobile Menu Button */}
-        <button
-          onClick={toggleMenu}
-          className="md:hidden p-2 rounded-md transition-colors duration-300 ease-out hover:bg-foreground/5"
-          aria-label="Toggle menu"
-        >
-          <div className="w-5 h-5 flex flex-col justify-center items-center">
-            <span className={`block w-4 h-0.5 bg-foreground transition-all duration-300 ${isMenuOpen ? 'rotate-45 translate-y-1' : ''}`}></span>
-            <span className={`block w-4 h-0.5 bg-foreground transition-all duration-300 mt-1 ${isMenuOpen ? 'opacity-0' : ''}`}></span>
-            <span className={`block w-4 h-0.5 bg-foreground transition-all duration-300 mt-1 ${isMenuOpen ? '-rotate-45 -translate-y-1' : ''}`}></span>
-          </div>
-        </button>
-      </div>
-
-      {/* Mobile Menu */}
-      <div className={`md:hidden transition-all duration-300 ease-in-out ${isMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}>
-        <div className="px-4 sm:px-6 lg:px-8 py-4 border-t border-foreground/10 bg-background/95 backdrop-blur">
-          <div className="flex flex-col space-y-3">
-            {links.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                className="text-sm font-medium transition-[color] duration-300 hover:text-accent py-2"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {l.label}
-              </Link>
-            ))}
-            <a
-              href="/resume.pdf"
-              onClick={(e) => {
-                downloadResume(e);
-                setIsMenuOpen(false);
-              }}
-              className="text-sm font-medium transition-[color] duration-300 hover:text-accent py-2 cursor-pointer"
-            >
-              Résumé
-            </a>
+        {/* Mobile Menu */}
+        <div className={`md:hidden transition-all duration-300 ease-in-out ${isMenuOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0 overflow-hidden"}`}>
+          <div className="px-5 sm:px-6 py-4 border-t border-white/5 bg-background/50 backdrop-blur-none">
+            <div className="flex flex-col space-y-1">
+              {links.map((l) => (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  className={`text-xs font-mono uppercase tracking-widest py-2.5 transition-colors duration-200 border-b border-foreground/5 last:border-0 ${pathname === l.href ? "text-accent" : "text-foreground/60 hover:text-accent"}`}
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {l.label}
+                </Link>
+              ))}
+              <div className="flex items-center justify-end pt-2">
+                <ThemeToggle />
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </nav>
+      </nav>
+    </div>
   );
 }
-
-

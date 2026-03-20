@@ -1,187 +1,219 @@
 "use client";
 
-import { useRef, useMemo, Suspense, useEffect, useState } from "react";
+import { useRef, useMemo, Suspense } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Points, PointMaterial } from "@react-three/drei";
+import { Points, PointMaterial, Billboard } from "@react-three/drei";
 import * as THREE from "three";
 import { useTheme } from "next-themes";
 
-/* ---------- Particle Layer Component ---------- */
-function ParticleLayer({
-  count,
-  radius,
-  speed,
-  size,
-  opacity,
-  theme,
-  layerIndex,
+const TIERS = [
+  { count: 120, yOffset: 6.0, thickness: 1.0, radiusX: 20, radiusZ: 20 },
+  { count: 180, yOffset: 0, thickness: 1.5, radiusX: 25, radiusZ: 25 },
+  { count: 120, yOffset: -6.0, thickness: 1.0, radiusX: 20, radiusZ: 20 },
+] as const;
+
+const CONNECTION_DISTANCE = 6.5;
+const TOTAL_COUNT = TIERS.reduce((acc, tier) => acc + tier.count, 0);
+
+function pseudoRandom(seed: number) {
+  const value = Math.sin(seed * 12.9898) * 43758.5453;
+  return value - Math.floor(value);
+}
+
+/* ---------- Data Packet Component ---------- */
+function DataPacket({
+  nodes,
+  adjList,
+  color,
+  baseSpeed,
+  seed,
 }: {
-  count: number;
-  radius: number;
-  speed: number;
-  size: number;
-  opacity: number;
-  theme: string | undefined;
-  layerIndex: number;
+  nodes: Float32Array;
+  adjList: number[][];
+  color: string;
+  baseSpeed: number;
+  seed: number;
 }) {
-  const mesh = useRef<THREE.Points>(null);
-  const light = theme === "light";
+  const ref = useRef<THREE.Group>(null);
 
-  const particles = useMemo(() => {
-    const seeded = (seed: number) => {
-      const value = Math.sin(seed * 12.9898) * 43758.5453;
-      return value - Math.floor(value);
-    };
+  const initialNode = Math.floor(pseudoRandom(seed + 1) * (nodes.length / 3));
+  const initialProgress = pseudoRandom(seed + 2);
+  const initialSpeedScale = 0.8 + pseudoRandom(seed + 3) * 0.4;
+  const initialTtl = 3 + Math.floor(pseudoRandom(seed + 4) * 5);
+  const initialNeighbors = adjList[initialNode] ?? [];
+  const initialNeighborIdx = initialNeighbors.length
+    ? Math.floor(pseudoRandom(seed + initialNode * 13) * initialNeighbors.length)
+    : -1;
+  const initialNextNode = initialNeighborIdx >= 0 ? initialNeighbors[initialNeighborIdx] : initialNode;
 
-    const positions = new Float32Array(count * 3);
-    const velocities = new Float32Array(count * 3);
-
-    for (let i = 0; i < count; i++) {
-      // Even distribution in a sphere
-      const theta = seeded(i + 1) * Math.PI * 2;
-      const phi = Math.acos(2 * seeded(i + 97) - 1);
-      const r = radius * (0.6 + seeded(i + 193) * 0.4);
-
-      positions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
-      positions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
-      positions[i * 3 + 2] = r * Math.cos(phi);
-
-      // Very slow drift velocities
-      velocities[i * 3] = (seeded(i + 17) - 0.5) * 0.004;
-      velocities[i * 3 + 1] = (seeded(i + 37) - 0.5) * 0.004;
-      velocities[i * 3 + 2] = (seeded(i + 59) - 0.5) * 0.004;
-    }
-
-    return { positions, velocities };
-  }, [count, radius]);
-
-  useFrame((state) => {
-    if (!mesh.current) return;
-
-    const pos = mesh.current.geometry.attributes.position.array as Float32Array;
-    const time = state.clock.elapsedTime;
-
-    // Gentle mouse parallax (reduced)
-    const { x, y } = state.mouse;
-    mesh.current.rotation.x = y * 0.05 + Math.sin(time * 0.1 + layerIndex) * 0.02;
-    mesh.current.rotation.y = x * 0.05 + Math.cos(time * 0.08 + layerIndex) * 0.02;
-
-    // Apply very slow drift movement
-    for (let i = 0; i < count; i++) {
-      pos[i * 3] += particles.velocities[i * 3] * speed;
-      pos[i * 3 + 1] += particles.velocities[i * 3 + 1] * speed;
-      pos[i * 3 + 2] += particles.velocities[i * 3 + 2] * speed;
-
-      // Wrap bounds smoothly
-      if (Math.abs(pos[i * 3]) > radius) pos[i * 3] *= -0.98;
-      if (Math.abs(pos[i * 3 + 1]) > radius) pos[i * 3 + 1] *= -0.98;
-      if (Math.abs(pos[i * 3 + 2]) > radius) pos[i * 3 + 2] *= -0.98;
-    }
-
-    mesh.current.geometry.attributes.position.needsUpdate = true;
+  const state = useRef({
+    currNodeIdx: initialNode,
+    nextNodeIdx: initialNextNode,
+    progress: initialProgress,
+    speed: baseSpeed * initialSpeedScale,
+    ttl: initialTtl,
+    hopCount: 0,
   });
 
-  // Theme-aware neutral colors
-  const colors = light
-    ? ["#555555", "#666666", "#777777"]  // Light mode: darker grays (visible on white)
-    : ["#888888", "#777777", "#666666"];  // Dark mode: slightly brighter grays
+  const pickNextNode = (curr: number, hopCount: number) => {
+    const neighbors = adjList[curr];
+    if (!neighbors || neighbors.length === 0) return curr;
+    const idx = Math.floor(pseudoRandom(seed + curr * 13 + hopCount * 7) * neighbors.length);
+    return neighbors[idx];
+  };
 
-  const color = colors[layerIndex % colors.length];
+  useFrame((_, delta) => {
+    if (!ref.current) return;
+    state.current.progress += delta * state.current.speed;
+
+    if (state.current.progress >= 1) {
+      state.current.progress = 0;
+      state.current.currNodeIdx = state.current.nextNodeIdx;
+      state.current.hopCount += 1;
+      state.current.nextNodeIdx = pickNextNode(state.current.currNodeIdx, state.current.hopCount);
+      state.current.ttl -= 1;
+
+      if (state.current.ttl <= 0) {
+        state.current.currNodeIdx = Math.floor(
+          pseudoRandom(seed + state.current.hopCount * 19) * (nodes.length / 3)
+        );
+        state.current.nextNodeIdx = pickNextNode(state.current.currNodeIdx, state.current.hopCount);
+        state.current.ttl = 3 + Math.floor(pseudoRandom(seed + state.current.hopCount * 23) * 5);
+      }
+    }
+
+    const cIdx = state.current.currNodeIdx * 3;
+    const nIdx = state.current.nextNodeIdx * 3;
+
+    ref.current.position.set(
+      THREE.MathUtils.lerp(nodes[cIdx], nodes[nIdx], state.current.progress),
+      THREE.MathUtils.lerp(nodes[cIdx + 1], nodes[nIdx + 1], state.current.progress),
+      THREE.MathUtils.lerp(nodes[cIdx + 2], nodes[nIdx + 2], state.current.progress)
+    );
+  });
 
   return (
-    <Points
-      ref={mesh}
-      positions={particles.positions}
-      stride={3}
-      frustumCulled={false}
-    >
-      <PointMaterial
-        transparent
-        color={color}
-        size={size}
-        sizeAttenuation={true}
-        depthWrite={false}
-        opacity={opacity}
-        blending={light ? THREE.NormalBlending : THREE.AdditiveBlending}
-      />
-    </Points>
+    <group ref={ref}>
+      <Billboard>
+        <mesh>
+          <sphereGeometry args={[0.024, 16, 16]} />
+          <meshBasicMaterial color={color} transparent opacity={1} />
+        </mesh>
+        <mesh>
+          <sphereGeometry args={[0.05, 20, 20]} />
+          <meshBasicMaterial color={color} transparent opacity={0.06} />
+        </mesh>
+      </Billboard>
+    </group>
   );
 }
 
-/* ---------- Camera Float ---------- */
-function CameraFloat() {
-  useFrame((state) => {
-    const t = state.clock.elapsedTime;
-    // Very subtle camera movement
-    state.camera.position.z = 5 + Math.sin(t * 0.05) * 0.1;
-    state.camera.position.y = Math.sin(t * 0.04) * 0.08;
-  });
+/* ---------- Singular Layered Mesh ---------- */
+// A single, globally connected mesh with nodes concentrated into horizontal architectural tiers
+function SingularTieredMesh({ theme }: { theme: string | undefined }) {
+  const groupRef = useRef<THREE.Group>(null);
+  const meshRef = useRef<THREE.Points>(null);
+  const linesRef = useRef<THREE.LineSegments>(null);
+  const isLight = theme === "light";
 
-  return null;
-}
+  const { positions, linePositions, adjList } = useMemo(() => {
+    const pos = new Float32Array(TOTAL_COUNT * 3);
 
-/* ---------- Background Canvas ---------- */
-function BackgroundCanvas() {
-  const { resolvedTheme } = useTheme();
-  const [particleCount, setParticleCount] = useState(2000);
+    // Assign nodes to specific horizontal layers
+    let offsetIdx = 0;
+    for (const tier of TIERS) {
+      for (let i = 0; i < tier.count; i++) {
+        const idx = offsetIdx + i;
+        const seed = idx + 1;
+        pos[idx * 3] = (pseudoRandom(seed * 2.1) - 0.5) * tier.radiusX * 2;
+        pos[idx * 3 + 1] = tier.yOffset + (pseudoRandom(seed * 3.7) - 0.5) * tier.thickness * 2;
+        pos[idx * 3 + 2] = (pseudoRandom(seed * 5.3) - 0.5) * tier.radiusZ * 2;
+      }
+      offsetIdx += tier.count;
+    }
 
-  useEffect(() => {
-    const updateCount = () => {
-      const isMobile = window.innerWidth < 768;
-      setParticleCount(isMobile ? 1000 : 2000);
+    // Global adjacency configuration - connects everything together into ONE mesh
+    const lpArr: number[] = [];
+    const adj: number[][] = Array.from({ length: TOTAL_COUNT }, () => []);
+    const maxDistSq = CONNECTION_DISTANCE * CONNECTION_DISTANCE;
+
+    for (let i = 0; i < TOTAL_COUNT; i++) {
+      const ax = pos[i * 3], ay = pos[i * 3 + 1], az = pos[i * 3 + 2];
+      for (let j = i + 1; j < TOTAL_COUNT; j++) {
+        const bx = pos[j * 3], by = pos[j * 3 + 1], bz = pos[j * 3 + 2];
+        const dx = ax - bx, dy = ay - by, dz = az - bz;
+
+        if (dx * dx + dy * dy + dz * dz < maxDistSq) {
+          lpArr.push(ax, ay, az, bx, by, bz);
+          adj[i].push(j);
+          adj[j].push(i); // Undirected graph
+        }
+      }
+    }
+
+    return {
+      positions: pos,
+      linePositions: new Float32Array(lpArr),
+      adjList: adj
     };
-
-    updateCount();
-    window.addEventListener("resize", updateCount);
-    return () => window.removeEventListener("resize", updateCount);
   }, []);
 
-  const isLight = resolvedTheme === "light";
+  useFrame((state) => {
+    if (!groupRef.current) return;
+    const t = state.clock.elapsedTime;
+
+    // Continuous ambient rotation independent of scroll or mouse.
+    // Creates a slow, complex orbiting wave motion on a fixed isometric axis.
+    groupRef.current.rotation.y = (Math.PI / 4) + t * 0.035;
+    groupRef.current.rotation.x = 0.35 + Math.sin(t * 0.015) * 0.1;
+    groupRef.current.rotation.z = Math.cos(t * 0.02) * 0.05;
+  });
+
+  const nodeColor = isLight ? "#096175" : "#1daec5";
+  const lineColor = isLight ? "#096175" : "#138ca2";
+  const packetColor = isLight ? "#077893" : "#1daec5";
+
+  const packetCount = 85;
 
   return (
-    <Canvas
-      camera={{ position: [0, 0, 5], fov: 75 }}
-      gl={{
-        alpha: true,
-        antialias: true,
-        powerPreference: "high-performance",
-      }}
-      dpr={[1, 1.5]}
-    >
-      <CameraFloat />
+    <group ref={groupRef}>
+      {/* Global Node Cloud */}
+      <Points ref={meshRef} positions={positions} stride={3}>
+        <PointMaterial transparent color={nodeColor} size={0.07} sizeAttenuation depthWrite={false} opacity={0.5} />
+      </Points>
 
-      {/* Far layer - subtle background */}
-      <ParticleLayer
-        count={Math.floor(particleCount * 0.4)}
-        radius={18}
-        speed={0.138}
-        size={0.048}
-        opacity={isLight ? 0.35 : 0.25}
-        theme={resolvedTheme}
-        layerIndex={0}
-      />
+      {/* Global Connectivity Edges (Intra AND Inter-Tier Links) */}
+      <lineSegments ref={linesRef}>
+        <bufferGeometry>
+          <bufferAttribute attach="attributes-position" count={linePositions.length / 3} array={linePositions} itemSize={3} args={[linePositions, 3]} />
+        </bufferGeometry>
+        <lineBasicMaterial color={lineColor} transparent opacity={0.25} depthWrite={false} />
+      </lineSegments>
 
-      {/* Middle layer - main particles */}
-      <ParticleLayer
-        count={Math.floor(particleCount * 0.5)}
-        radius={14}
-        speed={0.196}
-        size={0.06}
-        opacity={isLight ? 0.45 : 0.40}
-        theme={resolvedTheme}
-        layerIndex={1}
-      />
+      {/* Globally Hopping Data Packets */}
+      {Array.from({ length: packetCount }).map((_, i) => (
+        <DataPacket
+          key={i}
+          nodes={positions}
+          adjList={adjList}
+          color={packetColor}
+          baseSpeed={0.25 + pseudoRandom((i + 1) * 9.1) * 0.3}
+          seed={(i + 1) * 101}
+        />
+      ))}
+    </group>
+  );
+}
 
-      {/* Near layer - foreground particles */}
-      <ParticleLayer
-        count={Math.floor(particleCount * 0.3)}
-        radius={10}
-        speed={0.265}
-        size={0.072}
-        opacity={isLight ? 0.55 : 0.50}
-        theme={resolvedTheme}
-        layerIndex={2}
-      />
+/* ---------- Canvas ---------- */
+function BackgroundCanvas() {
+  const { resolvedTheme } = useTheme();
+
+  return (
+    <Canvas camera={{ position: [0, 0, 7], fov: 60 }} gl={{ alpha: true, antialias: true }} dpr={[1, 1.5]}>
+      <Suspense fallback={null}>
+        <SingularTieredMesh theme={resolvedTheme} />
+      </Suspense>
     </Canvas>
   );
 }
@@ -189,7 +221,7 @@ function BackgroundCanvas() {
 /* ---------- Export ---------- */
 export function ThreeBackground() {
   return (
-    <div className="fixed inset-0 -z-10 pointer-events-none">
+    <div className="fixed inset-0 -z-10 pointer-events-none blur-[0.5px] opacity-[1]">
       <Suspense fallback={null}>
         <BackgroundCanvas />
       </Suspense>
