@@ -175,6 +175,27 @@ select {
   50%       { box-shadow: 0 0 20px var(--accent-glow), 0 0 40px var(--accent-glow); }
 }
 
+@keyframes surface-drift {
+  0% {
+    transform: translate3d(0, 0, 0);
+    background-position: 0 0;
+  }
+
+  50% {
+    transform: translate3d(-1.5%, -1.2%, 0);
+    background-position: 10px -14px;
+  }
+
+  100% {
+    transform: translate3d(0, 0, 0);
+    background-position: 0 0;
+  }
+}
+
+.animate-surface-drift {
+  animation: surface-drift 18s linear infinite;
+}
+
 @keyframes arrow-slide-down {
   0% { transform: translateY(0); opacity: 1; }
   49% { transform: translateY(100%); opacity: 0; }
