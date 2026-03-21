@@ -45,38 +45,57 @@ const siteUrl = getSiteUrl();
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: {
-    default: "Rishabh Shah — MS CS (Software & Systems) | Scalable systems & ML-enabled apps",
-    template: "%s — Rishabh Shah",
+  alternates: {
+    canonical: "/",
   },
-  description: "I build scalable backend systems and ML-enabled applications. MS CS (Software & Systems) at Rutgers University; B.Tech in AI & Data Science at Dwarkadas J. Sanghvi College of Engineering, University of Mumbai.",
+  applicationName: "Rishabh Shah Portfolio",
+  referrer: "origin-when-cross-origin",
+  category: "technology",
+  title: {
+    default: "Rishabh Shah | MS CS (Software and Systems) | Scalable Backend and ML Apps",
+    template: "%s | Rishabh Shah",
+  },
+  description:
+    "Software engineer and MS CS (Software and Systems) student at Rutgers University building scalable backend systems, distributed services, and ML-enabled applications.",
   keywords: [
     "Rishabh Shah",
+    "Rishabh Shah portfolio",
     "Software Engineer",
+    "Software Developer",
     "Backend Developer",
+    "Backend Engineer",
     "ML Engineer",
+    "Machine Learning Engineer",
+    "Full Stack Engineer",
     "Rutgers University",
+    "MS Computer Science",
     "Computer Science",
     "Full-stack Developer",
     "Python",
+    "TypeScript",
+    "JavaScript",
+    "React",
     "Next.js",
     "Django",
     "Machine Learning",
     "AI",
     "Systems Engineer",
     "Microservices",
+    "Distributed Systems",
     "Docker",
     "AWS",
   ],
   authors: [{ name: "Rishabh Shah" }],
   creator: "Rishabh Shah",
+  publisher: "Rishabh Shah",
   openGraph: {
     type: "website",
     locale: "en_US",
     url: siteUrl,
-    siteName: "Rishabh Shah — Portfolio",
-    title: "Rishabh Shah — MS CS (Software & Systems)",
-    description: "I build scalable backend systems and ML-enabled applications. MS CS (Software & Systems) at Rutgers University; B.Tech in AI & Data Science at Dwarkadas J. Sanghvi College of Engineering, University of Mumbai.",
+    siteName: "Rishabh Shah Portfolio",
+    title: "Rishabh Shah | MS CS (Software and Systems)",
+    description:
+      "Explore projects, experience, and publications by Rishabh Shah focused on scalable backend systems, cloud-native engineering, and ML-enabled products.",
     images: [
       {
         url: `${siteUrl}/og-image.png`,
@@ -88,8 +107,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Rishabh Shah — MS CS (Software & Systems)",
-    description: "I build scalable backend systems and ML-enabled applications.",
+    title: "Rishabh Shah | Software Engineer",
+    description:
+      "Scalable backend systems, cloud-native services, and ML-enabled applications.",
+    creator: "@RishiiShah",
     images: [`${siteUrl}/og-image.png`],
   },
   robots: {
@@ -103,6 +124,11 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
 };
 
 export default function RootLayout({
@@ -114,10 +140,23 @@ export default function RootLayout({
     "@context": "https://schema.org",
     "@type": "Person",
     name: "Rishabh Shah",
-    description: "Master's student in Computer Science (Software & Systems) at Rutgers University focused on scalable backend systems and ML-enabled applications",
+    description:
+      "Software engineer and MS CS student at Rutgers University focused on scalable backend systems and ML-enabled applications",
     url: siteUrl,
     email: "rishabh.shah033@djsce.edu.in",
+    image: `${siteUrl}/og-image.png`,
     jobTitle: "Graduate Student",
+    knowsAbout: [
+      "Backend Engineering",
+      "Distributed Systems",
+      "Machine Learning",
+      "Cloud Infrastructure",
+      "Microservices",
+      "Next.js",
+      "Django",
+      "Python",
+      "TypeScript",
+    ],
     sameAs: [
       "https://github.com/RishiiShah",
       "https://www.linkedin.com/in/rishabh-shah1/",
