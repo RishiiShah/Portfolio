@@ -5,12 +5,12 @@ export const bio = {
   title: "Software Engineer & ML Researcher",
   tagline: "Building at the intersection of engineering and intelligence.",
   description:
-    "CS student at Northeastern University. I build scalable backend systems, ML pipelines, and research-grade computer vision — and publish what I find.",
-  email: "shah.joy@northeastern.edu",
+    "CS student at Rutgers University. I build scalable backend systems, ML pipelines, and research-grade computer vision — and publish what I find.",
+  email: "rishabh.shah@djsce.edu.in",
   github: "https://github.com/RishiiShah",
   linkedin: "https://www.linkedin.com/in/rishabh-shah1/",
   resume: "/resume.pdf",
-  location: "Boston, MA",
+  location: "New Brunswick, NJ",
 } as const;
 
 // ─── Education ───────────────────────────────────────────────────────────────
@@ -18,13 +18,13 @@ export const bio = {
 export const education = [
   {
     degree: "M.S. Computer Science (Software and Systems)",
-    institution: "Northeastern University",
-    location: "Boston, MA",
+    institution: "Rutgers University",
+    location: "New Brunswick, NJ",
     start: "2025",
     end: "2027",
   },
   {
-    degree: "B.E. Computer Engineering",
+    degree: "B.Tech. Artificial Intelligence & Data Science",
     institution: "Dwarkadas J. Sanghvi College of Engineering",
     location: "Mumbai, India",
     start: "2021",
