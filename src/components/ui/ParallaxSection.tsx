@@ -16,9 +16,13 @@ interface ParallaxProps {
  */
 export function Parallax({ children, offset = 20, className = "" }: ParallaxProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLElement | null>(
+    typeof document !== "undefined" ? document.body : null
+  );
   const reduce = useReducedMotion();
 
   const { scrollYProgress } = useScroll({
+    container: containerRef,
     target: ref,
     offset: ["start end", "end start"],
   });

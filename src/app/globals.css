@@ -40,6 +40,7 @@
 
 html {
   scroll-behavior: smooth;
+  position: relative;
   /* Fluid root type: scales with viewport width so macOS "More Space" and
      ultra-wide displays stay readable. Range: 16px (mobile) to 22px (4K+). */
   font-size: clamp(16px, 0.35vw + 12.5px, 22px);

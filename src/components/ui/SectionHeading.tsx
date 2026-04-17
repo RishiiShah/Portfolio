@@ -19,7 +19,11 @@ export function SectionHeading({
   backgroundText,
 }: SectionHeadingProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLElement | null>(
+    typeof document !== "undefined" ? document.body : null
+  );
   const { scrollYProgress } = useScroll({
+    container: containerRef,
     target: ref,
     offset: ["start end", "end start"],
   });
