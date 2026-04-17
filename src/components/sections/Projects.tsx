@@ -136,7 +136,7 @@ export function Projects() {
         )}
       </div>
 
-      <ProjectModal project={active} onClose={close} />
+      <ProjectModal key={active?.slug ?? "none"} project={active} onClose={close} />
     </section>
   );
 }
