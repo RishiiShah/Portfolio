@@ -15,8 +15,8 @@ type FormErrors = { name: string; email: string; message: string };
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const MAP_MARKERS = [
-  { lat: 40.7128, lng: -74.006, size: 0.9, pulse: true, label: "NYC" },
-  { lat: 19.076, lng: 72.8777, size: 0.9, pulse: true, label: "MUMBAI" },
+  { lat: 40.7128, lng: -74.006, size: 1.2, pulse: true, label: "NYC" },
+  { lat: 19.076, lng: 72.8777, size: 1.2, pulse: true, label: "MUMBAI" },
 ];
 
 function validate(values: FormFields): FormErrors {
@@ -144,27 +144,30 @@ export function Contact() {
               </div>
             </div>
 
-            <div className="glass-panel overflow-hidden p-4 rounded-2xl">
+            <div className="glass-panel overflow-hidden p-4 md:p-5 rounded-2xl">
               <DottedMap
                 markers={MAP_MARKERS}
                 dotColor="rgba(238,242,252,0.34)"
                 markerColor="#e6b980"
-                dotRadius={0.32}
+                dotRadius={0.34}
                 pulse
                 mapSamples={6400}
-                className="h-56 md:h-64"
+                className="h-72 md:h-80"
                 renderMarkerOverlay={({ marker, x, y }) => {
                   const isNYC = marker.label === "NYC";
-                  const offset = 1.6;
+                  const offset = 2.1;
                   return (
                     <g pointerEvents="none">
                       <text
                         x={isNYC ? x + offset : x - offset}
-                        y={y + 0.6}
-                        fontSize={2.1}
+                        y={y + 0.8}
+                        fontSize={2.8}
                         fontFamily="var(--font-mono)"
-                        fontWeight="700"
+                        fontWeight="800"
                         fill="#e6b980"
+                        stroke="rgba(7,9,15,0.65)"
+                        strokeWidth={0.24}
+                        paintOrder="stroke"
                         textAnchor={isNYC ? "start" : "end"}
                         style={{ letterSpacing: "0.1em" }}
                       >

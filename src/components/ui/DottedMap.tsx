@@ -22,6 +22,7 @@ export interface DottedMapProps<M extends Marker = Marker>
   extends React.SVGProps<SVGSVGElement> {
   width?: number;
   height?: number;
+  zoom?: number;
   mapSamples?: number;
   markers?: M[];
   dotColor?: string;
@@ -41,6 +42,7 @@ export interface DottedMapProps<M extends Marker = Marker>
 export function DottedMap<M extends Marker = Marker>({
   width = 150,
   height = 75,
+  zoom = 1,
   mapSamples = 5000,
   markers = [],
   dotColor = "currentColor",
@@ -53,6 +55,12 @@ export function DottedMap<M extends Marker = Marker>({
   style,
   ...svgProps
 }: DottedMapProps<M>) {
+  const safeZoom = Math.max(1, zoom);
+  const viewWidth = width / safeZoom;
+  const viewHeight = height / safeZoom;
+  const viewX = (width - viewWidth) / 2;
+  const viewY = (height - viewHeight) / 2;
+
   const { points, addMarkers } = React.useMemo(
     () => createMap({ width, height, mapSamples }),
     [width, height, mapSamples]
@@ -86,7 +94,7 @@ export function DottedMap<M extends Marker = Marker>({
 
   return (
     <svg
-      viewBox={`0 0 ${width} ${height}`}
+      viewBox={`${viewX} ${viewY} ${viewWidth} ${viewHeight}`}
       className={cn("text-zinc-700", className)}
       style={{ width: "100%", height: "100%", ...style }}
       {...svgProps}
