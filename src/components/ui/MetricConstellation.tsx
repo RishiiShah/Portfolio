@@ -9,6 +9,31 @@ interface MetricConstellationProps {
   size?: number;
 }
 
+function estimateMonoLabelWidth(label: string): number {
+  // Deterministic server/client width estimate for 10px mono labels.
+  // Includes a 0.08em letter spacing used by the label style.
+  const LETTER_SPACING = 0.8;
+  let width = 0;
+
+  for (const char of label.toUpperCase()) {
+    if (char === " ") {
+      width += 3.6;
+      continue;
+    }
+    if (char === "-") {
+      width += 4.2;
+      continue;
+    }
+    if (char === ".") {
+      width += 2.8;
+      continue;
+    }
+    width += 6;
+  }
+
+  return width + Math.max(0, label.length - 1) * LETTER_SPACING;
+}
+
 /**
  * Renders a radial "constellation" of project metrics: each metric is plotted
  * on a polar axis with value-driven radius and a connecting polygon.
@@ -16,9 +41,11 @@ interface MetricConstellationProps {
  */
 export function MetricConstellation({ metrics, size = 340 }: MetricConstellationProps) {
   const slice = metrics.slice(0, 6);
+  const framePadding = Math.round(size * 0.16);
   const cx = size / 2;
   const cy = size / 2;
-  const maxR = size * 0.36;
+  const maxR = size * 0.4;
+  const labelR = maxR + size * 0.04;
 
   // Normalize values to radius. Heuristic: extract first number from value string.
   const parsed = useMemo(
@@ -41,12 +68,12 @@ export function MetricConstellation({ metrics, size = 340 }: MetricConstellation
           r,
           x: cx + Math.cos(angle) * r,
           y: cy + Math.sin(angle) * r,
-          labelX: cx + Math.cos(angle) * (maxR + 30),
-          labelY: cy + Math.sin(angle) * (maxR + 30),
+          labelX: cx + Math.cos(angle) * labelR,
+          labelY: cy + Math.sin(angle) * labelR,
           normalized,
         };
       }),
-    [slice, cx, cy, maxR]
+    [slice, cx, cy, maxR, labelR]
   );
 
   const polygon = parsed.map((p) => `${p.x},${p.y}`).join(" ");
@@ -56,8 +83,8 @@ export function MetricConstellation({ metrics, size = 340 }: MetricConstellation
 
   return (
     <svg
-      viewBox={`0 0 ${size} ${size}`}
-      className="w-full h-auto"
+      viewBox={`${-framePadding} ${-framePadding} ${size + framePadding * 2} ${size + framePadding * 2}`}
+      className="h-auto w-full overflow-visible"
       role="img"
       aria-label="Project metric constellation"
     >
@@ -101,50 +128,63 @@ export function MetricConstellation({ metrics, size = 340 }: MetricConstellation
       />
 
       {/* Dots + labels */}
-      {parsed.map((p, i) => (
-        <m.g
-          key={`pt-${i}`}
-          initial={{ opacity: 0, scale: 0 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.4, delay: 0.6 + i * 0.08 }}
-        >
-          <circle
-            cx={p.x}
-            cy={p.y}
-            r="4"
-            fill="var(--accent-warm)"
-            stroke="var(--bg-elev-1)"
-            strokeWidth="2"
-          />
-          <circle cx={p.x} cy={p.y} r="9" fill="rgba(230,185,128,0.18)" />
-          {/* Label */}
-          <text
-            x={p.labelX}
-            y={p.labelY}
-            fontSize="10"
-            fontFamily="var(--font-mono)"
-            fill="var(--ink-mute)"
-            textAnchor="middle"
-            dominantBaseline="middle"
-            style={{ textTransform: "uppercase", letterSpacing: "0.08em" }}
+      {parsed.map((p, i) => {
+        const cos = Math.cos(p.angle);
+        const sin = Math.sin(p.angle);
+        const anchor = cos > 0.32 ? "start" : cos < -0.32 ? "end" : "middle";
+        const dx = cos > 0.32 ? 7 : cos < -0.32 ? -7 : 0;
+        const labelYOffset = sin > 0.4 ? 2 : sin < -0.4 ? -2 : 0;
+        const isTopOrBottom = Math.abs(cos) < 0.18;
+        const labelHalfWidth = estimateMonoLabelWidth(p.label) / 2;
+        const valueDx = isTopOrBottom ? labelHalfWidth + 8 : 0;
+        const valueY = isTopOrBottom
+          ? p.labelY + labelYOffset
+          : p.labelY + 14 + labelYOffset;
+        const valueAnchor = isTopOrBottom ? "start" : anchor;
+        return (
+          <m.g
+            key={`pt-${i}`}
+            initial={{ opacity: 0, scale: 0 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.4, delay: 0.6 + i * 0.08 }}
           >
-            {p.label}
-          </text>
-          <text
-            x={p.labelX}
-            y={p.labelY + 14}
-            fontSize="12"
-            fontFamily="var(--font-sans)"
-            fill="var(--ink)"
-            fontWeight="600"
-            textAnchor="middle"
-            dominantBaseline="middle"
-          >
-            {p.value}
-          </text>
-        </m.g>
-      ))}
+            <circle
+              cx={p.x}
+              cy={p.y}
+              r="4"
+              fill="var(--accent-warm)"
+              stroke="var(--bg-elev-1)"
+              strokeWidth="2"
+            />
+            <circle cx={p.x} cy={p.y} r="9" fill="rgba(230,185,128,0.18)" />
+            <text
+              x={p.labelX + dx}
+              y={p.labelY + labelYOffset}
+              fontSize="10"
+              fontFamily="var(--font-mono)"
+              fill="var(--ink-mute)"
+              textAnchor={anchor}
+              dominantBaseline="middle"
+              style={{ textTransform: "uppercase", letterSpacing: "0.08em" }}
+            >
+              {p.label}
+            </text>
+            <text
+              x={p.labelX + dx + valueDx}
+              y={valueY}
+              fontSize="12"
+              fontFamily="var(--font-sans)"
+              fill="var(--ink)"
+              fontWeight="600"
+              textAnchor={valueAnchor}
+              dominantBaseline="middle"
+            >
+              {p.value}
+            </text>
+          </m.g>
+        );
+      })}
 
       {/* Center crosshair */}
       <circle cx={cx} cy={cy} r="2" fill="var(--accent)" />

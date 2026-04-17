@@ -118,11 +118,20 @@ export function HeroShader({ className = "" }: { className?: string }) {
     const wrap = wrapRef.current;
     if (!wrap) return;
 
-    // reduced-motion: skip shader entirely
-    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reduce) {
+    const setStaticBackdrop = () => {
       wrap.style.background =
         "radial-gradient(ellipse at 30% 30%, rgba(122,162,255,0.18), transparent 60%), radial-gradient(ellipse at 70% 70%, rgba(230,185,128,0.12), transparent 60%), #07090F";
+    };
+
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+    const smallScreen = window.matchMedia("(max-width: 1024px)").matches;
+    const webglAvailable =
+      typeof window.WebGLRenderingContext !== "undefined" ||
+      typeof window.WebGL2RenderingContext !== "undefined";
+
+    if (reduce || coarsePointer || smallScreen || !webglAvailable) {
+      setStaticBackdrop();
       return;
     }
 
@@ -141,10 +150,8 @@ export function HeroShader({ className = "" }: { className?: string }) {
         alpha: false,
       });
     } catch {
-      // WebGL unsupported: fallback to static gradient
       canvas.remove();
-      wrap.style.background =
-        "radial-gradient(ellipse at 30% 30%, rgba(122,162,255,0.18), transparent 60%), radial-gradient(ellipse at 70% 70%, rgba(230,185,128,0.12), transparent 60%), #07090F";
+      setStaticBackdrop();
       return;
     }
 
@@ -152,19 +159,27 @@ export function HeroShader({ className = "" }: { className?: string }) {
     gl.clearColor(7 / 255, 9 / 255, 15 / 255, 1);
 
     const geometry = new Triangle(gl);
-    const program = new Program(gl, {
-      vertex,
-      fragment,
-      uniforms: {
-        uTime: { value: 0 },
-        uResolution: { value: [wrap.clientWidth, wrap.clientHeight] },
-        uMouse: { value: [0.5, 0.5] },
-        uAccent: { value: [0.478, 0.635, 1.0] }, // #7AA2FF
-        uWarm: { value: [0.902, 0.725, 0.502] }, // #E6B980
-        uBg: { value: [0.027, 0.035, 0.059] }, // #07090F
-      },
-    });
-    const mesh = new Mesh(gl, { geometry, program });
+    let program: Program;
+    let mesh: Mesh;
+    try {
+      program = new Program(gl, {
+        vertex,
+        fragment,
+        uniforms: {
+          uTime: { value: 0 },
+          uResolution: { value: [wrap.clientWidth, wrap.clientHeight] },
+          uMouse: { value: [0.5, 0.5] },
+          uAccent: { value: [0.478, 0.635, 1.0] },
+          uWarm: { value: [0.902, 0.725, 0.502] },
+          uBg: { value: [0.027, 0.035, 0.059] },
+        },
+      });
+      mesh = new Mesh(gl, { geometry, program });
+    } catch {
+      canvas.remove();
+      setStaticBackdrop();
+      return;
+    }
 
     function resize() {
       const w = wrap!.clientWidth;
@@ -189,14 +204,29 @@ export function HeroShader({ className = "" }: { className?: string }) {
     let isVisible = true;
 
     // Pause rAF when Hero out of viewport
-    const io = new IntersectionObserver(
-      (entries) => {
-        isVisible = entries[0]?.isIntersecting ?? true;
-        if (isVisible && !raf) start();
-      },
-      { threshold: 0 }
-    );
-    io.observe(wrap);
+    const hasIntersectionObserver =
+      typeof window.IntersectionObserver !== "undefined";
+    const io = hasIntersectionObserver
+      ? new IntersectionObserver(
+          (entries) => {
+            isVisible = entries[0]?.isIntersecting ?? true;
+            if (isVisible && !raf) start();
+          },
+          { threshold: 0 }
+        )
+      : null;
+    io?.observe(wrap);
+
+    let cleaned = false;
+    const cleanup = () => {
+      if (cleaned) return;
+      cleaned = true;
+      cancelAnimationFrame(raf);
+      window.removeEventListener("resize", resize);
+      window.removeEventListener("mousemove", onMove);
+      io?.disconnect();
+      canvas.remove();
+    };
 
     function loop(t: number) {
       // Lerp mouse
@@ -204,7 +234,14 @@ export function HeroShader({ className = "" }: { className?: string }) {
       currentMouse.y += (targetMouse.y - currentMouse.y) * 0.06;
       program.uniforms.uMouse.value = [currentMouse.x, currentMouse.y];
       program.uniforms.uTime.value = t * 0.001;
-      renderer.render({ scene: mesh });
+      try {
+        renderer.render({ scene: mesh });
+      } catch {
+        raf = 0;
+        cleanup();
+        setStaticBackdrop();
+        return;
+      }
       if (isVisible) raf = requestAnimationFrame(loop);
       else raf = 0;
     }
@@ -215,11 +252,7 @@ export function HeroShader({ className = "" }: { className?: string }) {
     start();
 
     return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("resize", resize);
-      window.removeEventListener("mousemove", onMove);
-      io.disconnect();
-      canvas.remove();
+      cleanup();
     };
   }, []);
 

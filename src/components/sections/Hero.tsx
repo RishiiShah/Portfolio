@@ -23,7 +23,7 @@ export function Hero() {
   return (
     <section
       id="top"
-      className="relative min-h-screen flex items-center overflow-hidden"
+      className="relative flex min-h-screen min-h-[100svh] items-start md:items-center"
     >
       {/* WebGL shader background */}
       <HeroShader className="z-0" />
@@ -38,8 +38,8 @@ export function Hero() {
         }}
       />
 
-      <div className="relative z-[2] mx-auto max-w-6xl px-6 w-full py-24 md:py-28">
-        <div className="flex flex-col-reverse md:flex-row items-center justify-between gap-12 lg:gap-16">
+      <div className="relative z-[2] mx-auto w-full max-w-6xl px-5 py-20 sm:px-6 sm:py-24 md:py-28">
+        <div className="flex flex-col-reverse items-center justify-between gap-10 md:flex-row lg:gap-16">
           {/* Left: content */}
           <div className="flex-1 max-w-2xl">
             {/* Status pill */}
