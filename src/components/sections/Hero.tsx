@@ -38,13 +38,13 @@ export function Hero() {
         }}
       />
 
-      <div className="relative z-[2] mx-auto w-full max-w-6xl px-5 py-20 sm:px-6 sm:py-24 md:py-28">
+      <div className="relative z-[2] mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24 md:py-28">
         <div className="flex flex-col-reverse items-center justify-between gap-10 md:flex-row lg:gap-16">
           {/* Left: content */}
-          <div className="flex-1 max-w-2xl">
+          <div className="w-full max-w-2xl flex-1">
             {/* Status pill */}
             <m.div {...fadeUp(0, 0.35)}>
-              <span className="inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.18em] px-3 py-1.5 rounded-full glass-panel text-[var(--ink-dim)]">
+              <span className="inline-flex max-w-full flex-wrap items-center gap-x-2 gap-y-1 rounded-full px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ink-dim)] glass-panel">
                 <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-signal)] animate-pulse" />
                 Open to roles · Spring 2026 · {bio.location}
               </span>
@@ -102,7 +102,7 @@ export function Hero() {
             {/* Title subtitle */}
             <m.p
               {...fadeUp(0.55)}
-              className="text-lg md:text-xl text-[var(--ink-dim)] leading-relaxed max-w-xl"
+              className="max-w-xl text-base leading-relaxed text-[var(--ink-dim)] sm:text-lg md:text-xl"
             >
               <span className="text-[var(--ink)]">{bio.title}</span>
               {". I build scalable "}
@@ -116,7 +116,7 @@ export function Hero() {
             {latest && (
               <m.div
                 {...fadeUp(0.65)}
-                className="mt-6 flex items-center gap-2.5 text-sm text-[var(--ink-mute)]"
+                className="mt-6 flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-sm text-[var(--ink-mute)]"
               >
                 <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--accent-signal)]">
                   Now building

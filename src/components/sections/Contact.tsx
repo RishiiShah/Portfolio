@@ -133,7 +133,7 @@ export function Contact() {
             <div className="space-y-3">
               <a
                 href={`mailto:${bio.email}`}
-                className="flex items-center gap-3 text-sm text-[var(--ink-dim)] hover:text-[var(--ink)] transition-colors"
+                className="flex items-center gap-3 break-words [overflow-wrap:anywhere] text-sm text-[var(--ink-dim)] transition-colors hover:text-[var(--ink)]"
               >
                 <Mail size={13} className="text-[var(--accent)] shrink-0" />
                 {bio.email}

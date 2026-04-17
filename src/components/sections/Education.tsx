@@ -33,14 +33,14 @@ export function Education() {
               transition={{ duration: 0.5, delay: i * 0.1 }}
               className="glass-panel-interactive rounded-2xl p-7 flex flex-col"
             >
-              <div className="flex items-start justify-between gap-3 mb-4">
+              <div className="mb-4 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
                 <h3
                   className="font-serif text-[var(--ink)] leading-[1.15]"
                   style={{ fontSize: "clamp(1.25rem, 2vw, 1.5rem)" }}
                 >
                   {edu.institution}
                 </h3>
-                <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--accent)] shrink-0 mt-2">
+                <span className="mt-1 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--accent)] sm:mt-2 sm:shrink-0">
                   <time dateTime={toIsoDate(edu.start)}>{edu.start}</time>
                   {" – "}
                   <time dateTime={toIsoDate(edu.end)}>{edu.end}</time>

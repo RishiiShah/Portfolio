@@ -35,7 +35,7 @@ export function SectionHeading({
         <m.div
           aria-hidden
           style={{ x }}
-          className="absolute -top-12 -left-4 md:-left-6 font-serif font-normal pointer-events-none select-none z-0 leading-none"
+          className="pointer-events-none absolute -top-12 -left-1 select-none font-serif font-normal leading-none md:-left-6"
         >
           <span
             className="block"

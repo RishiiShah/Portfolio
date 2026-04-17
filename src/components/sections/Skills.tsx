@@ -117,10 +117,10 @@ export function Skills() {
                   }}
                 />
 
-                <div className="relative flex items-center gap-4 md:gap-6 py-5 md:py-6">
+                <div className="relative flex flex-col items-stretch gap-4 py-5 md:flex-row md:items-center md:gap-6 md:py-6">
                   {/* Category label rail */}
                   <div
-                    className="shrink-0 pl-5 md:pl-6 pr-3 md:pr-4 min-w-[140px] md:min-w-[180px]"
+                    className="w-full shrink-0 px-5 md:w-auto md:min-w-[180px] md:pl-6 md:pr-4"
                   >
                     <div className="flex items-center gap-2 mb-1">
                       <span
@@ -160,7 +160,7 @@ export function Skills() {
                   <Marquee
                     direction={meta?.direction ?? "left"}
                     duration={meta?.duration ?? 40}
-                    className="flex-1 min-w-0"
+                    className="w-full md:min-w-0 md:flex-1"
                     gap={12}
                   >
                     {loopItems.map((item, loopIndex) => (
