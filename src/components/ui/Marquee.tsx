@@ -42,7 +42,7 @@ export function Marquee({
       <style>{`
         @keyframes ${animName} {
           0% { transform: translateX(0); }
-          100% { transform: translateX(${direction === "left" ? "-50%" : "50%"}); }
+          100% { transform: translateX(-50%); }
         }
       `}</style>
       <div
@@ -50,9 +50,9 @@ export function Marquee({
         style={{
           gap: `${gap}px`,
           animation: `${animName} ${duration}s linear infinite`,
+          animationDirection: direction === "right" ? "reverse" : "normal",
           animationPlayState: "running",
           willChange: "transform",
-          ...(direction === "right" ? { transform: "translateX(-50%)" } : {}),
         }}
         {...(pauseOnHover
           ? {
