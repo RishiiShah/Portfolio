@@ -1,5 +1,6 @@
 "use client";
 
+import { createElement } from "react";
 import { getTechIcon, getBrandColor } from "./techRegistry";
 
 interface TechChipProps {
@@ -43,7 +44,7 @@ export function TechChip({
         } as React.CSSProperties
       }
     >
-      <Icon size={ICON_SIZE[size]} color="currentColor" />
+      {createElement(Icon, { size: ICON_SIZE[size], color: "currentColor" })}
       <span>{name}</span>
       {interactive && (
         <span

@@ -53,11 +53,11 @@ export function DottedMap<M extends Marker = Marker>({
   style,
   ...svgProps
 }: DottedMapProps<M>) {
-  const { points, addMarkers } = createMap({ width, height, mapSamples });
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const processedMarkers = addMarkers(markers as any) as MapMarker<M>[];
-
-  const { xStep, yToRowIndex } = React.useMemo(() => {
+  const { points, addMarkers } = React.useMemo(
+    () => createMap({ width, height, mapSamples }),
+    [width, height, mapSamples]
+  );
+  const { xStep, yToRowIndex } = (() => {
     const sorted = [...points].sort((a, b) => a.y - b.y || a.x - b.x);
     const rowMap = new Map<number, number>();
     let step = 0;
@@ -78,7 +78,11 @@ export function DottedMap<M extends Marker = Marker>({
     }
 
     return { xStep: step || 1, yToRowIndex: rowMap };
-  }, [points]);
+  })();
+  const processedMarkers = React.useMemo(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return addMarkers(markers as any) as MapMarker<M>[];
+  }, [addMarkers, markers]);
 
   return (
     <svg

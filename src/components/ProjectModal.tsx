@@ -55,10 +55,6 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
     if (project) {
       document.body.style.overflow = "hidden";
       closeBtnRef.current?.focus();
-      // Reset tab to first available
-      if (project.architectureNotes?.length) setTab("architecture");
-      else if (project.challenges?.length) setTab("challenges");
-      else if (project.lessons?.length) setTab("lessons");
     } else {
       document.body.style.overflow = "";
     }
@@ -87,6 +83,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
     challenges: project.challenges as string[] | undefined,
     lessons: project.lessons as string[] | undefined,
   };
+  const activeTab = availableTabs.includes(tab) ? tab : availableTabs[0];
 
   const metrics = project.metrics ?? [];
 
@@ -246,7 +243,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                             className="flex flex-wrap gap-1 mb-4 border-b border-[var(--line)]"
                           >
                             {availableTabs.map((id) => {
-                              const active = tab === id;
+                              const active = activeTab === id;
                               return (
                                 <button
                                   key={id}
@@ -282,21 +279,21 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
 
                           <AnimatePresence mode="wait">
                             <m.ul
-                              key={tab}
+                              key={activeTab}
                               initial={{ opacity: 0, y: 6 }}
                               animate={{ opacity: 1, y: 0 }}
                               exit={{ opacity: 0, y: -4 }}
                               transition={{ duration: 0.22 }}
                               className="space-y-2.5"
                             >
-                              {(tabContent[tab] ?? []).map((item, i) => (
+                              {(tabContent[activeTab] ?? []).map((item, i) => (
                                 <li
                                   key={i}
                                   className="flex gap-2.5 text-sm text-[var(--ink-dim)] leading-relaxed"
                                 >
                                   <span
                                     className="shrink-0 mt-[3px] font-mono text-[10px]"
-                                    style={{ color: TAB_COLORS[tab] }}
+                                    style={{ color: TAB_COLORS[activeTab] }}
                                   >
                                     ›
                                   </span>

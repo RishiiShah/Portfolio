@@ -1,5 +1,6 @@
 "use client";
 
+import { createElement } from "react";
 import { m } from "framer-motion";
 import { skills } from "@/data";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -54,7 +55,7 @@ function SkillTile({ name }: { name: string }) {
         } as React.CSSProperties
       }
     >
-      <Icon size={18} color="currentColor" />
+      {createElement(Icon, { size: 18, color: "currentColor" })}
       <span className="group-hover/tile:text-[var(--ink)] transition-colors">
         {name}
       </span>
