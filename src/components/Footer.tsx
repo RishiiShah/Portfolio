@@ -3,11 +3,11 @@ import { bio } from "@/data";
 export function Footer() {
   return (
     <footer className="border-t border-[var(--line)] py-10">
-      <div className="mx-auto max-w-6xl px-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-[var(--ink-mute)]">
+      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-4 text-xs text-[var(--ink-mute)] sm:flex-row sm:px-6">
         <p className="font-mono">
           rishabh<span className="text-[var(--accent-warm)]">.</span>
         </p>
-        <p className="text-center">
+        <p className="text-center leading-relaxed">
           © {new Date().getFullYear()} {bio.name}
           <span className="mx-2 text-[var(--line-strong)]">·</span>
           Next.js 16
