@@ -5,8 +5,8 @@ export const bio = {
   title: "Software Engineer & ML Researcher",
   tagline: "Building at the intersection of engineering and intelligence.",
   description:
-    "CS student at Rutgers University. I build scalable backend systems, ML pipelines, and research-grade computer vision — and publish what I find.",
-  email: "rishabh.shah@djsce.edu.in",
+    "CS student at Rutgers University. I build scalable backend systems, ML pipelines, and research-grade computer vision, and publish what I find.",
+  email: "rishabh.shah033@djsce.edu.in",
   github: "https://github.com/RishiiShah",
   linkedin: "https://www.linkedin.com/in/rishabh-shah1/",
   resume: "/resume.pdf",
@@ -47,7 +47,6 @@ export const skills = [
       "Next.js",
       "Node.js",
       "React",
-      "FastAPI",
       "Docker",
       "Git",
       "GitHub Actions",
@@ -143,6 +142,7 @@ export interface Project {
   impact?: string;
   links?: ProjectLink[];
   featured?: boolean;
+  latest?: boolean;
   metrics?: ProjectMetric[];
   problem?: string;
   role?: string;
@@ -152,6 +152,42 @@ export interface Project {
 }
 
 export const projects: Project[] = [
+  {
+    slug: "snap-interview",
+    title: "Snap Interview",
+    tagline:
+      "AI-powered mock interview platform with real-time LLM evaluation, speech-to-text transcription, and per-skill performance breakdowns.",
+    tech: ["Next.js", "TypeScript", "Python", "OpenAI API", "PostgreSQL", "Redis", "Docker"],
+    tags: ["Full-stack", "AI/ML"],
+    latest: true,
+    impact:
+      "End-to-end interview simulation platform supporting behavioral, technical, and system design rounds with structured AI-generated feedback and session analytics.",
+    links: [{ type: "source", url: "https://github.com/RishiiShah/snap-interview" }],
+    featured: false,
+    metrics: [
+      { label: "Feedback Latency", value: "<2s" },
+      { label: "Interview Modes", value: "3" },
+      { label: "Question Types", value: "15+" },
+    ],
+    problem:
+      "Early-career engineers practicing for interviews get either generic AI feedback or nothing at all. Existing tools grade correctness but miss communication, structure, and per-skill signal.",
+    role: "Full-stack build: Next.js App Router UI with streaming feedback, Python evaluation service, OpenAI structured outputs for scoring, PostgreSQL for session history, Redis for live context, and Docker for deployment.",
+    architectureNotes: [
+      "Next.js App Router with React Server Components streams feedback as it arrives, holding feedback latency under 2s.",
+      "LLM evaluation uses OpenAI structured outputs (JSON schema) to enforce a per-skill rubric: clarity, depth, correctness. Scoring is deterministic and re-analyzable.",
+      "PostgreSQL stores sessions and rubrics; Redis holds live interview context so feedback stays fast across long sessions.",
+    ],
+    challenges: [
+      "Hitting sub-2s feedback latency required chunked streaming plus pre-computed rubrics instead of ad-hoc prompt chains per question.",
+      "Open-ended answers drift between sessions; calibration with few-shot examples and low temperature was essential for consistency.",
+      "Three interview modes mean three prompt chains and three rubric schemas, each tuned for behavioral, technical, and system-design intents.",
+    ],
+    lessons: [
+      "Structured JSON outputs from LLMs are dramatically more reliable than parsing free-text prose. Never parse prose when you can enforce a schema.",
+      "Users value per-skill breakdowns more than a single overall score. That was the biggest retention lever in user testing.",
+      "Store transcripts, rubrics, and scores separately so you can re-score with a newer model later without destroying history.",
+    ],
+  },
   {
     slug: "traffic-violation-detection",
     title: "Traffic Violation Detection & Automated Ticketing",
@@ -173,7 +209,7 @@ export const projects: Project[] = [
     links: [
       {
         type: "source",
-        url: "https://github.com/RishiiShah/Traffic-Violation-Detection-Automated-Ticketing-System",
+        url: "https://github.com/RishiiShah/Traffic",
       },
       { type: "paper", url: "https://ieeexplore.ieee.org/document/11371065/" },
     ],
@@ -200,7 +236,7 @@ export const projects: Project[] = [
       "Forensic-grade metadata capture (timestamps, geolocation, image integrity) for legal scrutiny.",
     ],
     lessons: [
-      "ANPR must validate through multiple stages — OCR, regex, and structural checks — because raw model predictions frequently contain errors.",
+      "ANPR must validate through multiple stages (OCR, regex, and structural checks) because raw model predictions frequently contain errors.",
       "Evidence collection and notification are as important as detection accuracy; a perfect detector creates no value if frames are lost or SMS delivery is unreliable.",
       "Preprocessing (lighting normalization, motion blur handling) dramatically improves real-world robustness.",
     ],
@@ -217,10 +253,28 @@ export const projects: Project[] = [
     links: [{ type: "paper", url: "https://www.scrivener.com/published/" }],
     featured: false,
     metrics: [
-      { label: "Accuracy Gain", value: "97.93% → 98.83%" },
+      { label: "Accuracy Gain", value: "97.93% to 98.83%" },
       { label: "Pearson Correlation", value: ">0.80" },
       { label: "R-squared", value: ">0.63" },
       { label: "Training Epochs", value: "3000" },
+    ],
+    problem:
+      "Financial time-series datasets are scarce, noisy, and often proprietary. Training robust forecasters on limited historical data produces overfit models that miss regime changes and rare events.",
+    role: "Designed and implemented the full pipeline: WGAN-GP architecture, 3000-epoch training, synthetic-data filtering, and downstream evaluation across three classifiers (LSTM, GRU, TCN). Co-authored the paper.",
+    architectureNotes: [
+      "Wasserstein GAN with gradient penalty, not vanilla GAN. WGAN-GP stabilizes training on high-variance time-series data where vanilla GANs collapse.",
+      "Generator is a stacked LSTM that emits 1D sequences; discriminator is a 1D convolutional critic. Latent dimensionality and gradient-penalty coefficient were swept via hyperparameter search.",
+      "Evaluation downstream on LSTM, GRU, and TCN classifiers with and without synthetic augmentation. Synthetic sequences are filtered by Pearson correlation and R-squared before being mixed into training sets.",
+    ],
+    challenges: [
+      "Vanilla GAN training collapses on long financial time series. Wasserstein loss with gradient penalty was required for stable training over 3000 epochs.",
+      "Validating synthetic quality needs multiple statistical measures. Visual plausibility alone is not sufficient; Pearson and R-squared on rolling windows were the real signal.",
+      "Avoiding data leakage. Synthetic sequences generated from training windows must not overlap statistically with held-out test windows.",
+    ],
+    lessons: [
+      "Synthetic data augmentation is real and measurable: downstream accuracy moved from 97.93% to 98.83% with no change to the classifier architecture.",
+      "GANs are temperamental. Gradient clipping, careful batch sizing, and Wasserstein loss made training 5x more stable than the defaults.",
+      "Rolling-window Pearson and R-squared are better quality signals for synthetic time series than any single-frame similarity measure.",
     ],
   },
   {
@@ -241,7 +295,7 @@ export const projects: Project[] = [
     impact:
       "End-to-end voice-controlled home automation achieving sub-300ms latency with secure cloud-edge synchronization and multi-module intent routing.",
     links: [
-      { type: "source", url: "https://github.com/RishiiShah/Jarvis-Voice-Assistant" },
+      { type: "source", url: "https://github.com/RishiiShah/Jarvis" },
       {
         type: "paper",
         url: "https://www.researchgate.net/profile/Vijay-Shelake/publication/393335295_Next-Gen_Predictive_Maintenancepage310_320/links/686616a5e4632b045dc9754a/Next-Gen-Predictive-Maintenancepage310-320.pdf#page=141",
@@ -253,6 +307,24 @@ export const projects: Project[] = [
       { label: "LLM", value: "Llama 3.1 8B" },
       { label: "IoT Platform", value: "Azure IoT Hub" },
       { label: "Modules", value: "4" },
+    ],
+    problem:
+      "Commercial smart-home assistants are cloud-locked, laggy on edge devices, and opaque about audio handling. The goal was an open, local-first voice assistant with sub-300ms response times and transparent data flow.",
+    role: "End-to-end build: Django backend, Groq API integration for LLM inference, Raspberry Pi edge device, Azure IoT Hub for device messaging, intent router, and speech pipeline.",
+    architectureNotes: [
+      "Django REST backend orchestrates intent classification, LLM calls, and device commands. Groq hosts Llama 3.1 8B to hit the sub-300ms latency budget.",
+      "Raspberry Pi 3B+ runs a wake-word plus speech recognizer on-device; detected intents are POSTed to Django, which fans out commands via Azure IoT Hub to target devices.",
+      "A rule-based fast path sits in front of the LLM. Common commands (lights, music, timers) never pay LLM latency cost; only ambiguous intents hit the model.",
+    ],
+    challenges: [
+      "The Pi's CPU makes full local speech recognition slow. A hybrid design, wake-word on-device plus cloud inference for complex intents, was the right trade.",
+      "Azure IoT Hub introduces MQTT-level retries and backoff. The backend had to be idempotent on device commands to prevent double-actions after retries.",
+      "LLM inference latency fluctuates with provider load. The rule-based fast path for common commands cut median response time by roughly 40%.",
+    ],
+    lessons: [
+      "Edge-plus-cloud hybrids win. Keep wake-word and simple intents local; send anything ambiguous to the cloud. Both ends play to their strengths.",
+      "Idempotency matters as much at the device edge as in backend APIs. Voice commands without idempotency become frustrating in unreliable networks.",
+      "Latency budgets, not accuracy, are the right framing for voice UX. Anything over 300ms feels unresponsive even when it is correct.",
     ],
   },
   {
@@ -276,13 +348,31 @@ export const projects: Project[] = [
     tags: ["MLOps"],
     impact:
       "Production-grade audio genre classifier achieving 98.73% accuracy while reducing model size by 15% and improving inference speed by 22%.",
-    links: [{ type: "source", url: "https://github.com/RishiiShah/Music-Genre-Detection" }],
+    links: [{ type: "source", url: "https://github.com/RishiiShah/Music" }],
     featured: false,
     metrics: [
       { label: "Accuracy", value: "98.73%" },
-      { label: "Model Size", value: "−15%" },
+      { label: "Model Size", value: "-15%" },
       { label: "Inference Speed", value: "+22%" },
       { label: "Genres", value: "10" },
+    ],
+    problem:
+      "Music genre classification needs fast inference for streaming apps, but most published research models are too large to deploy cheaply. The goal was a high-accuracy Bi-LSTM that could run in near-real-time on commodity hardware.",
+    role: "Built the full pipeline: feature extraction (MFCC plus spectral features via Librosa), Bi-LSTM architecture in TensorFlow, training loop, post-training quantization, and a Streamlit demo app.",
+    architectureNotes: [
+      "Librosa extracts MFCC coefficients plus spectral centroid and rolloff. Features are normalized and fed into a 2-layer Bi-LSTM with dropout between layers.",
+      "Post-training quantization shrinks the model by 15% and speeds inference by 22% at negligible accuracy cost. Deploy-time is materially better.",
+      "Streamlit demo app uploads audio, extracts features on the fly, runs inference, and shows per-genre probability plus a confidence spark chart.",
+    ],
+    challenges: [
+      "Audio lengths vary widely across the dataset. Fixed-window feature extraction drops information, but variable-length sequences were too slow for real-time use.",
+      "Overlapping genres (pop versus rock, reggae versus ska) share spectral signatures. Rebalanced sampling and confusion-matrix-driven class reweighting were needed to classify reliably.",
+      "Streamlit with a large Keras model has ugly cold-start UX. Post-training quantization plus lazy loading fixed it.",
+    ],
+    lessons: [
+      "MFCC plus handcrafted spectral features beat raw spectrograms for this task and trained in a fraction of the time.",
+      "Post-training quantization is almost free accuracy-wise and materially improves deployment UX. It should be the default, not an optimization.",
+      "Data balance matters more than model capacity for overlapping-class classification. Spend time on sampling before spending it on architecture.",
     ],
   },
   {
