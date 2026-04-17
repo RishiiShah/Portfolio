@@ -1,100 +1,165 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { AmbientBeams } from "@/components/ui/AmbientBeams";
+import { Grain } from "@/components/ui/Grain";
+import { MotionRoot } from "@/components/MotionRoot";
+import { bio } from "@/data";
+import { getSiteUrl, sanitizeForMeta } from "@/lib/site";
+import { buildStructuredData } from "@/lib/structured-data";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap",
 });
 
-const getSiteUrl = (): string => {
-  if (process.env.NEXT_PUBLIC_SITE_URL) {
-    return process.env.NEXT_PUBLIC_SITE_URL.startsWith("http")
-      ? process.env.NEXT_PUBLIC_SITE_URL
-      : `https://${process.env.NEXT_PUBLIC_SITE_URL}`;
-  }
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-  return "https://rishabhshah.vercel.app";
-};
+const instrumentSerif = Instrument_Serif({
+  variable: "--font-instrument-serif",
+  subsets: ["latin"],
+  weight: "400",
+  display: "swap",
+  preload: true,
+});
 
 const siteUrl = getSiteUrl();
+const description = sanitizeForMeta(bio.description);
+const metaTitleValue = sanitizeForMeta(bio.name + " | " + bio.title);
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "Rishabh Shah — Software Engineer & ML Researcher",
-  description:
-    "Portfolio of Rishabh Shah — CS student at Northeastern University specializing in machine learning, computer vision, and backend systems.",
+  title: {
+    default: metaTitleValue,
+    template: `%s | ${bio.name}`,
+  },
+  description,
+  applicationName: `${bio.name} Portfolio`,
   keywords: [
-    "Rishabh Shah",
+    bio.name,
     "Software Engineer",
     "ML Engineer",
-    "Machine Learning",
+    "Machine Learning Engineer",
     "Computer Vision",
-    "Northeastern University",
-    "Next.js",
+    "MLOps",
+    "Backend Engineer",
+    "Full Stack Developer",
+    "Rutgers University",
+    "Next.js Portfolio",
     "Python",
     "TypeScript",
-    "Backend",
-    "Full Stack",
+    "PyTorch",
+    "YOLO",
+    "WGAN-GP",
+    "Research",
+    "IEEE Publication",
+    "Software Engineering Intern",
   ],
-  authors: [{ name: "Rishabh Shah" }],
-  creator: "Rishabh Shah",
+  authors: [{ name: bio.name, url: siteUrl }],
+  creator: bio.name,
+  publisher: bio.name,
+  alternates: {
+    canonical: "/",
+  },
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
   openGraph: {
-    type: "website",
+    type: "profile",
     locale: "en_US",
     url: siteUrl,
-    siteName: "Rishabh Shah",
-    title: "Rishabh Shah — Software Engineer & ML Researcher",
-    description:
-      "CS student at Northeastern University. Building at the intersection of engineering and intelligence.",
-    images: [{ url: `${siteUrl}/og-image.png`, width: 1200, height: 630, alt: "Rishabh Shah" }],
+    siteName: `${bio.name} Portfolio`,
+    title: metaTitleValue,
+    description,
+    firstName: "Rishabh",
+    lastName: "Shah",
+    username: "RishiiShah",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: `${bio.name}, ${bio.title}`,
+        type: "image/png",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Rishabh Shah — Software Engineer & ML Researcher",
-    description: "ML, backend systems, open source.",
+    title: metaTitleValue,
+    description,
     creator: "@RishiiShah",
-    images: [`${siteUrl}/og-image.png`],
+    site: "@RishiiShah",
+    images: [
+      {
+        url: "/og-image.png",
+        alt: `${bio.name}, ${bio.title}`,
+      },
+    ],
   },
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-snippet": -1,
+      "max-image-preview": "large",
+      "max-video-preview": -1,
+    },
+  },
+  category: "technology",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: [{ url: "/apple-icon", sizes: "180x180", type: "image/png" }],
+  },
+  manifest: "/manifest.webmanifest",
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#07090f" },
+    { media: "(prefers-color-scheme: dark)", color: "#07090f" },
+  ],
+  colorScheme: "dark",
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "Person",
-    name: "Rishabh Shah",
-    url: siteUrl,
-    email: "shah.joy@northeastern.edu",
-    image: `${siteUrl}/og-image.png`,
-    jobTitle: "Software Engineer & ML Researcher",
-    sameAs: [
-      "https://github.com/RishiiShah",
-      "https://www.linkedin.com/in/rishabh-shah1/",
-    ],
-    alumniOf: [
-      { "@type": "CollegeOrUniversity", name: "Northeastern University" },
-      { "@type": "CollegeOrUniversity", name: "Dwarkadas J. Sanghvi College of Engineering" },
-    ],
-  };
-
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable}`}
+    >
       <head>
         <script
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+          dangerouslySetInnerHTML={{ __html: buildStructuredData() }}
         />
       </head>
       <body className="antialiased">
-        {children}
+        <a
+          href="#top"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-md focus:bg-[var(--bg-elev-2)] focus:px-4 focus:py-2 focus:text-sm focus:text-[var(--ink)] focus:border focus:border-[var(--line-strong)]"
+        >
+          Skip to content
+        </a>
+        <AmbientBeams />
+        <Grain />
+        <MotionRoot>{children}</MotionRoot>
         <Analytics />
         <SpeedInsights />
       </body>
