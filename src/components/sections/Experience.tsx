@@ -84,6 +84,19 @@ export function Experience() {
                   )}
                 </p>
 
+                {item.tech && item.tech.length > 0 && (
+                  <div className="mt-2 mb-5">
+                    <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--ink-mute)] mb-2.5">
+                      Stack
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {item.tech.map((t) => (
+                        <TechChip key={t} name={t} size="sm" />
+                      ))}
+                    </div>
+                  </div>
+                )}
+
                 <ul className="space-y-2.5 mb-5">
                   {item.bullets.map((bullet, bi) => (
                     <li
@@ -97,19 +110,6 @@ export function Experience() {
                     </li>
                   ))}
                 </ul>
-
-                {item.tech && item.tech.length > 0 && (
-                  <div className="mt-2">
-                    <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--ink-mute)] mb-2.5">
-                      Stack
-                    </p>
-                    <div className="flex flex-wrap gap-1.5">
-                      {item.tech.map((t) => (
-                        <TechChip key={t} name={t} size="sm" />
-                      ))}
-                    </div>
-                  </div>
-                )}
               </div>
             </m.div>
           ))}

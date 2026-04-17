@@ -97,6 +97,8 @@ export function Skills() {
           {skills.map((group, i) => {
             const meta = CATEGORY_META[group.category];
             const Glyph = meta?.glyph ?? Terminal;
+            const repeatMultiplier = Math.max(2, Math.ceil(14 / group.items.length));
+            const loopItems = Array.from({ length: repeatMultiplier }, () => group.items).flat();
             return (
               <m.div
                 key={group.category}
@@ -161,8 +163,8 @@ export function Skills() {
                     className="flex-1 min-w-0"
                     gap={12}
                   >
-                    {group.items.map((item) => (
-                      <SkillTile key={item} name={item} />
+                    {loopItems.map((item, loopIndex) => (
+                      <SkillTile key={`${group.category}-${item}-${loopIndex}`} name={item} />
                     ))}
                   </Marquee>
                 </div>
