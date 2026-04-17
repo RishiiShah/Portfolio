@@ -27,6 +27,7 @@ const linkLabel = {
 
 export function ProjectCardFeatured({ project, onOpen }: Props) {
   const topMetrics = project.metrics?.slice(0, 3) ?? [];
+  const mobileExtraMetrics = project.metrics?.slice(3, 6) ?? [];
 
   return (
     <m.article
@@ -99,6 +100,24 @@ export function ProjectCardFeatured({ project, onOpen }: Props) {
             </div>
           )}
 
+          {mobileExtraMetrics.length > 0 && (
+            <div className="mb-6 grid grid-cols-2 gap-2.5 md:hidden">
+              {mobileExtraMetrics.map((m) => (
+                <div
+                  key={m.label}
+                  className="rounded-lg border border-[var(--line)] bg-[var(--bg-elev-2)]/35 p-2.5"
+                >
+                  <p className="font-serif text-base leading-none text-[var(--accent-warm)]">
+                    {m.value}
+                  </p>
+                  <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.12em] text-[var(--ink-mute)]">
+                    {m.label}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+
           {project.role && (
             <p className="italic text-sm text-[var(--ink-dim)] leading-relaxed mb-6">
               <span className="not-italic font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--ink-mute)] mr-2">
@@ -149,7 +168,7 @@ export function ProjectCardFeatured({ project, onOpen }: Props) {
         </div>
 
         {/* Right: metric constellation */}
-        <div className="flex items-center justify-center min-h-[280px]">
+        <div className="hidden min-h-[280px] items-center justify-center md:flex">
           {project.metrics && project.metrics.length > 0 ? (
             <MetricConstellation metrics={project.metrics} />
           ) : (
