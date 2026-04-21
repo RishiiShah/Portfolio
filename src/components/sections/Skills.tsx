@@ -160,7 +160,7 @@ export function Skills() {
                   <Marquee
                     direction={meta?.direction ?? "left"}
                     duration={meta?.duration ?? 40}
-                    className="w-full md:min-w-0 md:flex-1"
+                    className="w-full py-1 md:min-w-0 md:flex-1"
                     gap={12}
                   >
                     {loopItems.map((item, loopIndex) => (

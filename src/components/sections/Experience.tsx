@@ -57,9 +57,7 @@ export function Experience() {
               {/* Timeline column */}
               <div className="flex flex-col items-center">
                 <TimelineDot active={i === 0} />
-                {i < experience.length - 1 && (
-                  <div className="w-px flex-1 my-1 bg-gradient-to-b from-[var(--accent)]/40 to-transparent" />
-                )}
+                <div className="w-px flex-1 my-1 bg-gradient-to-b from-[var(--accent)]/40 via-[var(--accent)]/25 to-[var(--accent)]/10" />
               </div>
 
               {/* Content */}
