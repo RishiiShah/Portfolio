@@ -8,10 +8,12 @@ import { HeroShader } from "@/components/shaders/HeroShader";
 import { Tilt } from "@/components/ui/Tilt";
 import { HeroSignalPanel } from "@/components/ui/HeroSignalPanel";
 
-const fadeUp = (delay = 0, duration = 0.55) => ({
-  initial: { opacity: 0, y: 20 },
+const heroEase = [0.16, 1, 0.3, 1] as const;
+
+const fadeUp = (delay = 0, duration = 0.78) => ({
+  initial: { opacity: 0, y: 18 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration, delay, ease: [0.22, 1, 0.36, 1] as const },
+  transition: { duration, delay, ease: heroEase },
 });
 
 export function Hero() {
@@ -43,7 +45,7 @@ export function Hero() {
           {/* Left: content */}
           <div className="w-full max-w-2xl flex-1">
             {/* Status pill */}
-            <m.div {...fadeUp(0, 0.35)}>
+            <m.div {...fadeUp(0, 0.52)}>
               <span className="inline-flex max-w-full flex-wrap items-center gap-x-2 gap-y-1 rounded-full px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ink-dim)] glass-panel">
                 <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-signal)] animate-pulse" />
                 Open to roles · Spring 2026 · {bio.location}
@@ -66,12 +68,12 @@ export function Hero() {
                       <m.span
                         key={i}
                         className="inline-block"
-                        initial={{ opacity: 0, y: 24, scale: 0.96 }}
+                        initial={{ opacity: 0, y: 18, scale: 0.97 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         transition={{
-                          duration: 0.55,
-                          delay: 0.12 + i * 0.035,
-                          ease: [0.22, 1, 0.36, 1],
+                          duration: 0.72,
+                          delay: 0.18 + i * 0.045,
+                          ease: heroEase,
                         }}
                       >
                         {char}
@@ -88,9 +90,9 @@ export function Hero() {
                         : { opacity: 1, scale: [0.5, 1.25, 1] }
                     }
                     transition={{
-                      duration: 0.7,
-                      delay: 0.12 + nameLetters.length * 0.035,
-                      ease: [0.22, 1, 0.36, 1],
+                      duration: 0.9,
+                      delay: 0.18 + nameLetters.length * 0.045,
+                      ease: heroEase,
                     }}
                   >
                     .
@@ -143,10 +145,10 @@ export function Hero() {
             >
               <a
                 href="#work"
-                className="glass-button px-7 py-3 text-sm font-medium flex items-center gap-2 group"
+                className="hero-shader-button px-7 py-3 text-sm font-medium flex items-center gap-2 group"
               >
                 Explore the work
-                <ArrowDown className="w-4 h-4 group-hover:translate-y-1 transition-transform" />
+                <ArrowDown className="w-4 h-4 transition-transform duration-500 ease-out group-hover:translate-y-1" />
               </a>
               <a
                 href={bio.resume}
@@ -195,7 +197,7 @@ export function Hero() {
           <m.div
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.78, delay: 0.45, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.95, delay: 0.52, ease: heroEase }}
             className="w-full md:w-[420px] lg:w-[460px] shrink-0"
           >
             <HeroSignalPanel />

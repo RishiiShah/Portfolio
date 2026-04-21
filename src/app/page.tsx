@@ -10,10 +10,12 @@ import { Footer } from "@/components/Footer";
 import { CustomCursor } from "@/components/CustomCursor";
 import { PortfolioDock } from "@/components/PortfolioDock";
 import { Assistant } from "@/components/assistant/Assistant";
+import { SiteLoader } from "@/components/SiteLoader";
 
 export default function Page() {
   return (
     <>
+      <SiteLoader />
       <CustomCursor />
       <main>
         <Hero />
