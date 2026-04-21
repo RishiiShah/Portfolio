@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { AnimatePresence, m } from "framer-motion";
+import { AnimatePresence, LayoutGroup, m, type Transition } from "framer-motion";
 import dynamic from "next/dynamic";
 import { projects, type Project } from "@/data";
 import { SectionHeading } from "@/components/ui/SectionHeading";
@@ -13,6 +13,16 @@ const ProjectModal = dynamic(
   () => import("@/components/ProjectModal").then((m) => m.ProjectModal),
   { ssr: false }
 );
+
+const layoutTransition = {
+  layout: { type: "spring", stiffness: 150, damping: 28, mass: 0.9 },
+} satisfies Transition;
+
+const featuredCardTransition = {
+  opacity: { duration: 0.22 },
+  y: { duration: 0.36, ease: [0.22, 1, 0.36, 1] },
+  layout: { type: "spring", stiffness: 150, damping: 28, mass: 0.9 },
+} satisfies Transition;
 
 export function Projects() {
   const [active, setActive] = useState<Project | null>(null);
@@ -29,19 +39,17 @@ export function Projects() {
   const compactList = useMemo(() => {
     let list = featured ? projects.filter((p) => p.slug !== featured.slug) : [...projects];
     if (filter === "Featured") {
-      list = projects.filter((p) => p.featured || p.latest);
+      list = [
+        ...projects.filter((p) => p.latest),
+        ...projects.filter((p) => p.featured && !p.latest),
+      ];
     } else if (filter !== "All") {
       list = projects.filter((p) => p.tags.includes(filter));
     }
     return list;
   }, [filter, featured]);
 
-  // Hide featured card when filtering to a tag that doesn't include it
-  const showFeaturedCard =
-    featured &&
-    (filter === "All" ||
-      filter === "Featured" ||
-      featured.tags.includes(filter));
+  const showFeaturedCard = featured && filter === "All";
 
   // URL hash sync: open modal from hash on mount; update hash when modal opens/closes
   useEffect(() => {
@@ -101,35 +109,39 @@ export function Projects() {
           <FilterPills options={tags} value={filter} onChange={setFilter} />
         </m.div>
 
-        {/* Featured card */}
-        <AnimatePresence mode="wait">
-          {showFeaturedCard && featured && (
-            <m.div
-              key={`featured-${filter}`}
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.4 }}
-              className="mb-10"
-            >
-              <ProjectCardFeatured project={featured} onOpen={() => open(featured)} />
-            </m.div>
-          )}
-        </AnimatePresence>
-
-        {/* Grid */}
-        <m.div
-          layout
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
-        >
-          <AnimatePresence mode="popLayout">
-            {compactList.map((p) => (
-              <ProjectCardCompact key={p.slug} project={p} onOpen={() => open(p)} />
-            ))}
+        <LayoutGroup id="projects-filter-layout">
+          {/* Featured card */}
+          <AnimatePresence initial={false} mode="popLayout">
+            {showFeaturedCard && featured && (
+              <m.div
+                layout
+                key="featured-panel"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={featuredCardTransition}
+                className="mb-10"
+              >
+                <ProjectCardFeatured project={featured} onOpen={() => open(featured)} />
+              </m.div>
+            )}
           </AnimatePresence>
-        </m.div>
 
-        {compactList.length === 0 && (
+          {/* Grid */}
+          <m.div
+            layout
+            transition={layoutTransition}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+          >
+            <AnimatePresence initial={false} mode="popLayout">
+              {compactList.map((p) => (
+                <ProjectCardCompact key={p.slug} project={p} onOpen={() => open(p)} />
+              ))}
+            </AnimatePresence>
+          </m.div>
+        </LayoutGroup>
+
+        {!showFeaturedCard && compactList.length === 0 && (
           <p className="text-center py-12 text-sm text-[var(--ink-mute)]">
             No projects match this filter.
           </p>
