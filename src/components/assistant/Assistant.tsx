@@ -16,6 +16,10 @@ type Message =
   | { role: "user"; text: string }
   | { role: "assistant"; text: string; streamed: string; done: boolean };
 
+const GREETING =
+  `Hi, I'm Jarvis, ${bio.name}'s portfolio assistant. ` +
+  "Ask me anything about projects, papers, experience, or contact. Try a chip below.";
+
 export function Assistant() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
@@ -25,43 +29,6 @@ export function Assistant() {
   const inputRef = useRef<HTMLInputElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const reduce = useReducedMotion();
-
-  // Seed greeting on first open
-  useEffect(() => {
-    if (open && messages.length === 0) {
-      queueResponse(
-        `Hi, I'm Jarvis, ${bio.name}'s portfolio assistant. Ask me anything about projects, papers, experience, or contact. Try a chip below.`
-      );
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
-
-  // Auto-scroll on new content
-  useEffect(() => {
-    const el = bodyRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
-  }, [messages, streaming]);
-
-  // Focus input when opening, and whenever streaming ends so user can keep typing
-  useEffect(() => {
-    if (!open) return;
-    if (!streaming) {
-      // Small delay to win focus against any concurrent DOM updates
-      const t = setTimeout(() => inputRef.current?.focus(), 40);
-      return () => clearTimeout(t);
-    }
-  }, [open, streaming]);
-
-  // Esc to close
-  useEffect(() => {
-    if (!open) return;
-    const onKey = (e: globalThis.KeyboardEvent) => {
-      if (e.key === "Escape") close();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
 
   const close = useCallback(() => {
     setOpen(false);
@@ -119,6 +86,39 @@ export function Assistant() {
     [reduce]
   );
 
+  const openAssistant = useCallback(() => {
+    setOpen(true);
+    if (messages.length === 0) {
+      queueResponse(GREETING);
+    }
+  }, [messages.length, queueResponse]);
+
+  // Auto-scroll on new content
+  useEffect(() => {
+    const el = bodyRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [messages, streaming]);
+
+  // Focus input when opening, and whenever streaming ends so user can keep typing
+  useEffect(() => {
+    if (!open) return;
+    if (!streaming) {
+      // Small delay to win focus against any concurrent DOM updates
+      const t = setTimeout(() => inputRef.current?.focus(), 40);
+      return () => clearTimeout(t);
+    }
+  }, [open, streaming]);
+
+  // Esc to close
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: globalThis.KeyboardEvent) => {
+      if (e.key === "Escape") close();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open, close]);
+
   const ask = useCallback(
     (q: string) => {
       const trimmed = q.trim();
@@ -142,7 +142,7 @@ export function Assistant() {
       {/* Floating trigger */}
       <button
         ref={triggerRef}
-        onClick={() => setOpen(true)}
+        onClick={openAssistant}
         aria-label="Open portfolio assistant"
         aria-expanded={open}
         aria-controls="jarvis-panel"
