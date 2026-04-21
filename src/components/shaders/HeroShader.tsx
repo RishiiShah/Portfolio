@@ -59,7 +59,7 @@ const fragment = /* glsl */ `
   float fbm(vec2 p) {
     float v = 0.0;
     float a = 0.5;
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 4; i++) {
       v += a * snoise(p);
       p *= 2.02;
       a *= 0.5;
@@ -103,10 +103,6 @@ const fragment = /* glsl */ `
     float vig = smoothstep(1.35, 0.2, length(uv - 0.5));
     col *= mix(0.65, 1.0, vig);
 
-    // Grain (subtle, time-based)
-    float grain = fract(sin(dot(uv * uResolution, vec2(12.9898, 78.233)) + t) * 43758.5453);
-    col += (grain - 0.5) * 0.015;
-
     gl_FragColor = vec4(col, 1.0);
   }
 `;
@@ -145,7 +141,7 @@ export function HeroShader({ className = "" }: { className?: string }) {
     try {
       renderer = new Renderer({
         canvas,
-        dpr: Math.min(window.devicePixelRatio, 1.5),
+        dpr: Math.min(window.devicePixelRatio, 1.25),
         antialias: false,
         alpha: false,
       });
