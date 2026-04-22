@@ -1,36 +1,115 @@
-This is a Personal Portfolio website using [Next.js](https://nextjs.org) bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Rishabh Shah Portfolio
 
-## Getting Started
+High-performance personal portfolio built with Next.js 16, React 19, TypeScript, and Tailwind CSS v4.
 
-First, run the development server:
+The site showcases:
+
+- Projects (with impact, architecture notes, and metrics)
+- Publications and research
+- Experience, skills, and education
+- Interactive UI elements (custom cursor, animated dock, assistant panel)
+- SEO-first metadata and structured data output
+
+## Tech Stack
+
+- Next.js 16 (App Router)
+- React 19 + TypeScript
+- Tailwind CSS v4
+- Framer Motion
+- Vercel Analytics + Speed Insights
+
+## Quick Start
+
+### 1) Install dependencies
+
+```bash
+npm install
+```
+
+### 2) Run development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run dev      # Start local dev server (Turbopack)
+npm run build    # Production build
+npm run start    # Run production server
+npm run lint     # ESLint
+```
 
-## Learn More
+## Environment Variables
 
-To learn more about Next.js, take a look at the following resources:
+Create a `.env.local` file if you want to override the canonical site URL used for SEO metadata and structured data.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+NEXT_PUBLIC_SITE_URL=https://your-domain.com
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+If not set, the app falls back to `VERCEL_URL` (on Vercel) and then a hardcoded default.
 
-## Deploy on Vercel
+## Project Structure
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```text
+src/
+	app/                  # App Router entrypoints, metadata, sitemap/robots/manifest
+	components/
+		sections/           # Page sections (Hero, Projects, Publications, etc.)
+		ui/                 # Shared UI building blocks
+		assistant/          # Local portfolio assistant logic and responses
+	data/
+		index.ts            # Primary portfolio content source
+	lib/
+		site.ts             # Site URL and metadata helpers
+		structured-data.ts  # JSON-LD generation
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Content Editing Guide
+
+Most content updates happen in one place:
+
+- `src/data/index.ts`
+
+Update these exported objects/arrays to keep the site fresh:
+
+- `bio`
+- `projects`
+- `publications`
+- `experience`
+- `skills`
+- `education`
+
+## SEO and Metadata
+
+Key SEO configuration lives in:
+
+- `src/app/layout.tsx` (metadata, Open Graph, Twitter cards)
+- `src/app/sitemap.ts`
+- `src/app/robots.ts`
+- `src/lib/structured-data.ts` (JSON-LD graph)
+
+The app automatically sanitizes metadata strings for consistent social/search previews.
+
+## Deployment
+
+Recommended target: Vercel.
+
+1. Import repository into Vercel.
+2. Set `NEXT_PUBLIC_SITE_URL` in project environment variables.
+3. Deploy.
+
+For non-Vercel hosting:
+
+```bash
+npm run build
+npm run start
+```
+
+## Notes for Next.js 16
+
+This repository is aligned to Next.js 16 behavior (including Turbopack defaults and ESLint CLI usage). If you add new server-side request logic, follow Next.js 16 async request API conventions.
