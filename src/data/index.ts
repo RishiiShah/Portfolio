@@ -6,7 +6,7 @@ export const bio = {
   tagline: "Building at the intersection of engineering and intelligence.",
   description:
     "CS student at Rutgers University. I build scalable backend systems, ML pipelines, and research-grade computer vision, and publish what I find.",
-  email: "rishabh.shah033@djsce.edu.in",
+  email: "rish.shah@rutgers.edu",
   github: "https://github.com/RishiiShah",
   linkedin: "https://www.linkedin.com/in/rishabh-shah1/",
   resume: "/resume.pdf",
@@ -20,15 +20,17 @@ export const education = [
     degree: "M.S. Computer Science (Software and Systems)",
     institution: "Rutgers University",
     location: "New Brunswick, NJ",
-    start: "2025",
-    end: "2027",
+    start: "August 2025",
+    end: "May 2027",
+    gpa: "3.83 / 4.0",
   },
   {
     degree: "B.Tech. Artificial Intelligence & Data Science",
     institution: "Dwarkadas J. Sanghvi College of Engineering",
     location: "Mumbai, India",
-    start: "2021",
-    end: "2025",
+    start: "December 2021",
+    end: "June 2025",
+    gpa: "7.76 / 10.0",
   },
 ] as const;
 
@@ -68,6 +70,8 @@ export const skills = [
       "NumPy",
       "OpenCV",
       "YOLO",
+      "OCR",
+      "ANPR",
       "Librosa",
     ],
   },
@@ -96,10 +100,10 @@ export const experience: ExperienceItem[] = [
     summary:
       "Python/Next.js backend services, JWT-secured APIs, microservices, Docker, AWS, and CI/CD.",
     bullets: [
-      "Developed backend services in Python and Next.js API routes integrated with MySQL, optimizing relational database schemas and SQL queries, reducing average response time by 22%.",
-      "Built secure REST APIs with JWT authentication and role-based access control, improving inter-module communication and application security through structured logging.",
-      "Containerized 4 services using Docker and deployed to AWS, managing build and deployment workflows with Git and GitHub to maintain environment consistency.",
-      "Shipped 10 production-ready features across backend APIs, web application and dashboard modules, writing tests and supporting cloud releases on AWS.",
+      "With 400ms+ queries degrading user-facing response times, restructured MySQL schemas and rewrote critical SQL paths in Python and Next.js, reducing average API latency traced via structured application logs.",
+      "Replaced ad-hoc inter-module calls lacking auth validation by implementing JWT-authenticated REST APIs with role-based access control across backend services, standardizing error handling and security.",
+      "Containerized all services using Docker and built Git/GitHub managed deployment workflows on AWS, cutting deployments from manual multi-step configuration to repeatable single-command runs.",
+      "Owned end-to-end releases independently in the final quarter, coordinating with frontend and QA teams across backend APIs, web application, and dashboard modules for integration testing.",
     ],
     tech: ["Python", "Next.js", "MySQL", "Docker", "AWS", "JWT", "GitHub Actions"],
   },
@@ -112,10 +116,8 @@ export const experience: ExperienceItem[] = [
     summary:
       "Next.js performance optimization, API route automation, and reliability-focused delivery.",
     bullets: [
-      "Refactored 7 reusable components across 3 features, reducing per-file code by nearly 70% and eliminating component coupling.",
-      "Developed and tested Next.js API routes with error handling and caching optimizations, improving integration reliability between frontend and backend services.",
-      "Integrated MySQL database with Next.js API routes, improving data retrieval speed by 23%, and wrote unit tests to validate critical data flows.",
-      "Implemented API integrations following clean architecture and modular design principles, improving long-term maintainability.",
+      "Refactored tightly coupled components across features to eliminate duplication, reducing per-file size and enabling faster iteration on new feature work.",
+      "Resolved frequent timeout and null-response issues developing Next.js API routes with MySQL integration, caching, and error handling, backed through unit tests.",
     ],
     tech: ["Next.js", "MySQL", "TypeScript", "REST APIs"],
   },
@@ -156,13 +158,13 @@ export const projects: Project[] = [
     slug: "snap-interview",
     title: "Snap Interview",
     tagline:
-      "AI-powered mock interview platform with real-time LLM evaluation, speech-to-text transcription, and per-skill performance breakdowns.",
-    tech: ["Next.js", "TypeScript", "Python", "OpenAI API", "PostgreSQL", "Redis", "Docker"],
+      "AI-powered mock interview platform with adaptive question progression, streaming LLM evaluation, and schema-enforced structured feedback.",
+    tech: ["Next.js", "TypeScript", "PostgreSQL", "Prisma", "Groq API", "AWS S3", "ElevenLabs", "BetterAuth"],
     tags: ["Full-stack", "AI/ML"],
     latest: true,
     impact:
-      "End-to-end interview simulation platform supporting behavioral, technical, and system design rounds with structured AI-generated feedback and session analytics.",
-    links: [{ type: "source", url: "https://github.com/RishiiShah/snap-interview" }],
+      "End-to-end interview simulation platform with persona/difficulty-aware prompting, presigned S3 recording uploads, and a CI pipeline covering lint, typecheck, unit, and e2e tests.",
+    links: [{ type: "source", url: "https://github.com/RishiiShah/SnapInterview" }],
     featured: false,
     metrics: [
       { label: "Feedback Latency", value: "<2s" },
@@ -171,21 +173,21 @@ export const projects: Project[] = [
     ],
     problem:
       "Early-career engineers practicing for interviews get either generic AI feedback or nothing at all. Existing tools grade correctness but miss communication, structure, and per-skill signal.",
-    role: "Full-stack build: Next.js App Router UI with streaming feedback, Python evaluation service, OpenAI structured outputs for scoring, PostgreSQL for session history, Redis for live context, and Docker for deployment.",
+    role: "Full-stack build: Next.js App Router UI with streaming feedback, Groq API for LLM inference, PostgreSQL with Prisma ORM, AWS S3 for recordings, ElevenLabs for TTS, BetterAuth for auth, and a full CI pipeline.",
     architectureNotes: [
-      "Next.js App Router with React Server Components streams feedback as it arrives, holding feedback latency under 2s.",
-      "LLM evaluation uses OpenAI structured outputs (JSON schema) to enforce a per-skill rubric: clarity, depth, correctness. Scoring is deterministic and re-analyzable.",
-      "PostgreSQL stores sessions and rubrics; Redis holds live interview context so feedback stays fast across long sessions.",
+      "Adaptive question progression with persona/difficulty-aware prompt composition shapes each session to the candidate's level and target role.",
+      "Evaluation engine produces per-skill scores (communication, technical depth, clarity) using schema-enforced AI output to prevent malformed results.",
+      "Recording pipeline uses presigned S3 uploads scoped to per-user key prefixes with CSRF protection and rate limiting on all sensitive endpoints.",
     ],
     challenges: [
-      "Hitting sub-2s feedback latency required chunked streaming plus pre-computed rubrics instead of ad-hoc prompt chains per question.",
-      "Open-ended answers drift between sessions; calibration with few-shot examples and low temperature was essential for consistency.",
-      "Three interview modes mean three prompt chains and three rubric schemas, each tuned for behavioral, technical, and system-design intents.",
+      "Hitting sub-2s feedback latency required streaming LLM responses with schema-enforced structured outputs instead of ad-hoc prompt chains.",
+      "Open-ended answers drift between sessions; calibration with few-shot examples and schema enforcement was essential for consistency.",
+      "Security surface spans login, OTP, eval, and upload endpoints — each required independent rate limiting and CSRF hardening.",
     ],
     lessons: [
-      "Structured JSON outputs from LLMs are dramatically more reliable than parsing free-text prose. Never parse prose when you can enforce a schema.",
+      "Schema-enforced AI outputs are dramatically more reliable than parsing free-text prose. Never parse prose when you can enforce a schema.",
       "Users value per-skill breakdowns more than a single overall score. That was the biggest retention lever in user testing.",
-      "Store transcripts, rubrics, and scores separately so you can re-score with a newer model later without destroying history.",
+      "A CI pipeline covering lint, typecheck, unit, and e2e tests catches regressions earlier than any manual review cadence.",
     ],
   },
   {

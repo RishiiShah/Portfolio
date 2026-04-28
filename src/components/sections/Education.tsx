@@ -52,6 +52,11 @@ export function Education() {
               <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-[var(--ink-mute)]">
                 {edu.location}
               </p>
+              {"gpa" in edu && (
+                <p className="mt-2 font-mono text-[11px] tracking-[0.08em] text-[var(--accent)]">
+                  GPA {edu.gpa}
+                </p>
+              )}
             </m.div>
           ))}
         </div>
