@@ -1,12 +1,29 @@
 "use client";
 
 import { m, useReducedMotion } from "framer-motion";
+import dynamic from "next/dynamic";
 import { bio, projects } from "@/data";
 import { FiGithub, FiLinkedin, FiMail } from "react-icons/fi";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
-import { HeroShader } from "@/components/shaders/HeroShader";
 import { Tilt } from "@/components/ui/Tilt";
 import { HeroSignalPanel } from "@/components/ui/HeroSignalPanel";
+
+const HeroShader = dynamic(
+  () => import("@/components/shaders/HeroShader").then((m) => ({ default: m.HeroShader })),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        aria-hidden
+        className="absolute inset-0 z-0"
+        style={{
+          background:
+            "linear-gradient(135deg, rgba(122,162,255,0.06) 0%, rgba(7,9,15,0) 60%, rgba(230,185,128,0.04) 100%)",
+        }}
+      />
+    ),
+  }
+);
 
 const heroEase = [0.16, 1, 0.3, 1] as const;
 
@@ -72,7 +89,7 @@ export function Hero() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         transition={{
                           duration: 0.72,
-                          delay: 0.18 + i * 0.045,
+                          delay: i * 0.03,
                           ease: heroEase,
                         }}
                       >
@@ -91,7 +108,7 @@ export function Hero() {
                     }
                     transition={{
                       duration: 0.9,
-                      delay: 0.18 + nameLetters.length * 0.045,
+                      delay: nameLetters.length * 0.03,
                       ease: heroEase,
                     }}
                   >
@@ -103,7 +120,7 @@ export function Hero() {
 
             {/* Title subtitle */}
             <m.p
-              {...fadeUp(0.55)}
+              {...fadeUp(0.25)}
               className="max-w-xl text-base leading-relaxed text-[var(--ink-dim)] sm:text-lg md:text-xl"
             >
               <span className="text-[var(--ink)]">{bio.title}</span>
@@ -117,7 +134,7 @@ export function Hero() {
             {/* Currently building */}
             {latest && (
               <m.div
-                {...fadeUp(0.65)}
+                {...fadeUp(0.35)}
                 className="mt-6 flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-sm text-[var(--ink-mute)]"
               >
                 <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--accent-signal)]">
@@ -140,7 +157,7 @@ export function Hero() {
 
             {/* CTAs */}
             <m.div
-              {...fadeUp(0.75)}
+              {...fadeUp(0.45)}
               className="mt-9 flex flex-wrap items-center gap-3"
             >
               <a
@@ -162,7 +179,7 @@ export function Hero() {
 
             {/* Socials row */}
             <m.div
-              {...fadeUp(0.85)}
+              {...fadeUp(0.55)}
               className="mt-7 flex items-center gap-5"
             >
               <a
@@ -197,7 +214,7 @@ export function Hero() {
           <m.div
             initial={{ opacity: 0, y: 18 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.95, delay: 0.52, ease: heroEase }}
+            transition={{ duration: 0.95, delay: 0.2, ease: heroEase }}
             className="w-full md:w-[420px] lg:w-[460px] shrink-0"
           >
             <HeroSignalPanel />
@@ -206,7 +223,7 @@ export function Hero() {
 
         {/* Scroll hint */}
         <m.div
-          {...fadeUp(1.1)}
+          {...fadeUp(0.7)}
           className="mt-20 hidden md:flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ink-mute)]"
         >
           <span>scroll to begin</span>

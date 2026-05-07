@@ -1,22 +1,38 @@
+import dynamic from "next/dynamic";
 import { Hero } from "@/components/sections/Hero";
-import { Projects } from "@/components/sections/Projects";
-import { Publications } from "@/components/sections/Publications";
-import { Experience } from "@/components/sections/Experience";
-import { Skills } from "@/components/sections/Skills";
-import { Education } from "@/components/sections/Education";
-import { About } from "@/components/sections/About";
-import { Contact } from "@/components/sections/Contact";
-import { Footer } from "@/components/Footer";
-import { CustomCursor } from "@/components/CustomCursor";
-import { PortfolioDock } from "@/components/PortfolioDock";
-import { Assistant } from "@/components/assistant/Assistant";
+import { ClientOnlyUI } from "@/components/ClientOnlyUI";
 import { SiteLoader } from "@/components/SiteLoader";
+
+const Projects = dynamic(() =>
+  import("@/components/sections/Projects").then((m) => ({ default: m.Projects }))
+);
+const Publications = dynamic(() =>
+  import("@/components/sections/Publications").then((m) => ({ default: m.Publications }))
+);
+const Experience = dynamic(() =>
+  import("@/components/sections/Experience").then((m) => ({ default: m.Experience }))
+);
+const Skills = dynamic(() =>
+  import("@/components/sections/Skills").then((m) => ({ default: m.Skills }))
+);
+const Education = dynamic(() =>
+  import("@/components/sections/Education").then((m) => ({ default: m.Education }))
+);
+const About = dynamic(() =>
+  import("@/components/sections/About").then((m) => ({ default: m.About }))
+);
+const Contact = dynamic(() =>
+  import("@/components/sections/Contact").then((m) => ({ default: m.Contact }))
+);
+const Footer = dynamic(() =>
+  import("@/components/Footer").then((m) => ({ default: m.Footer }))
+);
 
 export default function Page() {
   return (
     <>
       <SiteLoader />
-      <CustomCursor />
+      <ClientOnlyUI />
       <main>
         <Hero />
         <Projects />
@@ -28,8 +44,6 @@ export default function Page() {
         <Contact />
       </main>
       <Footer />
-      <Assistant />
-      <PortfolioDock />
     </>
   );
 }
