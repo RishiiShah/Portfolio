@@ -273,6 +273,41 @@ section[id] {
   animation: siteLoaderOut 0.4s ease-out 1s forwards;
 }
 
+.site-loader-text {
+  opacity: 0;
+  animation: loaderTextIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+}
+
+.site-loader-bar {
+  background: var(--line);
+}
+
+.site-loader-bar-fill {
+  transform-origin: left;
+  transform: scaleX(0);
+  background: linear-gradient(90deg, var(--accent-signal), var(--accent-warm));
+  animation: loaderBarFill 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+}
+
+@keyframes loaderTextIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+    letter-spacing: 0.3em;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    letter-spacing: 0.05em;
+  }
+}
+
+@keyframes loaderBarFill {
+  to {
+    transform: scaleX(1);
+  }
+}
+
 @keyframes siteLoaderOut {
   to {
     opacity: 0;
