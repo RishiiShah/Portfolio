@@ -9,7 +9,6 @@ export function HeroSignalPanel() {
   const fill = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   const latest = projects.find((p) => p.latest);
-  const featuredPaper = publications.find((p) => p.featured);
 
   return (
     <Tilt
@@ -36,10 +35,8 @@ export function HeroSignalPanel() {
         <Divider />
         <Row
           eyebrow="Published"
-          title={`${publications.length} papers · ${publications.filter(
-            (p) => p.featured
-          ).length} featured`}
-          badge={featuredPaper ? "IEEE" : undefined}
+          title={`${publications.length} papers`}
+          badge={publications.find((p) => p.publisher)?.publisher}
           badgeTone="warm"
         />
         <Divider />

@@ -2,7 +2,7 @@
 
 import { m, useReducedMotion } from "framer-motion";
 import dynamic from "next/dynamic";
-import { bio, projects } from "@/data";
+import { bio } from "@/data";
 import { FiGithub, FiLinkedin, FiMail } from "react-icons/fi";
 import { ArrowDown, ArrowUpRight } from "lucide-react";
 import { Tilt } from "@/components/ui/Tilt";
@@ -35,7 +35,6 @@ const fadeUp = (delay = 0, duration = 0.78) => ({
 
 export function Hero() {
   const reduce = useReducedMotion();
-  const latest = projects.find((p) => p.latest);
 
   const nameLetters = bio.name.split("");
 
@@ -61,16 +60,8 @@ export function Hero() {
         <div className="flex flex-col-reverse items-center justify-between gap-10 md:flex-row lg:gap-16">
           {/* Left: content */}
           <div className="w-full max-w-2xl flex-1">
-            {/* Status pill */}
-            <m.div {...fadeUp(0, 0.52)}>
-              <span className="inline-flex max-w-full flex-wrap items-center gap-x-2 gap-y-1 rounded-full px-3 py-1.5 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ink-dim)] glass-panel">
-                <span className="h-1.5 w-1.5 rounded-full bg-[var(--accent-signal)] animate-pulse" />
-                Open to roles · Spring 2026 · {bio.location}
-              </span>
-            </m.div>
-
             {/* Name: 3D tilted, serif, amber period */}
-            <div className="mt-6 mb-7">
+            <div className="mb-7">
               <Tilt max={7} perspective={1600} className="inline-block">
                 <h1
                   className="font-serif leading-[1.02] tracking-tight text-[var(--ink)]"
@@ -131,33 +122,9 @@ export function Hero() {
               <span className="text-[var(--ink)]">computer vision</span>.
             </m.p>
 
-            {/* Currently building */}
-            {latest && (
-              <m.div
-                {...fadeUp(0.35)}
-                className="mt-6 flex flex-wrap items-center gap-x-2.5 gap-y-1.5 text-sm text-[var(--ink-mute)]"
-              >
-                <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--accent-signal)]">
-                  Now building
-                </span>
-                <span className="text-[var(--ink-dim)]">
-                  <span className="text-[var(--ink)]">{latest.title}</span>
-                  {latest.metrics?.[0] && (
-                    <>
-                      {" · "}
-                      <span className="text-[var(--accent-warm)]">
-                        {latest.metrics[0].value}
-                      </span>{" "}
-                      {latest.metrics[0].label.toLowerCase()}
-                    </>
-                  )}
-                </span>
-              </m.div>
-            )}
-
             {/* CTAs */}
             <m.div
-              {...fadeUp(0.45)}
+              {...fadeUp(0.35)}
               className="mt-9 flex flex-wrap items-center gap-3"
             >
               <a

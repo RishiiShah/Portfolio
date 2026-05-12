@@ -155,13 +155,47 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    slug: "csegraph",
+    title: "csegraph",
+    tagline:
+      "Repository context engine for coding agents that indexes multi-language codebases into a dependency graph and returns the smallest useful context bundle for any task.",
+    tech: ["Python", "SQLite", "AST", "Tree-sitter"],
+    tags: ["Systems", "Backend", "Developer Tools"],
+    latest: true,
+    impact:
+      "Context engine serving 10 programming languages with zero runtime dependencies, replacing brute-force repo search with graph-driven retrieval.",
+    featured: false,
+    metrics: [
+      { label: "Languages", value: "10" },
+      { label: "Runtime Deps", value: "0" },
+      { label: "Retrieval", value: "Graph-driven" },
+    ],
+    problem:
+      "Coding agents waste tool calls and prompt tokens searching repositories for context. Brute-force file reads miss dependencies, and embedding-only approaches lose structural relationships between symbols.",
+    role: "Sole developer. Designed and built the full system: multi-language parser infrastructure, graph storage engine, retrieval pipeline, sufficiency scoring, CLI, and SDK.",
+    architectureNotes: [
+      "AST/CST-driven indexing extracts symbols, dependencies, and call graphs without ever executing user code. Python uses stdlib ast, and all other languages go through a single generic tree-sitter parser parameterized per language.",
+      "Retrieval combines lexical search with graph expansion to surface structurally relevant context that keyword search alone would miss.",
+      "Shipped as three packages (core engine, SDK facade, and CLI), each independently installable with strict dependency isolation.",
+    ],
+    challenges: [
+      "Supporting 10 languages with a single retrieval pipeline required a language-neutral intermediate representation that preserves structural fidelity.",
+      "Keeping zero runtime dependencies for the core package while supporting optional tree-sitter grammars across platforms.",
+      "Balancing context precision against recall: returning too little misses critical dependencies, returning too much wastes agent tokens.",
+    ],
+    lessons: [
+      "Graph structure captures relationships that pure text search cannot. Even a shallow BFS over a dependency graph surfaces context that keyword matching misses entirely.",
+      "Zero-dependency core was worth the constraint. It makes the tool installable anywhere without version conflicts, which matters for agent toolchains.",
+      "Sufficiency metrics that quantify context quality let you tune retrieval empirically instead of guessing at thresholds.",
+    ],
+  },
+  {
     slug: "snap-interview",
     title: "Snap Interview",
     tagline:
       "AI-powered mock interview platform with adaptive question progression, streaming LLM evaluation, and schema-enforced structured feedback.",
     tech: ["Next.js", "TypeScript", "PostgreSQL", "Prisma", "Groq API", "AWS S3", "ElevenLabs", "BetterAuth"],
     tags: ["Full-stack", "AI/ML"],
-    latest: true,
     impact:
       "End-to-end interview simulation platform with persona/difficulty-aware prompting, presigned S3 recording uploads, and a CI pipeline covering lint, typecheck, unit, and e2e tests.",
     links: [{ type: "source", url: "https://github.com/RishiiShah/SnapInterview" }],
@@ -426,6 +460,7 @@ export interface PublicationLink {
 export interface Publication {
   title: string;
   venue: string;
+  publisher?: string;
   year: number;
   publishedAt?: string;
   authors: string[];
@@ -439,6 +474,7 @@ export const publications: Publication[] = [
     title:
       "Intelligent Traffic Surveillance: A Vision-Based System for Detecting Traffic Rule Violations",
     venue: "2nd International Conference on Integration of Computational Intelligent Systems",
+    publisher: "IEEE",
     year: 2025,
     publishedAt: "September 2025",
     authors: [
