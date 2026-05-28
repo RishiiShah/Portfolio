@@ -9,6 +9,7 @@ import { ArrowUpRight } from "lucide-react";
 interface Props {
   project: Project;
   onOpen: () => void;
+  index?: number;
 }
 
 const cardTransition = {
@@ -18,7 +19,7 @@ const cardTransition = {
 } satisfies Transition;
 
 export const ProjectCardCompact = forwardRef<HTMLDivElement, Props>(
-  function ProjectCardCompact({ project, onOpen }, ref) {
+  function ProjectCardCompact({ project, onOpen, index = 0 }, ref) {
     const hasCaseStudy = !!(
       project.architectureNotes ||
       project.challenges ||
@@ -34,7 +35,7 @@ export const ProjectCardCompact = forwardRef<HTMLDivElement, Props>(
         initial={{ opacity: 0, y: 14 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: -10 }}
-        transition={cardTransition}
+        transition={{ ...cardTransition, delay: index * 0.06 }}
       >
         <Tilt max={6} glare className="h-full rounded-2xl">
           <button
@@ -58,10 +59,17 @@ export const ProjectCardCompact = forwardRef<HTMLDivElement, Props>(
                   </span>
                 )}
               </div>
-              <ArrowUpRight
-                size={16}
-                className="text-[var(--ink-mute)] group-hover:text-[var(--ink)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all"
-              />
+              <div className="flex items-center gap-3">
+                {project.year && (
+                  <span className="font-mono text-[10px] text-[var(--ink-mute)] tracking-wider">
+                    {project.year}
+                  </span>
+                )}
+                <ArrowUpRight
+                  size={16}
+                  className="text-[var(--ink-mute)] group-hover:text-[var(--ink)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all"
+                />
+              </div>
             </div>
 
             {/* Title */}

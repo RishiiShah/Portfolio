@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { m, AnimatePresence } from "framer-motion";
-import type { Project } from "@/data";
+import { projects, type Project } from "@/data";
 import { FiX, FiGithub, FiExternalLink, FiBookOpen } from "react-icons/fi";
 import { TechChip } from "@/components/ui/TechChip";
+import { AnimatedMetric } from "@/components/ui/AnimatedMetric";
 
 const linkIcon = {
   source: FiGithub,
@@ -63,6 +64,19 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
     };
   }, [project]);
 
+  const relatedProjects = useMemo(() => {
+    if (!project) return [];
+    return projects
+      .filter((p) => p.slug !== project.slug)
+      .map((p) => ({
+        project: p,
+        sharedTags: p.tags.filter((t) => project.tags.includes(t)),
+      }))
+      .filter((r) => r.sharedTags.length > 0)
+      .sort((a, b) => b.sharedTags.length - a.sharedTags.length)
+      .slice(0, 3);
+  }, [project]);
+
   if (!project) {
     return (
       <AnimatePresence>{null}</AnimatePresence>
@@ -86,6 +100,13 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
   const activeTab = availableTabs.includes(tab) ? tab : availableTabs[0];
 
   const metrics = project.metrics ?? [];
+
+  const handleRelatedClick = (slug: string) => {
+    onClose();
+    setTimeout(() => {
+      window.location.hash = `project/${slug}`;
+    }, 350);
+  };
 
   return (
     <AnimatePresence>
@@ -189,13 +210,13 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                   {/* Metrics strip */}
                   {metrics.length > 0 && (
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2.5 mb-6">
-                      {metrics.slice(0, 6).map((metric) => (
+                      {metrics.slice(0, 6).map((metric, i) => (
                         <div
                           key={metric.label}
                           className="rounded-lg border border-[var(--line)] bg-[var(--bg-elev-2)]/40 p-3"
                         >
                           <div className="font-serif text-[var(--accent-warm)] leading-none text-lg md:text-xl">
-                            {metric.value}
+                            <AnimatedMetric value={metric.value} delay={i * 100} />
                           </div>
                           <div className="font-mono text-[9px] uppercase tracking-[0.12em] text-[var(--ink-mute)] mt-1.5 leading-tight">
                             {metric.label}
@@ -312,41 +333,63 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
                       )}
                     </div>
                   </div>
+
+
                 </div>
               </div>
 
               {/* Footer (fixed) */}
               <footer className="flex-shrink-0 border-t border-[var(--line)] px-6 md:px-8 py-4 bg-[var(--bg-elev-2)]/30">
-                <div className="flex flex-wrap items-center justify-between gap-4">
-                  {/* Tech stack */}
-                  <div className="flex flex-wrap items-center gap-1.5 min-w-0">
-                    <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--ink-mute)] mr-1 self-center">
-                      Stack
-                    </span>
-                    {project.tech.map((t) => (
-                      <TechChip key={t} name={t} size="xs" />
-                    ))}
+                <div className="flex flex-col gap-3">
+                  <div className="flex flex-wrap items-center justify-between gap-4">
+                    {/* Tech stack */}
+                    <div className="flex flex-wrap items-center gap-1.5 min-w-0">
+                      <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--ink-mute)] mr-1 self-center">
+                        Stack
+                      </span>
+                      {project.tech.map((t) => (
+                        <TechChip key={t} name={t} size="xs" />
+                      ))}
+                    </div>
+
+                    {/* Links */}
+                    {project.links && project.links.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {project.links.map((link) => {
+                          const Icon = linkIcon[link.type] ?? FiExternalLink;
+                          const label = linkLabel[link.type] ?? "Link";
+                          return (
+                            <a
+                              key={link.type}
+                              href={link.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="ghost-button px-3.5 py-1.5 text-xs flex items-center gap-1.5"
+                            >
+                              <Icon size={12} />
+                              {label}
+                            </a>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
 
-                  {/* Links */}
-                  {project.links && project.links.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {project.links.map((link) => {
-                        const Icon = linkIcon[link.type] ?? FiExternalLink;
-                        const label = linkLabel[link.type] ?? "Link";
-                        return (
-                          <a
-                            key={link.type}
-                            href={link.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="ghost-button px-3.5 py-1.5 text-xs flex items-center gap-1.5"
-                          >
-                            <Icon size={12} />
-                            {label}
-                          </a>
-                        );
-                      })}
+                  {/* Inline Related Projects */}
+                  {relatedProjects.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-2 pt-2 border-t border-[var(--line)]/50">
+                      <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--ink-mute)] mr-1">
+                        Related
+                      </span>
+                      {relatedProjects.map((rp) => (
+                        <button
+                          key={rp.project.slug}
+                          onClick={() => handleRelatedClick(rp.project.slug)}
+                          className="font-mono text-[10px] px-2 py-1 rounded border border-[var(--line)] hover:border-[var(--accent)] hover:text-[var(--accent)] text-[var(--ink-dim)] transition-colors cursor-pointer"
+                        >
+                          {rp.project.title}
+                        </button>
+                      ))}
                     </div>
                   )}
                 </div>

@@ -8,6 +8,7 @@ import { SectionHeading } from "@/components/ui/SectionHeading";
 import { FilterPills } from "@/components/ui/FilterPills";
 import { ProjectCardFeatured } from "@/components/ui/ProjectCardFeatured";
 import { ProjectCardCompact } from "@/components/ui/ProjectCardCompact";
+import { Search, X } from "lucide-react";
 
 const ProjectModal = dynamic(
   () => import("@/components/ProjectModal").then((m) => m.ProjectModal),
@@ -18,15 +19,19 @@ const layoutTransition = {
   layout: { type: "spring", stiffness: 150, damping: 28, mass: 0.9 },
 } satisfies Transition;
 
-const featuredCardTransition = {
-  opacity: { duration: 0.22 },
-  y: { duration: 0.36, ease: [0.22, 1, 0.36, 1] },
-  layout: { type: "spring", stiffness: 150, damping: 28, mass: 0.9 },
-} satisfies Transition;
+function matchesSearch(p: Project, q: string): boolean {
+  return (
+    p.title.toLowerCase().includes(q) ||
+    p.tagline.toLowerCase().includes(q) ||
+    p.tags.some((t) => t.toLowerCase().includes(q)) ||
+    p.tech.some((t) => t.toLowerCase().includes(q))
+  );
+}
 
 export function Projects() {
   const [active, setActive] = useState<Project | null>(null);
   const [filter, setFilter] = useState<string>("All");
+  const [search, setSearch] = useState("");
 
   const tags = useMemo(() => {
     const set = new Set<string>();
@@ -46,10 +51,16 @@ export function Projects() {
     } else if (filter !== "All") {
       list = projects.filter((p) => p.tags.includes(filter));
     }
+    const q = search.trim().toLowerCase();
+    if (q) {
+      list = list.filter((p) => matchesSearch(p, q));
+    }
     return list;
-  }, [filter, featured]);
+  }, [filter, featured, search]);
 
-  const showFeaturedCard = featured && filter === "All";
+  const searchQuery = search.trim().toLowerCase();
+  const showFeaturedCard = featured && filter === "All" &&
+    (!searchQuery || matchesSearch(featured, searchQuery));
 
   // URL hash sync: open modal from hash on mount; update hash when modal opens/closes
   useEffect(() => {
@@ -98,6 +109,38 @@ export function Projects() {
           />
         </m.div>
 
+        {/* Search */}
+        <m.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.4, delay: 0.08 }}
+          className="mb-5"
+        >
+          <div className="relative">
+            <Search
+              size={14}
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--ink-mute)] pointer-events-none"
+            />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search projects..."
+              className="w-full md:w-80 pl-9 pr-9 py-2.5 rounded-xl bg-[var(--bg-elev-1)] border border-[var(--line)] text-sm text-[var(--ink)] placeholder:text-[var(--ink-mute)] font-mono tracking-wide focus:outline-none focus:border-[var(--accent)]/50 focus:ring-1 focus:ring-[var(--accent)]/20 transition-colors"
+            />
+            {search && (
+              <button
+                onClick={() => setSearch("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--ink-mute)] hover:text-[var(--ink)] transition-colors"
+                aria-label="Clear search"
+              >
+                <X size={14} />
+              </button>
+            )}
+          </div>
+        </m.div>
+
         {/* Filter pills */}
         <m.div
           initial={{ opacity: 0, y: 12 }}
@@ -110,32 +153,28 @@ export function Projects() {
         </m.div>
 
         <LayoutGroup id="projects-filter-layout">
-          {/* Featured card */}
-          <AnimatePresence initial={false} mode="popLayout">
-            {showFeaturedCard && featured && (
-              <m.div
-                layout
-                key="featured-panel"
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={featuredCardTransition}
-                className="mb-10"
-              >
-                <ProjectCardFeatured project={featured} onOpen={() => open(featured)} />
-              </m.div>
-            )}
-          </AnimatePresence>
-
-          {/* Grid */}
+          {/* Unified grid: featured card (2-col span) + compact cards */}
           <m.div
             layout
             transition={layoutTransition}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
           >
-            <AnimatePresence initial={false} mode="popLayout">
-              {compactList.map((p) => (
-                <ProjectCardCompact key={p.slug} project={p} onOpen={() => open(p)} />
+            <AnimatePresence mode="popLayout">
+              {showFeaturedCard && featured && (
+                <ProjectCardFeatured
+                  key={featured.slug}
+                  project={featured}
+                  onOpen={() => open(featured)}
+                  index={0}
+                />
+              )}
+              {compactList.map((p, i) => (
+                <ProjectCardCompact
+                  key={p.slug}
+                  project={p}
+                  onOpen={() => open(p)}
+                  index={showFeaturedCard ? i + 1 : i}
+                />
               ))}
             </AnimatePresence>
           </m.div>
@@ -143,7 +182,7 @@ export function Projects() {
 
         {!showFeaturedCard && compactList.length === 0 && (
           <p className="text-center py-12 text-sm text-[var(--ink-mute)]">
-            No projects match this filter.
+            {search.trim() ? "No projects match your search." : "No projects match this filter."}
           </p>
         )}
       </div>
