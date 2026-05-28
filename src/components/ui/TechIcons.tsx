@@ -5,8 +5,8 @@ type IconProps = SVGProps<SVGSVGElement> & {
   color?: string;
 };
 
-/** Java: steaming coffee cup with a lowercase "j" hint. Monoline, brand-agnostic. */
-export function JavaIcon({
+/** Groq brand mark (not in Simple Icons). */
+export function GroqIcon({
   size = 24,
   color = "currentColor",
   ...rest
@@ -16,97 +16,17 @@ export function JavaIcon({
       xmlns="http://www.w3.org/2000/svg"
       width={size}
       height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke={color}
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
+      viewBox="0 0 209.6 304.7"
+      fill={color}
       aria-hidden="true"
       {...rest}
     >
-      {/* Steam */}
-      <path d="M8.5 2.5c0 1 1 1.5 1 2.5s-1 1.5-1 2.5" opacity="0.85" />
-      <path d="M12 2c0 1 1 1.5 1 2.5s-1 1.5-1 2.5" opacity="0.85" />
-      <path d="M15.5 2.5c0 1 1 1.5 1 2.5s-1 1.5-1 2.5" opacity="0.85" />
-      {/* Cup */}
-      <path d="M4 10h13v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5v-5z" />
-      {/* Handle */}
-      <path d="M17 11h2a2 2 0 0 1 0 4h-1.2" />
-      {/* Saucer */}
-      <path d="M3 22h15" opacity="0.7" />
+      <path d="M105.3.004C47.7-.5.5 45.8 0 103.4c-.5 57.6 45.8 104.8 103.4 105.3h36.2v-39.1h-34.3c-36.4-65.6-28.4-66-64.5-.4-36.1 28.4-65.6 64.5-66h1.5c36 0 65.2 29.2 65.4 65.2v96.1c0 35.7-29.1 64.8-64.7 65.2-17.1-.1-33.4-7-45.4-19.1l-27.7 27.7c19.2 19.3 45.2 30.3 72.4 30.5h1.4c56.9-.8 102.6-47 102.9-103.9v-99.1c-1.4-56.5-47.7-101.6-104.3-101.7z" />
     </svg>
   );
 }
 
-/** SQL: database cylinder with a query bracket underline. */
-export function SqlIcon({
-  size = 24,
-  color = "currentColor",
-  ...rest
-}: IconProps) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke={color}
-      strokeWidth="1.6"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      {...rest}
-    >
-      {/* Cylinder top */}
-      <ellipse cx="12" cy="5" rx="7.5" ry="2.5" />
-      {/* Left side */}
-      <path d="M4.5 5v11c0 1.4 3.4 2.5 7.5 2.5s7.5-1.1 7.5-2.5V5" />
-      {/* Middle band */}
-      <path d="M4.5 10.5c0 1.4 3.4 2.5 7.5 2.5s7.5-1.1 7.5-2.5" opacity="0.6" />
-      {/* Query caret */}
-      <path
-        d="M8.5 21l-1.5-1.5L8.5 18"
-        opacity="0.9"
-      />
-      <path
-        d="M15.5 21l1.5-1.5L15.5 18"
-        opacity="0.9"
-      />
-    </svg>
-  );
-}
-
-/** OpenAI API: simple monogram of the rosette. */
-export function OpenAiIcon({
-  size = 24,
-  color = "currentColor",
-  ...rest
-}: IconProps) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke={color}
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      {...rest}
-    >
-      <path d="M12 3a4 4 0 0 1 4 4v5a4 4 0 0 1-4 4 4 4 0 0 1-4-4V7a4 4 0 0 1 4-4z" />
-      <path d="M8.5 7.5L12 9.5l3.5-2" />
-      <path d="M12 9.5V15" />
-      <path d="M8.5 12.5l3.5 2 3.5-2" />
-    </svg>
-  );
-}
-
-/** Generic chip fallback for any tech without a dedicated icon. */
+/** Generic fallback for tech without a brand icon. */
 export function TechDot({
   size = 24,
   color = "currentColor",

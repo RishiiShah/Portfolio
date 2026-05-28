@@ -4,6 +4,7 @@ import { forwardRef } from "react";
 import { m, type Transition } from "framer-motion";
 import type { Project } from "@/data";
 import { Tilt } from "@/components/ui/Tilt";
+import { TechChip } from "@/components/ui/TechChip";
 import { ArrowUpRight } from "lucide-react";
 
 interface Props {
@@ -109,18 +110,13 @@ export const ProjectCardCompact = forwardRef<HTMLDivElement, Props>(
               </div>
             )}
 
-            {/* Tech chips */}
+            {/* Tech stack */}
             <div className="flex flex-wrap gap-1 mb-3">
               {project.tech.slice(0, 4).map((t) => (
-                <span
-                  key={t}
-                  className="font-mono text-[9px] px-1.5 py-0.5 rounded border border-[var(--line)] text-[var(--ink-mute)]"
-                >
-                  {t}
-                </span>
+                <TechChip key={t} name={t} size="xs" interactive={false} />
               ))}
               {project.tech.length > 4 && (
-                <span className="font-mono text-[9px] px-1.5 py-0.5 text-[var(--ink-mute)]">
+                <span className="self-center font-mono text-[9px] px-1 text-[var(--ink-mute)]">
                   +{project.tech.length - 4}
                 </span>
               )}
