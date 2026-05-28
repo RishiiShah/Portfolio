@@ -1,181 +1,165 @@
 "use client";
 
-import { m } from "framer-motion";
+import { forwardRef } from "react";
+import { m, type Transition } from "framer-motion";
 import type { Project } from "@/data";
-import { MetricConstellation } from "@/components/ui/MetricConstellation";
+import { Tilt } from "@/components/ui/Tilt";
 import { TechChip } from "@/components/ui/TechChip";
-import { FiGithub, FiExternalLink, FiBookOpen } from "react-icons/fi";
-import { ArrowRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 
 interface Props {
   project: Project;
   onOpen: () => void;
+  index?: number;
 }
 
-const linkIcon = {
-  source: FiGithub,
-  paper: FiBookOpen,
-  demo: FiExternalLink,
-  blog: FiExternalLink,
-};
-const linkLabel = {
-  source: "Source",
-  paper: "Paper",
-  demo: "Live demo",
-  blog: "Blog",
-};
+const cardTransition = {
+  opacity: { duration: 0.24 },
+  y: { duration: 0.38, ease: [0.22, 1, 0.36, 1] },
+  layout: { type: "spring", stiffness: 170, damping: 30, mass: 0.9 },
+} satisfies Transition;
 
-export function ProjectCardFeatured({ project, onOpen }: Props) {
-  const topMetrics = project.metrics?.slice(0, 3) ?? [];
-  const mobileExtraMetrics = project.metrics?.slice(3, 6) ?? [];
+const innerEase = [0.22, 1, 0.36, 1] as const;
 
-  return (
-    <m.article
-      initial={{ opacity: 0, y: 24 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="relative glass-panel rounded-3xl overflow-hidden"
-    >
-      {/* Warm top accent line */}
-      <div
-        className="h-px w-full"
-        style={{
-          background:
-            "linear-gradient(90deg, transparent, rgba(230,185,128,0.75), transparent)",
-        }}
-      />
+export const ProjectCardFeatured = forwardRef<HTMLDivElement, Props>(
+  function ProjectCardFeatured({ project, onOpen, index = 0 }, ref) {
+    const topMetrics = project.metrics?.slice(0, 3) ?? [];
+    const baseDelay = index * 0.06;
 
-      <div className="grid lg:grid-cols-[1.1fr_1fr] gap-8 lg:gap-10 p-7 md:p-10">
-        {/* Left: prose */}
-        <div className="flex flex-col">
-          <div className="flex items-center gap-2 mb-5">
-            <span className="font-mono text-[10px] uppercase tracking-[0.18em] px-2.5 py-1 rounded-full bg-[var(--accent-warm)]/10 border border-[var(--accent-warm)]/30 text-[var(--accent-warm)]">
-              Featured · IEEE
-            </span>
-            {project.tags.slice(0, 2).map((t) => (
-              <span
-                key={t}
-                className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--ink-mute)]"
-              >
-                · {t}
-              </span>
-            ))}
-          </div>
-
-          <h3
-            className="font-serif text-[var(--ink)] leading-[1.08] mb-4"
-            style={{ fontSize: "clamp(1.8rem, 3.5vw, 2.4rem)" }}
+    return (
+      <m.div
+        ref={ref}
+        layout="position"
+        initial={{ opacity: 0, y: 14 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        transition={{ ...cardTransition, delay: baseDelay }}
+        className="col-span-1 md:col-span-2"
+      >
+        <Tilt max={4} glare className="h-full rounded-2xl">
+          <button
+            onClick={onOpen}
+            aria-haspopup="dialog"
+            aria-label={`View ${project.title} details`}
+            className="group flex flex-col text-left w-full h-full min-h-[260px] rounded-2xl glass-panel-interactive p-7 md:p-8 cursor-pointer relative overflow-hidden"
+            style={{
+              boxShadow:
+                "0 0 40px rgba(230,185,128,0.06), 0 0 80px rgba(230,185,128,0.03), 0 28px 60px 0 rgba(0,0,0,0.35)",
+            }}
           >
-            {project.title}
-          </h3>
+            {/* Warm top accent line */}
+            <div
+              className="absolute top-0 left-0 right-0 h-px"
+              style={{
+                background:
+                  "linear-gradient(90deg, transparent, rgba(230,185,128,0.6), transparent)",
+              }}
+            />
 
-          <p className="text-[var(--ink-dim)] leading-relaxed mb-5 text-[0.9375rem]">
-            {project.tagline}
-          </p>
-
-          {project.problem && (
-            <div className="mb-6 border-l-2 border-[var(--accent-warm)]/40 pl-4">
-              <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--ink-mute)] mb-1">
-                Problem
-              </p>
-              <p className="text-sm text-[var(--ink-dim)] leading-relaxed">
-                {project.problem}
-              </p>
-            </div>
-          )}
-
-          {topMetrics.length > 0 && (
-            <div className="grid grid-cols-3 gap-4 mb-6">
-              {topMetrics.map((m) => (
-                <div key={m.label}>
-                  <p className="font-serif text-2xl text-[var(--accent-warm)] leading-none">
-                    {m.value}
-                  </p>
-                  <p className="mt-1.5 font-mono text-[10px] uppercase tracking-[0.12em] text-[var(--ink-mute)]">
-                    {m.label}
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {mobileExtraMetrics.length > 0 && (
-            <div className="mb-6 grid grid-cols-2 gap-2.5 md:hidden">
-              {mobileExtraMetrics.map((m) => (
-                <div
-                  key={m.label}
-                  className="rounded-lg border border-[var(--line)] bg-[var(--bg-elev-2)]/35 p-2.5"
-                >
-                  <p className="font-serif text-base leading-none text-[var(--accent-warm)]">
-                    {m.value}
-                  </p>
-                  <p className="mt-1 font-mono text-[9px] uppercase tracking-[0.12em] text-[var(--ink-mute)]">
-                    {m.label}
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {project.role && (
-            <p className="italic text-sm text-[var(--ink-dim)] leading-relaxed mb-6">
-              <span className="not-italic font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--ink-mute)] mr-2">
-                Role
-              </span>
-              {project.role}
-            </p>
-          )}
-
-          {/* Tech chips */}
-          <div className="flex flex-wrap gap-1.5 mb-6">
-            {project.tech.slice(0, 8).map((t) => (
-              <TechChip key={t} name={t} size="xs" />
-            ))}
-            {project.tech.length > 8 && (
-              <span className="font-mono text-[10px] text-[var(--ink-mute)] self-center">
-                +{project.tech.length - 8}
-              </span>
-            )}
-          </div>
-
-          {/* Actions */}
-          <div className="mt-auto flex flex-wrap items-center gap-3">
-            <button
-              onClick={onOpen}
-              className="warm-button px-5 py-2.5 text-sm flex items-center gap-2 group"
+            {/* Badge row */}
+            <m.div
+              initial={{ opacity: 0, y: 8 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.35, ease: innerEase, delay: baseDelay + 0.06 }}
+              className="flex items-center justify-between mb-4"
             >
-              Read case study
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-            </button>
-            {project.links?.map((link) => {
-              const Icon = linkIcon[link.type] ?? FiExternalLink;
-              const label = linkLabel[link.type] ?? "Link";
-              return (
-                <a
-                  key={link.type}
-                  href={link.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="ghost-button px-5 py-2.5 text-sm flex items-center gap-2"
-                >
-                  <Icon size={13} />
-                  {label}
-                </a>
-              );
-            })}
-          </div>
-        </div>
+              <div className="flex items-center gap-2">
+                <span className="font-mono text-[10px] uppercase tracking-[0.14em] px-2.5 py-1 rounded-full bg-[var(--accent-warm)]/10 border border-[var(--accent-warm)]/30 text-[var(--accent-warm)]">
+                  Featured · IEEE
+                </span>
+                {project.tags.slice(0, 2).map((t) => (
+                  <span
+                    key={t}
+                    className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--ink-mute)]"
+                  >
+                    · {t}
+                  </span>
+                ))}
+              </div>
+              <div className="flex items-center gap-3">
+                {project.year && (
+                  <span className="font-mono text-[10px] text-[var(--ink-mute)] tracking-wider">
+                    {project.year}
+                  </span>
+                )}
+                <ArrowUpRight
+                  size={16}
+                  className="text-[var(--ink-mute)] group-hover:text-[var(--ink)] group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-all"
+                />
+              </div>
+            </m.div>
 
-        {/* Right: metric constellation */}
-        <div className="hidden min-h-[280px] items-center justify-center md:flex">
-          {project.metrics && project.metrics.length > 0 ? (
-            <MetricConstellation metrics={project.metrics} />
-          ) : (
-            <p className="text-sm text-[var(--ink-mute)]">No metrics yet</p>
-          )}
-        </div>
-      </div>
-    </m.article>
-  );
-}
+            {/* Title */}
+            <m.h3
+              initial={{ opacity: 0, y: 8 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.35, ease: innerEase, delay: baseDelay + 0.12 }}
+              className="font-serif text-[var(--ink)] leading-[1.1] mb-3"
+              style={{ fontSize: "clamp(1.3rem, 2.2vw, 1.7rem)" }}
+            >
+              {project.title}
+            </m.h3>
+
+            {/* Tagline */}
+            <m.p
+              initial={{ opacity: 0, y: 8 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.35, ease: innerEase, delay: baseDelay + 0.16 }}
+              className="text-sm text-[var(--ink-dim)] leading-relaxed mb-5 max-w-2xl"
+            >
+              {project.tagline}
+            </m.p>
+
+            {/* Metrics */}
+            {topMetrics.length > 0 && (
+              <m.div
+                initial={{ opacity: 0, y: 8 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.35, ease: innerEase, delay: baseDelay + 0.2 }}
+                className="flex flex-wrap gap-x-6 gap-y-2 mb-5"
+              >
+                {topMetrics.map((metric) => (
+                  <div key={metric.label} className="flex items-baseline gap-1.5">
+                    <span className="font-serif text-lg text-[var(--accent-warm)] leading-none">
+                      {metric.value}
+                    </span>
+                    <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-[var(--ink-mute)]">
+                      {metric.label}
+                    </span>
+                  </div>
+                ))}
+              </m.div>
+            )}
+
+            {/* Bottom: tech chips + case study CTA */}
+            <m.div
+              initial={{ opacity: 0, y: 8 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.35, ease: innerEase, delay: baseDelay + 0.24 }}
+              className="flex flex-wrap items-center justify-between gap-4 mt-auto"
+            >
+              <div className="flex flex-wrap gap-1.5">
+                {project.tech.slice(0, 6).map((t) => (
+                  <TechChip key={t} name={t} size="xs" />
+                ))}
+                {project.tech.length > 6 && (
+                  <span className="font-mono text-[10px] text-[var(--ink-mute)] self-center">
+                    +{project.tech.length - 6}
+                  </span>
+                )}
+              </div>
+              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--accent-warm)]/60 group-hover:text-[var(--accent-warm)] transition-colors">
+                Read case study →
+              </span>
+            </m.div>
+          </button>
+        </Tilt>
+      </m.div>
+    );
+  }
+);

@@ -151,11 +151,13 @@ export interface Project {
   architectureNotes?: string[];
   challenges?: string[];
   lessons?: string[];
+  year?: string;
 }
 
 export const projects: Project[] = [
   {
     slug: "csegraph",
+    year: "2025",
     title: "csegraph",
     tagline:
       "Repository context engine for coding agents that indexes multi-language codebases into a dependency graph and returns the smallest useful context bundle for any task.",
@@ -191,6 +193,7 @@ export const projects: Project[] = [
   },
   {
     slug: "snap-interview",
+    year: "2024",
     title: "Snap Interview",
     tagline:
       "AI-powered mock interview platform with adaptive question progression, streaming LLM evaluation, and schema-enforced structured feedback.",
@@ -226,6 +229,7 @@ export const projects: Project[] = [
   },
   {
     slug: "traffic-violation-detection",
+    year: "2025",
     title: "Traffic Violation Detection & Automated Ticketing",
     tagline:
       "YOLO-based vision system for five-rule enforcement with OCR/ANPR and automated challan workflows.",
@@ -279,6 +283,7 @@ export const projects: Project[] = [
   },
   {
     slug: "wgan-gp-financial-timeseries",
+    year: "2025",
     title: "Synthetic Financial Time Series via WGAN-GP",
     tagline:
       "Generative adversarial network for realistic stock market data synthesis with 98.83% downstream accuracy.",
@@ -315,6 +320,7 @@ export const projects: Project[] = [
   },
   {
     slug: "jarvis-voice-assistant",
+    year: "2025",
     title: "JARVIS: Voice Assistant & Smart Home Automation",
     tagline:
       "Full-stack smart home automation with Django, Azure IoT Hub, Raspberry Pi, and sub-300ms LLM responses.",
@@ -365,6 +371,7 @@ export const projects: Project[] = [
   },
   {
     slug: "discord-admin-bot",
+    year: "2023",
     title: "Discord Bot with Admin Privileges",
     tagline:
       "Moderation-first Discord bot with role-scoped commands, audit trails, and reversible actions.",
@@ -377,6 +384,7 @@ export const projects: Project[] = [
   },
   {
     slug: "music-genre-detection",
+    year: "2024",
     title: "Music Genre Detection System",
     tagline:
       "Bi-LSTM ML pipeline using Librosa features achieving 98.73% accuracy with lightweight inference.",
@@ -413,6 +421,7 @@ export const projects: Project[] = [
   },
   {
     slug: "movie-recommendation-system",
+    year: "2023",
     title: "Movie Recommendation System",
     tagline:
       "TMDB-based recommendation engine using cosine similarity across 5000+ films.",
@@ -427,6 +436,7 @@ export const projects: Project[] = [
   },
   {
     slug: "ar-interaction-platform",
+    year: "2023",
     title: "AR Product Visualization Platform",
     tagline:
       "Augmented reality platform with Google PaLM 2 chatbot for product visualization and support.",
@@ -439,6 +449,7 @@ export const projects: Project[] = [
   },
   {
     slug: "banking-system-bluej",
+    year: "2022",
     title: "Banking System (Early Project)",
     tagline:
       "Java OOP banking simulator with runtime accounts, auth, and core banking operations.",
