@@ -4,8 +4,12 @@ import { useState } from "react";
 import { m } from "framer-motion";
 import { bio } from "@/data";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { DottedMap } from "@/components/ui/DottedMap";
+import dynamic from "next/dynamic";
 import { Mail, MapPin } from "lucide-react";
+
+const DottedMap = dynamic(() => import("@/components/ui/DottedMap").then((m) => m.DottedMap), {
+  ssr: false,
+});
 import { FiGithub, FiLinkedin } from "react-icons/fi";
 
 type Status = "idle" | "loading" | "success" | "error";
@@ -132,11 +136,15 @@ export function Contact() {
 
             <div className="space-y-3">
               <a
-                href={`mailto:${bio.email}`}
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.location.href = `mailto:${bio.email}`;
+                }}
                 className="flex items-center gap-3 break-words [overflow-wrap:anywhere] text-sm text-[var(--ink-dim)] transition-colors hover:text-[var(--ink)]"
               >
                 <Mail size={13} className="text-[var(--accent)] shrink-0" />
-                {bio.email}
+                Send an email
               </a>
               <div className="flex items-center gap-3 text-sm text-[var(--ink-mute)]">
                 <MapPin size={13} className="text-[var(--accent)] shrink-0" />
@@ -151,10 +159,10 @@ export function Contact() {
                 markerColor="#e6b980"
                 dotRadius={0.34}
                 pulse
-                mapSamples={6400}
+                mapSamples={1200}
                 className="h-72 md:h-80"
                 renderMarkerOverlay={({ marker, x, y }) => {
-                  const isNYC = marker.label === "NYC";
+                  const isNYC = (marker as unknown as { label?: string }).label === "NYC";
                   const offset = 2.1;
                   return (
                     <g pointerEvents="none">
@@ -171,7 +179,7 @@ export function Contact() {
                         textAnchor={isNYC ? "start" : "end"}
                         style={{ letterSpacing: "0.1em" }}
                       >
-                        {marker.label}
+                        {(marker as unknown as { label?: string }).label}
                       </text>
                     </g>
                   );

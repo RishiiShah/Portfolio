@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Renderer, Program, Mesh, Triangle } from "ogl";
 
 const vertex = /* glsl */ `
@@ -109,6 +109,12 @@ const fragment = /* glsl */ `
 
 export function HeroShader({ className = "" }: { className?: string }) {
   const wrapRef = useRef<HTMLDivElement>(null);
+  const [opacity, setOpacity] = useState(0);
+
+  useEffect(() => {
+    const t = setTimeout(() => setOpacity(1), 50);
+    return () => clearTimeout(t);
+  }, []);
 
   useEffect(() => {
     const wrap = wrapRef.current;
@@ -257,6 +263,7 @@ export function HeroShader({ className = "" }: { className?: string }) {
       ref={wrapRef}
       aria-hidden
       className={`absolute inset-0 overflow-hidden ${className}`}
+      style={{ opacity, transition: "opacity 1.5s ease-in-out" }}
     />
   );
 }
