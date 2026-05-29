@@ -270,12 +270,11 @@ section[id] {
 }
 
 .site-loader {
-  animation: siteLoaderOut 0.4s ease-out 1s forwards;
+  animation: siteLoaderOut 0.5s ease-out 1.5s forwards;
 }
 
 .site-loader-text {
-  opacity: 0;
-  animation: loaderTextIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s forwards;
+  animation: loaderTextIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .site-loader-bar {
@@ -286,7 +285,7 @@ section[id] {
   transform-origin: left;
   transform: scaleX(0);
   background: linear-gradient(90deg, var(--accent-signal), var(--accent-warm));
-  animation: loaderBarFill 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+  animation: loaderBarFill 1.0s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
 }
 
 @keyframes loaderTextIn {

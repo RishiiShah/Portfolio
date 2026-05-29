@@ -9,7 +9,11 @@ import { Tilt } from "@/components/ui/Tilt";
 import { HeroSignalPanel } from "@/components/ui/HeroSignalPanel";
 
 const HeroShader = dynamic(
-  () => import("@/components/shaders/HeroShader").then((m) => ({ default: m.HeroShader })),
+  () =>
+    new Promise<typeof import("@/components/shaders/HeroShader")>((resolve) => {
+      // Defer loading the heavy shader chunk to prioritize LCP
+      setTimeout(() => resolve(import("@/components/shaders/HeroShader")), 250);
+    }).then((m) => ({ default: m.HeroShader })),
   {
     ssr: false,
     loading: () => (
@@ -168,7 +172,11 @@ export function Hero() {
                 <FiLinkedin size={18} />
               </a>
               <a
-                href={`mailto:${bio.email}`}
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  window.location.href = `mailto:${bio.email}`;
+                }}
                 className="text-[var(--ink-mute)] hover:text-[var(--ink)] transition-colors"
                 aria-label="Email"
               >

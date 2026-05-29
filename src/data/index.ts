@@ -5,7 +5,7 @@ export const bio = {
   title: "Software Engineer & ML Researcher",
   tagline: "Building at the intersection of engineering and intelligence.",
   description:
-    "CS student at Rutgers University. I build scalable backend systems, ML pipelines, and research-grade computer vision, and publish what I find.",
+    "CS student at Rutgers University. I specialize in building scalable backend systems in Python, machine learning pipelines, and research-grade computer vision. View my work on GitHub.",
   email: "rish.shah@rutgers.edu",
   github: "https://github.com/RishiiShah",
   linkedin: "https://www.linkedin.com/in/rishabh-shah1/",
