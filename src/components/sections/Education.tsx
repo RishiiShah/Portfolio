@@ -42,7 +42,7 @@ export function Education() {
                 </h3>
                 <span className="mt-1 font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--accent)] sm:mt-2 sm:shrink-0">
                   <time dateTime={toIsoDate(edu.start)}>{edu.start}</time>
-                  {" – "}
+                  {" - "}
                   <time dateTime={toIsoDate(edu.end)}>{edu.end}</time>
                 </span>
               </div>

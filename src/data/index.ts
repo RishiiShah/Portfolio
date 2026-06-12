@@ -39,16 +39,15 @@ export const education = [
 export const skills = [
   {
     category: "Languages",
-    items: ["Python", "C++", "Java", "TypeScript", "JavaScript", "SQL", "C"],
+    items: ["Python", "C++", "Java", "TypeScript", "SQL", "C"],
   },
   {
     category: "Frameworks & Tools",
     items: [
       "Django",
-      "Flask",
       "Next.js",
-      "Node.js",
-      "React",
+      "REST APIs",
+      "JWT Auth",
       "Docker",
       "Git",
       "GitHub Actions",
@@ -60,20 +59,12 @@ export const skills = [
     items: ["PostgreSQL", "MySQL", "MongoDB", "AWS", "Azure", "GCP"],
   },
   {
+    category: "Testing",
+    items: ["Pytest", "Vitest", "Playwright"],
+  },
+  {
     category: "AI / ML & Computer Vision",
-    items: [
-      "PyTorch",
-      "TensorFlow",
-      "Scikit-learn",
-      "Keras",
-      "Pandas",
-      "NumPy",
-      "OpenCV",
-      "YOLO",
-      "OCR",
-      "ANPR",
-      "Librosa",
-    ],
+    items: ["TensorFlow", "PyTorch", "Scikit-learn", "OpenCV", "YOLO"],
   },
 ] as const;
 
@@ -98,12 +89,11 @@ export const experience: ExperienceItem[] = [
     start: "January 2025",
     end: "July 2025",
     summary:
-      "Python/Next.js backend services, JWT-secured APIs, microservices, Docker, AWS, and CI/CD.",
+      "Python/Next.js backend services, JWT-secured APIs, Docker, AWS, and CI/CD automation.",
     bullets: [
-      "With 400ms+ queries degrading user-facing response times, restructured MySQL schemas and rewrote critical SQL paths in Python and Next.js, reducing average API latency traced via structured application logs.",
-      "Replaced ad-hoc inter-module calls lacking auth validation by implementing JWT-authenticated REST APIs with role-based access control across backend services, standardizing error handling and security.",
-      "Containerized all services using Docker and built Git/GitHub managed deployment workflows on AWS, cutting deployments from manual multi-step configuration to repeatable single-command runs.",
-      "Owned end-to-end releases independently in the final quarter, coordinating with frontend and QA teams across backend APIs, web application, and dashboard modules for integration testing.",
+      "Reduced API response times exceeding 400ms by restructuring MySQL schemas and rewriting critical SQL paths in Python and Next.js, cutting average latency by 22%.",
+      "Eliminated unauthorized cross-service requests across 4 backend services by building JWT-authenticated REST APIs with role-based access control, enforcing identity verification on every internal call.",
+      "Containerized 4 backend services with Docker and automated AWS release workflows, reducing manual per-release deployment setup by 65% for a 4-person backend team.",
     ],
     tech: ["Python", "Next.js", "MySQL", "Docker", "AWS", "JWT", "GitHub Actions"],
   },
@@ -114,10 +104,11 @@ export const experience: ExperienceItem[] = [
     start: "June 2024",
     end: "September 2024",
     summary:
-      "Next.js performance optimization, API route automation, and reliability-focused delivery.",
+      "Next.js performance optimization, security hardening, and reliability-focused delivery.",
     bullets: [
-      "Refactored tightly coupled components across features to eliminate duplication, reducing per-file size and enabling faster iteration on new feature work.",
-      "Resolved frequent timeout and null-response issues developing Next.js API routes with MySQL integration, caching, and error handling, backed through unit tests.",
+      "Resolved a coupling bottleneck across 3 features by refactoring 7 shared-logic components into isolated responsibilities, cutting per-file size by 70% and reducing review complexity.",
+      "Traced P95 response times above 3100ms to missing indexes and absent connection pooling by rebuilding 3 Next.js routes with both fixes, dropping load time to 420ms.",
+      "Closed SQL injection exposure in user-facing forms by switching to parameterized queries and adding input validation across authentication and CRUD endpoints, eliminating direct raw-input-to-database paths.",
     ],
     tech: ["Next.js", "MySQL", "TypeScript", "REST APIs"],
   },
@@ -158,68 +149,73 @@ export const projects: Project[] = [
   {
     slug: "csegraph",
     year: "2025",
-    title: "csegraph",
+    title: "CseGraph",
     tagline:
-      "Repository context engine for coding agents that indexes multi-language codebases into a dependency graph and returns the smallest useful context bundle for any task.",
-    tech: ["Python", "SQLite", "AST", "Tree-sitter"],
+      "Repository context engine for coding agents that indexes 22 languages into a SQLite dependency graph and returns the smallest useful context bundle for any task.",
+    tech: ["Python", "SQLite", "Tree-sitter", "MCP", "FTS5"],
     tags: ["Systems", "Backend", "Developer Tools"],
     latest: true,
     impact:
-      "Context engine serving 10 programming languages with zero runtime dependencies, replacing brute-force repo search with graph-driven retrieval.",
+      "Reduced agent token consumption by 96% on the engine's own codebase (144 files, 1,509 symbols, 6,570 edges) by replacing brute-force repo search with graph-driven retrieval.",
+    links: [{ type: "source", url: "https://github.com/RishiiShah/CseGraph" }],
     featured: false,
     metrics: [
-      { label: "Languages", value: "10" },
-      { label: "Runtime Deps", value: "0" },
-      { label: "Retrieval", value: "Graph-driven" },
+      { label: "Token Reduction", value: "96%" },
+      { label: "Languages", value: "22" },
+      { label: "MCP Tools", value: "6" },
+      { label: "Symbols Indexed", value: "1,509" },
     ],
     problem:
       "Coding agents waste tool calls and prompt tokens searching repositories for context. Brute-force file reads miss dependencies, and embedding-only approaches lose structural relationships between symbols.",
-    role: "Sole developer. Designed and built the full system: multi-language parser infrastructure, graph storage engine, retrieval pipeline, sufficiency scoring, CLI, and SDK.",
+    role: "Sole developer. Designed and built the full system: multi-language Tree-sitter parsing, WAL-mode SQLite graph storage, FTS5 retrieval pipeline, 6-tool MCP stdio server, CLI, SDK, and a VS Code extension.",
     architectureNotes: [
-      "AST/CST-driven indexing extracts symbols, dependencies, and call graphs without ever executing user code. Python uses stdlib ast, and all other languages go through a single generic tree-sitter parser parameterized per language.",
-      "Retrieval combines lexical search with graph expansion to surface structurally relevant context that keyword search alone would miss.",
-      "Shipped as three packages (core engine, SDK facade, and CLI), each independently installable with strict dependency isolation.",
+      "Indexing pipeline parses 22 languages with Tree-sitter into a WAL-mode SQLite dependency graph, with incremental SHA256-based refresh and a lexical index over symbols, signatures, and docstrings.",
+      "Retrieval combines FTS5 BM25 ranking with exact-name boosting, hub-aware BFS traversal that refuses to expand through high-degree utility nodes, and deterministic byte-capped context selection.",
+      "A 6-tool MCP stdio server (index, refresh, minimal, context, graph, path) provides session-aware suggestion filtering and confidence tiers that distinguish AST-proven edges from inferred ones.",
     ],
     challenges: [
-      "Supporting 10 languages with a single retrieval pipeline required a language-neutral intermediate representation that preserves structural fidelity.",
-      "Keeping zero runtime dependencies for the core package while supporting optional tree-sitter grammars across platforms.",
+      "Supporting 22 languages with a single retrieval pipeline required a language-neutral representation that preserves structural fidelity.",
+      "Keeping responses budget-safe for agents: a hard byte cap with a deterministic drop order (source text, then explanations, then trailing nodes and edges) guarantees the response never blows the context window.",
       "Balancing context precision against recall: returning too little misses critical dependencies, returning too much wastes agent tokens.",
     ],
     lessons: [
       "Graph structure captures relationships that pure text search cannot. Even a shallow BFS over a dependency graph surfaces context that keyword matching misses entirely.",
-      "Zero-dependency core was worth the constraint. It makes the tool installable anywhere without version conflicts, which matters for agent toolchains.",
-      "Sufficiency metrics that quantify context quality let you tune retrieval empirically instead of guessing at thresholds.",
+      "Hub-aware traversal matters: without suppressing expansion through high-degree utility nodes, every query drags in logging and config helpers.",
+      "Edge trust should be explicit. Tagging edges as AST-proven versus inferred lets agents gate decisions on confidence instead of treating all relationships as equally reliable.",
     ],
   },
   {
     slug: "snap-interview",
-    year: "2024",
-    title: "Snap Interview",
+    year: "2025",
+    title: "Snap-Interview",
     tagline:
-      "AI-powered mock interview platform with adaptive question progression, streaming LLM evaluation, and schema-enforced structured feedback.",
+      "AI interview practice platform where users run voice-based mock interviews with an AI interviewer, get recorded, and receive schema-enforced structured evaluations.",
     tech: ["Next.js", "TypeScript", "PostgreSQL", "Prisma", "Groq API", "AWS S3", "ElevenLabs", "BetterAuth"],
     tags: ["Full-stack", "AI/ML"],
     impact:
-      "End-to-end interview simulation platform with persona/difficulty-aware prompting, presigned S3 recording uploads, and a CI pipeline covering lint, typecheck, unit, and e2e tests.",
-    links: [{ type: "source", url: "https://github.com/RishiiShah/SnapInterview" }],
+      "Live at snapinterview.app: an async interview pipeline coordinating microphone capture, LLM streaming, TTS synthesis, and S3 uploads, eliminating audio lag and race conditions.",
+    links: [
+      { type: "demo", url: "https://snapinterview.app" },
+      { type: "source", url: "https://github.com/RishiiShah/SnapInterview" },
+    ],
     featured: false,
     metrics: [
-      { label: "Feedback Latency", value: "<2s" },
-      { label: "Interview Modes", value: "3" },
-      { label: "Question Types", value: "15+" },
+      { label: "Eval Scale", value: "0 to 100" },
+      { label: "Role Prompts", value: "28" },
+      { label: "API Route Groups", value: "19" },
     ],
     problem:
       "Early-career engineers practicing for interviews get either generic AI feedback or nothing at all. Existing tools grade correctness but miss communication, structure, and per-skill signal.",
-    role: "Full-stack build: Next.js App Router UI with streaming feedback, Groq API for LLM inference, PostgreSQL with Prisma ORM, AWS S3 for recordings, ElevenLabs for TTS, BetterAuth for auth, and a full CI pipeline.",
+    role: "Full-stack build: Next.js 16 App Router with a layered backend (API routes, services, repositories, Prisma), Groq Llama 3.3 70B for interview chat and evaluation, Web Speech API recognition, ElevenLabs TTS, presigned AWS S3 uploads, Better Auth sessions, and a CI pipeline covering lint, typecheck, unit, and e2e tests.",
     architectureNotes: [
-      "Adaptive question progression with persona/difficulty-aware prompt composition shapes each session to the candidate's level and target role.",
-      "Evaluation engine produces per-skill scores (communication, technical depth, clarity) using schema-enforced AI output to prevent malformed results.",
-      "Recording pipeline uses presigned S3 uploads scoped to per-user key prefixes with CSRF protection and rate limiting on all sensitive endpoints.",
+      "Async interview pipeline coordinates microphone capture, LLM streaming, TTS synthesis, and S3 uploads; frontend state is composed from specialized hooks chained by a single page controller, eliminating audio lag and race conditions.",
+      "Schema-enforced evaluation engine scores responses from 0 to 100 with structured feedback across communication, technical depth, and clarity, eliminating malformed AI output.",
+      "Hardened upload and auth surface: presigned S3 keys scoped to per-user prefixes, origin-based CSRF protection and Postgres-backed rate limits across 4 endpoint types, and a nonce-based CSP served through the Next.js 16 proxy.",
     ],
     challenges: [
-      "Hitting sub-2s feedback latency required streaming LLM responses with schema-enforced structured outputs instead of ad-hoc prompt chains.",
-      "Open-ended answers drift between sessions; calibration with few-shot examples and schema enforcement was essential for consistency.",
-      "Security surface spans login, OTP, eval, and upload endpoints — each required independent rate limiting and CSRF hardening.",
+      "Chaining speech recognition, LLM streaming, and TTS without race conditions required an explicitly async pipeline instead of ad-hoc event handlers.",
+      "Open-ended answers drift between sessions; calibration with role-specific prompts and schema enforcement was essential for consistency.",
+      "Security surface spans login, OTP, eval, and upload endpoints, and each required independent rate limiting and CSRF hardening.",
     ],
     lessons: [
       "Schema-enforced AI outputs are dramatically more reliable than parsing free-text prose. Never parse prose when you can enforce a schema.",
@@ -238,14 +234,13 @@ export const projects: Project[] = [
       "YOLOv12x",
       "OpenCV",
       "Groq Llama-4",
-      "OCR",
       "Django",
       "Twilio",
       "AWS S3",
     ],
     tags: ["MLOps", "Systems", "Research"],
     impact:
-      "Production-grade end-to-end traffic enforcement achieving 93.76% accuracy across five violation classes with automated evidence collection and immediate offender notification.",
+      "End-to-end traffic enforcement achieving 93.76% accuracy across five violation classes, completing the violation-to-notification pipeline within source-video duration plus 10 seconds.",
     links: [
       {
         type: "source",
@@ -257,28 +252,28 @@ export const projects: Project[] = [
     metrics: [
       { label: "End-to-End Accuracy", value: "93.76%" },
       { label: "Vehicle Detection", value: "97.56%" },
-      { label: "OCR Accuracy", value: "92.7%" },
-      { label: "Localization", value: "98%" },
+      { label: "Helmet Detection", value: "93.26%" },
+      { label: "Plate Extraction", value: "92.7%" },
+      { label: "ANPR Localization", value: "98%" },
       { label: "Violation Types", value: "5" },
-      { label: "Manual Overhead", value: "−90%" },
     ],
     problem:
       "Automate traffic violation detection and evidence-backed ticketing at scale by detecting multiple violation types from live video feeds and delivering verifiable digital challans.",
-    role: "Led the full computer vision pipeline: YOLOv12x model development, license plate OCR via Groq Llama-4, challan metadata automation, and end-to-end cloud storage + SMS notification.",
+    role: "Led the full computer vision pipeline: YOLO model evaluation and selection, vision-based license plate extraction via Groq Llama-4 Scout, challan metadata automation, and end-to-end cloud storage plus SMS notification.",
     architectureNotes: [
-      "YOLOv12x selected after comparative testing against YOLOv11x on a custom traffic dataset. Detects five violation classes in real time with 93.76% end-to-end accuracy.",
-      "Two-stage license plate recognition: Groq Llama-4 Scout vision model extracts characters with 92.7% accuracy, followed by Indian number plate regex validation (98% localization accuracy).",
-      "Challan system captures violation metadata to AWS S3 with secure pre-signed URLs, delivering SMS notifications via Twilio with evidence links and fine amounts.",
+      "YOLOv12x selected through an automated evaluation harness across YOLOv11x/v12x nano-to-XL variants, fine-tuned on a custom traffic dataset covering red light jumping, speeding, helmet-less riding, missing insurance, and pollution non-compliance.",
+      "Replaced traditional OCR that failed on angled low-light plates with the Groq Llama-4 Scout vision model as a fallback, followed by regex post-validation against Indian BH and state plate formats, reaching 92.7% plate extraction with 98% localization.",
+      "Violation-to-notification pipeline runs frame-by-frame detection with trigger-point violation logic, stores evidence frames in AWS S3 with presigned URLs, and delivers Twilio SMS challans with fine amounts and evidence links.",
     ],
     challenges: [
       "Real-time detection under uncontrolled lighting, weather variations, and diverse camera angles.",
-      "Stream processing with tripwire detection requires robust handling of dropped frames without losing evidence.",
-      "Forensic-grade metadata capture (timestamps, geolocation, image integrity) for legal scrutiny.",
+      "Speed estimation from video alone required pixel-to-distance calibration across successive frames to convert tracked movement into real-world km/h.",
+      "Vision-model plate reads are not deterministic; when Llama-4 Scout cannot return a definitive answer, the pipeline retries with the sharpest successive frame after the violation.",
     ],
     lessons: [
-      "ANPR must validate through multiple stages (OCR, regex, and structural checks) because raw model predictions frequently contain errors.",
+      "ANPR must validate through multiple stages (vision extraction, regex, and structural checks) because raw model predictions frequently contain errors.",
       "Evidence collection and notification are as important as detection accuracy; a perfect detector creates no value if frames are lost or SMS delivery is unreliable.",
-      "Preprocessing (lighting normalization, motion blur handling) dramatically improves real-world robustness.",
+      "Model selection is a trade-off curve, not a single answer: extra-large variants earned their cost only on plate detection, while medium variants matched them on vehicle detection at a fraction of the memory.",
     ],
   },
   {
@@ -287,11 +282,10 @@ export const projects: Project[] = [
     title: "Synthetic Financial Time Series via WGAN-GP",
     tagline:
       "Generative adversarial network for realistic stock market data synthesis with 98.83% downstream accuracy.",
-    tech: ["Python", "PyTorch", "WGAN-GP", "LSTM", "GRU", "TCN", "NumPy", "Pandas"],
+    tech: ["Python", "PyTorch", "NumPy", "Pandas"],
     tags: ["MLOps", "Research"],
     impact:
       "Generative model producing statistically valid synthetic market data that augments training sets, improving downstream prediction from 97.93% to 98.83% accuracy.",
-    links: [{ type: "paper", url: "https://www.scrivener.com/published/" }],
     featured: false,
     metrics: [
       { label: "Accuracy Gain", value: "97.93% to 98.83%" },
@@ -301,21 +295,21 @@ export const projects: Project[] = [
     ],
     problem:
       "Financial time-series datasets are scarce, noisy, and often proprietary. Training robust forecasters on limited historical data produces overfit models that miss regime changes and rare events.",
-    role: "Designed and implemented the full pipeline: WGAN-GP architecture, 3000-epoch training, synthetic-data filtering, and downstream evaluation across three classifiers (LSTM, GRU, TCN). Co-authored the paper.",
+    role: "First author. Designed and implemented the full pipeline: WGAN-GP architecture, 3000-epoch training, synthetic-data filtering, and downstream prediction evaluation on unseen data.",
     architectureNotes: [
       "Wasserstein GAN with gradient penalty, not vanilla GAN. WGAN-GP stabilizes training on high-variance time-series data where vanilla GANs collapse.",
-      "Generator is a stacked LSTM that emits 1D sequences; discriminator is a 1D convolutional critic. Latent dimensionality and gradient-penalty coefficient were swept via hyperparameter search.",
-      "Evaluation downstream on LSTM, GRU, and TCN classifiers with and without synthetic augmentation. Synthetic sequences are filtered by Pearson correlation and R-squared before being mixed into training sets.",
+      "Generator concatenates past market windows with noise, then runs multi-head attention, temporal convolution blocks, two LSTM layers, and a GRU before a dense head. The critic is a Conv1D plus LeakyReLU stack trained 5 times per generator step with AdamW.",
+      "Trained on AAPL daily data (Open, High, Low, Close, Adjusted Close, Volume) preprocessed with log returns and a hybrid standard plus min-max scaling scheme. Synthetic sequences are validated with Pearson, Spearman, and R-squared before being mixed into training sets.",
     ],
     challenges: [
       "Vanilla GAN training collapses on long financial time series. Wasserstein loss with gradient penalty was required for stable training over 3000 epochs.",
-      "Validating synthetic quality needs multiple statistical measures. Visual plausibility alone is not sufficient; Pearson and R-squared on rolling windows were the real signal.",
-      "Avoiding data leakage. Synthetic sequences generated from training windows must not overlap statistically with held-out test windows.",
+      "Validating synthetic quality needs multiple statistical measures. Visual plausibility alone is not sufficient; Pearson, Spearman, and R-squared were the real signal.",
+      "Volume barely correlates with price features, making it the hardest series to synthesize; it had to be scaled and processed separately from the price columns.",
     ],
     lessons: [
       "Synthetic data augmentation is real and measurable: downstream accuracy moved from 97.93% to 98.83% with no change to the classifier architecture.",
-      "GANs are temperamental. Gradient clipping, careful batch sizing, and Wasserstein loss made training 5x more stable than the defaults.",
-      "Rolling-window Pearson and R-squared are better quality signals for synthetic time series than any single-frame similarity measure.",
+      "GANs are temperamental. Training the critic 5 times per generator step with AdamW and Wasserstein loss made training dramatically more stable than the defaults.",
+      "Spearman correlation exceeding Pearson was the tell that the generator produced varied scales while preserving trend, which is exactly what augmentation needs.",
     ],
   },
   {
@@ -323,7 +317,7 @@ export const projects: Project[] = [
     year: "2025",
     title: "JARVIS: Voice Assistant & Smart Home Automation",
     tagline:
-      "Full-stack smart home automation with Django, Azure IoT Hub, Raspberry Pi, and sub-300ms LLM responses.",
+      "Voice assistant with smart home automation: wake-word speech pipeline, Groq-hosted Llama 3.1 8B query processing, and Azure IoT Hub device control through Raspberry Pi GPIO.",
     tech: [
       "Python",
       "Django",
@@ -335,7 +329,7 @@ export const projects: Project[] = [
     ],
     tags: ["Full-stack", "Systems", "Research"],
     impact:
-      "End-to-end voice-controlled home automation achieving sub-300ms latency with secure cloud-edge synchronization and multi-module intent routing.",
+      "End-to-end voice-controlled home automation across four modules with secure cloud-edge device messaging and privacy-first handling of voice commands.",
     links: [
       { type: "source", url: "https://github.com/RishiiShah/Jarvis" },
       {
@@ -345,28 +339,28 @@ export const projects: Project[] = [
     ],
     featured: false,
     metrics: [
-      { label: "Latency", value: "<300ms" },
+      { label: "Modules", value: "4" },
       { label: "LLM", value: "Llama 3.1 8B" },
       { label: "IoT Platform", value: "Azure IoT Hub" },
-      { label: "Modules", value: "4" },
+      { label: "Edge Device", value: "Pi 3B+" },
     ],
     problem:
-      "Commercial smart-home assistants are cloud-locked, laggy on edge devices, and opaque about audio handling. The goal was an open, local-first voice assistant with sub-300ms response times and transparent data flow.",
-    role: "End-to-end build: Django backend, Groq API integration for LLM inference, Raspberry Pi edge device, Azure IoT Hub for device messaging, intent router, and speech pipeline.",
+      "Commercial smart-home assistants handle simple commands well but their limited natural language understanding fails on complex requests, and they are opaque about how voice data is stored and handled.",
+    role: "End-to-end build: Django backend with authentication via django-allauth, Groq API integration for LLM inference, Raspberry Pi 3B+ device control, Azure IoT Hub messaging, and the wake-word speech pipeline.",
     architectureNotes: [
-      "Django REST backend orchestrates intent classification, LLM calls, and device commands. Groq hosts Llama 3.1 8B to hit the sub-300ms latency budget.",
-      "Raspberry Pi 3B+ runs a wake-word plus speech recognizer on-device; detected intents are POSTed to Django, which fans out commands via Azure IoT Hub to target devices.",
-      "A rule-based fast path sits in front of the LLM. Common commands (lights, music, timers) never pay LLM latency cost; only ambiguous intents hit the model.",
+      "Four modules: deterministic keyword tasks, multi-threaded math and reminder handling, LLM query processing, and home automation. The wake word JARVIS triggers the speech pipeline after noise filtering.",
+      "LLM queries are forwarded with guard prompts to Llama 3.1 8B hosted on Groq; prompt engineering filters harmful context and prevents exposure of private data before responses reach the user.",
+      "Home automation commands flow through Azure IoT Hub to a Raspberry Pi 3B+ that toggles appliances via GPIO pins, with device state mirrored in a database and voice commands never cached on device.",
     ],
     challenges: [
-      "The Pi's CPU makes full local speech recognition slow. A hybrid design, wake-word on-device plus cloud inference for complex intents, was the right trade.",
-      "Azure IoT Hub introduces MQTT-level retries and backoff. The backend had to be idempotent on device commands to prevent double-actions after retries.",
-      "LLM inference latency fluctuates with provider load. The rule-based fast path for common commands cut median response time by roughly 40%.",
+      "Latency between question and response directly affects how natural the interaction feels; preloading common tasks and keeping deterministic commands out of the LLM path were the key mitigations.",
+      "Speech recognition degrades in noisy environments and with diverse accents; spectral filtering and noise gating before wake-word detection materially improved recognition.",
+      "Securing the device control path required per-device Azure IoT Hub configuration and account-gated access so only trusted users can drive appliances.",
     ],
     lessons: [
-      "Edge-plus-cloud hybrids win. Keep wake-word and simple intents local; send anything ambiguous to the cloud. Both ends play to their strengths.",
-      "Idempotency matters as much at the device edge as in backend APIs. Voice commands without idempotency become frustrating in unreliable networks.",
-      "Latency budgets, not accuracy, are the right framing for voice UX. Anything over 300ms feels unresponsive even when it is correct.",
+      "Deterministic fast paths for common commands (calculations, reminders, app launches) keep the assistant responsive without paying LLM cost on every query.",
+      "Privacy is a design constraint, not a feature. Deciding never to persist voice commands shaped the entire pipeline.",
+      "A managed IoT message bus beats ad-hoc sockets for device control reliability, especially across flaky home networks.",
     ],
   },
   {
@@ -388,7 +382,7 @@ export const projects: Project[] = [
     title: "Music Genre Detection System",
     tagline:
       "Bi-LSTM ML pipeline using Librosa features achieving 98.73% accuracy with lightweight inference.",
-    tech: ["Python", "TensorFlow", "Bi-LSTM", "Librosa", "NumPy", "Pandas", "Scikit-learn", "Streamlit"],
+    tech: ["Python", "TensorFlow", "Librosa", "NumPy", "Pandas", "Scikit-learn", "Streamlit"],
     tags: ["MLOps"],
     impact:
       "Production-grade audio genre classifier achieving 98.73% accuracy while reducing model size by 15% and improving inference speed by 22%.",
@@ -484,7 +478,7 @@ export const publications: Publication[] = [
   {
     title:
       "Intelligent Traffic Surveillance: A Vision-Based System for Detecting Traffic Rule Violations",
-    venue: "2nd International Conference on Integration of Computational Intelligent Systems",
+    venue: "2nd International Conference on Integration of Computational Intelligent System (ICICIS)",
     publisher: "IEEE",
     year: 2025,
     publishedAt: "September 2025",
@@ -503,9 +497,11 @@ export const publications: Publication[] = [
   {
     title:
       "Bridging Financial Data Gaps with WGAN-GP: Generating Synthetic Time Series for Robust Models",
-    venue: "1st International Conference on Next-Generation AI & ML",
-    year: 2025,
-    publishedAt: "August 2025",
+    venue:
+      "Explainable Artificial Intelligence, Volume 2: Bridging Concepts, Applications, and Future Challenges (Ch. 34, pp. 739-754)",
+    publisher: "Scrivener Publishing",
+    year: 2026,
+    publishedAt: "2026",
     authors: [
       "Rishabh Shah",
       "Fayed Hakim",

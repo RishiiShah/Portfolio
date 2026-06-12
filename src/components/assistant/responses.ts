@@ -84,7 +84,7 @@ export const rules: Rule[] = [
           .slice(0, 5)
           .map((p) => `${fmt.bullet}${p.title}: ${p.tagline.slice(0, 80)}${p.tagline.length > 80 ? "…" : ""}`),
         "",
-        "Type a project name (e.g. 'traffic violation', 'snap', 'wgan', 'jarvis') for detail.",
+        "Type a project name (e.g. 'csegraph', 'snap', 'traffic violation', 'wgan') for detail.",
       ];
       return lines.filter(Boolean).join("\n");
     },
@@ -98,6 +98,11 @@ export const rules: Rule[] = [
     id: "snap",
     keywords: ["snap", "interview", "mock interview"],
     build: () => projectSummary("snap-interview"),
+  },
+  {
+    id: "csegraph",
+    keywords: ["csegraph", "context engine", "tree-sitter", "mcp", "dependency graph", "coding agents"],
+    build: () => projectSummary("csegraph"),
   },
   {
     id: "wgan",
@@ -162,7 +167,7 @@ export const rules: Rule[] = [
         ...experience.flatMap((e) => [
           "",
           `${e.role} @ ${e.organization}`,
-          `${e.start} – ${e.end}${e.location ? ` · ${e.location}` : ""}`,
+          `${e.start} - ${e.end}${e.location ? ` · ${e.location}` : ""}`,
           e.summary ? e.summary : "",
           ...e.bullets.slice(0, 2).map((b) => `  › ${b}`),
         ]),
@@ -205,7 +210,7 @@ export const rules: Rule[] = [
         fmt.heading("Education"),
         ...education.map(
           (e) =>
-            `${fmt.bullet}${e.degree}\n    ${e.institution} · ${e.location} · ${e.start}–${e.end}`
+            `${fmt.bullet}${e.degree}\n    ${e.institution} · ${e.location} · ${e.start}-${e.end}`
         ),
       ].join("\n"),
   },
@@ -250,7 +255,7 @@ export const rules: Rule[] = [
         `${fmt.bullet}contact         → email, socials`,
         `${fmt.bullet}resume          → download link`,
         "",
-        "Or a project name like 'traffic', 'snap', 'wgan', 'jarvis'.",
+        "Or a project name like 'csegraph', 'snap', 'traffic', 'wgan'.",
       ].join("\n"),
   },
 ];

@@ -68,7 +68,7 @@ export function Experience() {
                   </h3>
                   <span className="font-mono text-[11px] text-[var(--ink-mute)] shrink-0 uppercase tracking-[0.12em]">
                     <time dateTime={toIsoDate(item.start)}>{item.start}</time>
-                    {" – "}
+                    {" - "}
                     <time dateTime={toIsoDate(item.end)}>{item.end}</time>
                   </span>
                 </div>
