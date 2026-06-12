@@ -11,7 +11,7 @@ export function About() {
 
   const facts: { label: string; value: string }[] = [
     { label: "Based in", value: bio.location },
-    { label: "Current", value: "M.S. CS @ Rutgers (2025–2027)" },
+    { label: "Current", value: "M.S. CS @ Rutgers (2025-2027)" },
     {
       label: "Now building",
       value: latest ? latest.title : "Active projects",

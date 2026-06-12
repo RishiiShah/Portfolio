@@ -6,7 +6,7 @@ import { skills } from "@/data";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Marquee } from "@/components/ui/Marquee";
 import { getTechIcon, getBrandColor } from "@/components/ui/techRegistry";
-import { Terminal, Layers, Cloud, Brain } from "lucide-react";
+import { Terminal, Layers, Cloud, Brain, FlaskConical } from "lucide-react";
 import type { ComponentType } from "react";
 
 type CategoryMeta = {
@@ -35,11 +35,17 @@ const CATEGORY_META: Record<string, CategoryMeta> = {
     duration: 44,
     direction: "left",
   },
+  Testing: {
+    glyph: FlaskConical,
+    tint: "#c792ea",
+    duration: 36,
+    direction: "right",
+  },
   "AI / ML & Computer Vision": {
     glyph: Brain,
     tint: "#e6b980",
     duration: 58,
-    direction: "right",
+    direction: "left",
   },
 };
 
