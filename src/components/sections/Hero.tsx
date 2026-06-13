@@ -39,8 +39,13 @@ const fadeUp = (delay = 0, duration = 0.78) => ({
 
 export function Hero() {
   const reduce = useReducedMotion();
-
   const nameLetters = bio.name.split("");
+  const handleContactClick = () => {
+    document.getElementById("contact-form")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
 
   return (
     <section
@@ -171,17 +176,14 @@ export function Hero() {
               >
                 <FiLinkedin size={18} />
               </a>
-              <a
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.location.href = `mailto:${bio.email}`;
-                }}
+              <button
+                type="button"
+                onClick={handleContactClick}
                 className="text-[var(--ink-mute)] hover:text-[var(--ink)] transition-colors"
-                aria-label="Email"
+                aria-label="Contact form"
               >
                 <FiMail size={18} />
-              </a>
+              </button>
             </m.div>
           </div>
 

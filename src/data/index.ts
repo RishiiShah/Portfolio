@@ -5,8 +5,7 @@ export const bio = {
   title: "Software Engineer & ML Researcher",
   tagline: "Building at the intersection of engineering and intelligence.",
   description:
-    "CS student at Rutgers University. I specialize in building scalable backend systems in Python, machine learning pipelines, and research-grade computer vision. View my work on GitHub.",
-  email: "rish.shah@rutgers.edu",
+    "M.S. Computer Science student at Rutgers University building scalable backend systems, AI-enabled full-stack products, and research-grade computer vision pipelines.",
   github: "https://github.com/RishiiShah",
   linkedin: "https://www.linkedin.com/in/rishabh-shah1/",
   resume: "/resume.pdf",
@@ -17,16 +16,15 @@ export const bio = {
 
 export const education = [
   {
-    degree: "M.S. Computer Science (Software and Systems)",
-    institution: "Rutgers University",
+    degree: "M.S. in Computer Science",
+    institution: "Rutgers University - New Brunswick",
     location: "New Brunswick, NJ",
     start: "August 2025",
     end: "May 2027",
     gpa: "3.83 / 4.0",
   },
   {
-    degree: "B.Tech. Artificial Intelligence & Data Science",
-    // institution: "Dwarkadas J. Sanghvi College of Engineering",
+    degree: "B.Tech. in Artificial Intelligence & Data Science",
     institution: "University of Mumbai",
     location: "Mumbai, India",
     start: "December 2021",
@@ -51,6 +49,7 @@ export const skills = [
       "JWT Auth",
       "Docker",
       "Git",
+      "GitHub",
       "GitHub Actions",
       "Linux",
     ],
@@ -61,10 +60,10 @@ export const skills = [
   },
   {
     category: "Testing",
-    items: ["Pytest", "Vitest", "Playwright"],
+    items: ["Pytest", "Vitest", "Playwright", "Postman"],
   },
   {
-    category: "AI / ML & Computer Vision",
+    category: "AI/ML",
     items: ["TensorFlow", "PyTorch", "Scikit-learn", "OpenCV", "YOLO"],
   },
 ] as const;
@@ -90,13 +89,13 @@ export const experience: ExperienceItem[] = [
     start: "January 2025",
     end: "July 2025",
     summary:
-      "Python/Next.js backend services, JWT-secured APIs, Docker, AWS, and CI/CD automation.",
+      "Python and Next.js backend services, JWT-secured APIs, Docker, AWS release workflows, and Postman-tested performance improvements.",
     bullets: [
-      "Reduced API response times exceeding 400ms by restructuring MySQL schemas and rewriting critical SQL paths in Python and Next.js, cutting average latency by 22%.",
+      "Reduced API response times exceeding 400ms by restructuring MySQL schemas and rewriting critical SQL paths in Python and Next.js, cutting average latency by 22% in Postman API tests.",
       "Eliminated unauthorized cross-service requests across 4 backend services by building JWT-authenticated REST APIs with role-based access control, enforcing identity verification on every internal call.",
-      "Containerized 4 backend services with Docker and automated AWS release workflows, reducing manual per-release deployment setup by 65% for a 4-person backend team.",
+      "Containerized 4 backend services with Docker and built AWS release workflows, reducing manual per-release deployment setup by 65% for a 4-person backend team.",
     ],
-    tech: ["Python", "Next.js", "MySQL", "Docker", "AWS", "JWT", "GitHub Actions"],
+    tech: ["Python", "Next.js", "MySQL", "Docker", "AWS", "JWT", "Postman"],
   },
   {
     role: "Web Development Intern",
@@ -108,7 +107,7 @@ export const experience: ExperienceItem[] = [
       "Next.js performance optimization, security hardening, and reliability-focused delivery.",
     bullets: [
       "Resolved a coupling bottleneck across 3 features by refactoring 7 shared-logic components into isolated responsibilities, cutting per-file size by 70% and reducing review complexity.",
-      "Traced P95 response times above 3100ms to missing indexes and absent connection pooling by rebuilding 3 Next.js routes with both fixes, dropping load time to 420ms.",
+      "Traced P95 latency above 3100ms to missing indexes and absent connection pooling, then rebuilt 3 Next.js routes with indexed queries and pooled connections, reducing P95 latency to 420ms.",
       "Closed SQL injection exposure in user-facing forms by switching to parameterized queries and adding input validation across authentication and CRUD endpoints, eliminating direct raw-input-to-database paths.",
     ],
     tech: ["Next.js", "MySQL", "TypeScript", "REST APIs"],
@@ -152,26 +151,26 @@ export const projects: Project[] = [
     year: "2025",
     title: "CseGraph",
     tagline:
-      "Repository context engine for coding agents that indexes 22 languages into a SQLite dependency graph and returns the smallest useful context bundle for any task.",
-    tech: ["Python", "SQLite", "Tree-sitter", "MCP", "FTS5"],
+      "Local-first repository context engine for coding agents that parses code with Tree-sitter, stores dependency graphs in SQLite, and returns task-specific context.",
+    tech: ["Python", "SQLite", "Tree-sitter", "FTS5", "MCP", "VS Code Extension"],
     tags: ["Systems", "Backend", "Developer Tools"],
     latest: true,
     impact:
-      "Reduced agent token consumption by 96% on the engine's own codebase (144 files, 1,509 symbols, 6,570 edges) by replacing brute-force repo search with graph-driven retrieval.",
-    links: [{ type: "source", url: "https://github.com/RishiiShah/CseGraph" }],
+      "Reduced agent context from a 394,638-token repository baseline to 6,564-12,891 retrieved tokens across benchmark runs, cutting token load by 96.73-98.34% while preserving 100% expected-hit coverage across 5 self-corpus tasks.",
+    links: [{ type: "source", url: "https://github.com/RishiiShah/Csegraph" }],
     featured: false,
     metrics: [
-      { label: "Token Reduction", value: "96%" },
-      { label: "Languages", value: "22" },
+      { label: "Token Reduction", value: "96.73-98.34%" },
+      { label: "Expected-Hit Coverage", value: "100%" },
+      { label: "Baseline Tokens", value: "394,638" },
       { label: "MCP Tools", value: "6" },
-      { label: "Symbols Indexed", value: "1,509" },
     ],
     problem:
       "Coding agents waste tool calls and prompt tokens searching repositories for context. Brute-force file reads miss dependencies, and embedding-only approaches lose structural relationships between symbols.",
     role: "Sole developer. Designed and built the full system: multi-language Tree-sitter parsing, WAL-mode SQLite graph storage, FTS5 retrieval pipeline, 6-tool MCP stdio server, CLI, SDK, and a VS Code extension.",
     architectureNotes: [
-      "Indexing pipeline parses 22 languages with Tree-sitter into a WAL-mode SQLite dependency graph, with incremental SHA256-based refresh and a lexical index over symbols, signatures, and docstrings.",
-      "Retrieval combines FTS5 BM25 ranking with exact-name boosting, hub-aware BFS traversal that refuses to expand through high-degree utility nodes, and deterministic byte-capped context selection.",
+      "Indexing pipeline parses code with Tree-sitter into a WAL-mode SQLite dependency graph, with SHA256 incremental refresh and a lexical index over symbols, signatures, and docstrings.",
+      "Retrieval combines FTS5 BM25 ranking with exact-name and path boosting, hub-aware BFS traversal that refuses to expand through high-degree utility nodes, and deterministic token-budgeted context selection.",
       "A 6-tool MCP stdio server (index, refresh, minimal, context, graph, path) provides session-aware suggestion filtering and confidence tiers that distinguish AST-proven edges from inferred ones.",
     ],
     challenges: [
@@ -190,7 +189,7 @@ export const projects: Project[] = [
     year: "2025",
     title: "Snap-Interview",
     tagline:
-      "AI interview practice platform where users run voice-based mock interviews with an AI interviewer, get recorded, and receive schema-enforced structured evaluations.",
+      "AI interview practice platform with voice-based mock interviews, LLM streaming, TTS synthesis, S3 uploads, and structured evaluations.",
     tech: ["Next.js", "TypeScript", "PostgreSQL", "Prisma", "Groq API", "AWS S3", "ElevenLabs", "BetterAuth"],
     tags: ["Full-stack", "AI/ML"],
     impact:
@@ -203,13 +202,14 @@ export const projects: Project[] = [
     metrics: [
       { label: "Eval Scale", value: "0 to 100" },
       { label: "Role Prompts", value: "28" },
-      { label: "API Route Groups", value: "19" },
+      { label: "Rate-Limited Endpoint Types", value: "4" },
     ],
     problem:
       "Early-career engineers practicing for interviews get either generic AI feedback or nothing at all. Existing tools grade correctness but miss communication, structure, and per-skill signal.",
     role: "Full-stack build: Next.js 16 App Router with a layered backend (API routes, services, repositories, Prisma), Groq Llama 3.3 70B for interview chat and evaluation, Web Speech API recognition, ElevenLabs TTS, presigned AWS S3 uploads, Better Auth sessions, and a CI pipeline covering lint, typecheck, unit, and e2e tests.",
     architectureNotes: [
       "Async interview pipeline coordinates microphone capture, LLM streaming, TTS synthesis, and S3 uploads; frontend state is composed from specialized hooks chained by a single page controller, eliminating audio lag and race conditions.",
+      "Production session-validation issue was resolved by redesigning revocation checks with a 5-minute cache, preventing repeated database checks during route transitions.",
       "Schema-enforced evaluation engine scores responses from 0 to 100 with structured feedback across communication, technical depth, and clarity, eliminating malformed AI output.",
       "Hardened upload and auth surface: presigned S3 keys scoped to per-user prefixes, origin-based CSRF protection and Postgres-backed rate limits across 4 endpoint types, and a nonce-based CSP served through the Next.js 16 proxy.",
     ],
@@ -256,7 +256,7 @@ export const projects: Project[] = [
       { label: "Helmet Detection", value: "93.26%" },
       { label: "Plate Extraction", value: "92.7%" },
       { label: "ANPR Localization", value: "98%" },
-      { label: "Violation Types", value: "5" },
+      { label: "Indexing", value: "Scopus" },
     ],
     problem:
       "Automate traffic violation detection and evidence-backed ticketing at scale by detecting multiple violation types from live video feeds and delivering verifiable digital challans.",
