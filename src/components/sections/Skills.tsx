@@ -41,7 +41,7 @@ const CATEGORY_META: Record<string, CategoryMeta> = {
     duration: 36,
     direction: "right",
   },
-  "AI / ML & Computer Vision": {
+  "AI/ML": {
     glyph: Brain,
     tint: "#e6b980",
     duration: 58,

@@ -4,13 +4,13 @@ import { getSiteUrl, sanitizeForMeta } from "@/lib/site";
 type JsonLd = Record<string, unknown>;
 
 const UNIVERSITY_SAMEAS: Record<string, string[]> = {
-  "Rutgers University": [
+  "Rutgers University - New Brunswick": [
     "https://en.wikipedia.org/wiki/Rutgers_University",
     "https://www.rutgers.edu/",
   ],
-  "Dwarkadas J. Sanghvi College of Engineering": [
-    "https://en.wikipedia.org/wiki/Dwarkadas_J._Sanghvi_College_of_Engineering",
-    "https://djsce.ac.in/",
+  "University of Mumbai": [
+    "https://en.wikipedia.org/wiki/University_of_Mumbai",
+    "https://mu.ac.in/",
   ],
 };
 
@@ -20,7 +20,6 @@ function personSchema(site: string): JsonLd {
     "@id": `${site}/#person`,
     name: bio.name,
     url: site,
-    email: bio.email,
     image: `${site}/og-image.png`,
     jobTitle: bio.title,
     description: sanitizeForMeta(bio.description),
@@ -37,6 +36,7 @@ function personSchema(site: string): JsonLd {
       "Computer Vision",
       "Backend Systems",
       "MLOps",
+      "Full-Stack Development",
       "Generative Adversarial Networks",
       "Natural Language Processing",
     ],

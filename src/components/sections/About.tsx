@@ -11,14 +11,14 @@ export function About() {
 
   const facts: { label: string; value: string }[] = [
     { label: "Based in", value: bio.location },
-    { label: "Current", value: "M.S. CS @ Rutgers (2025-2027)" },
+    { label: "Current", value: "M.S. Computer Science @ Rutgers" },
     {
       label: "Now building",
       value: latest ? latest.title : "Active projects",
     },
     {
       label: "Open to",
-      value: "SWE · Systems · ML-AI · FT + internships",
+      value: "SWE · Systems · AI/ML · FT + internships",
     },
   ];
 
@@ -62,9 +62,9 @@ export function About() {
               <p className="text-[var(--ink-dim)] leading-[1.75] text-base">
                 My work spans{" "}
                 <span className="text-[var(--ink)]">backend services</span>{" "}
-                (Django, Flask, Node),{" "}
+                (Python, Django, Next.js),{" "}
                 <span className="text-[var(--ink)]">ML research</span>{" "}
-                (generative models, computer vision, audio), and{" "}
+                (generative models and computer vision), and{" "}
                 <span className="text-[var(--ink)]">MLOps pipelines</span> that
                 take experiments to reliable production systems. Three
                 peer-reviewed papers so far, covering synthetic financial data,

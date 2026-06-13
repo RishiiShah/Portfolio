@@ -44,6 +44,14 @@ export function Contact() {
   const [errors, setErrors] = useState<FormErrors>({ name: "", email: "", message: "" });
   const [touched, setTouched] = useState({ name: false, email: false, message: false });
 
+  const handleContactFormClick = () => {
+    document.getElementById("contact-form")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+    document.getElementById("name")?.focus({ preventScroll: true });
+  };
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -135,17 +143,14 @@ export function Contact() {
             </p>
 
             <div className="space-y-3">
-              <a
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  window.location.href = `mailto:${bio.email}`;
-                }}
+              <button
+                type="button"
+                onClick={handleContactFormClick}
                 className="flex items-center gap-3 break-words [overflow-wrap:anywhere] text-sm text-[var(--ink-dim)] transition-colors hover:text-[var(--ink)]"
               >
                 <Mail size={13} className="text-[var(--accent)] shrink-0" />
-                Send an email
-              </a>
+                Use the contact form
+              </button>
               <div className="flex items-center gap-3 text-sm text-[var(--ink-mute)]">
                 <MapPin size={13} className="text-[var(--accent)] shrink-0" />
                 {bio.location}
@@ -227,6 +232,7 @@ export function Contact() {
               </div>
             ) : (
               <form
+                id="contact-form"
                 onSubmit={handleSubmit}
                 className="space-y-4 glass-panel rounded-2xl p-6 md:p-7"
                 noValidate

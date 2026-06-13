@@ -60,7 +60,7 @@ export const rules: Rule[] = [
         "",
         `Role: ${bio.title}`,
         `Location: ${bio.location}`,
-        `Status: Open to SWE / systems / ML-AI roles.`,
+        `Status: Open to SWE / systems / AI/ML roles.`,
       ].join("\n"),
   },
   {
@@ -220,7 +220,7 @@ export const rules: Rule[] = [
     build: () =>
       [
         fmt.heading("Contact"),
-        `${fmt.bullet}Email: ${bio.email}`,
+        `${fmt.bullet}Use the contact form on this page.`,
         `${fmt.bullet}GitHub: ${bio.github}`,
         `${fmt.bullet}LinkedIn: ${bio.linkedin}`,
         `${fmt.bullet}Location: ${bio.location}`,
@@ -251,7 +251,7 @@ export const rules: Rule[] = [
         `${fmt.bullet}publications    → ${publications.length} peer-reviewed papers`,
         `${fmt.bullet}experience      → internships + impact`,
         `${fmt.bullet}skills          → stack & tools`,
-        `${fmt.bullet}education       → Rutgers, DJSCE`,
+        `${fmt.bullet}education       → Rutgers, University of Mumbai`,
         `${fmt.bullet}contact         → email, socials`,
         `${fmt.bullet}resume          → download link`,
         "",
