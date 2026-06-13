@@ -26,7 +26,8 @@ export const education = [
   },
   {
     degree: "B.Tech. Artificial Intelligence & Data Science",
-    institution: "Dwarkadas J. Sanghvi College of Engineering",
+    // institution: "Dwarkadas J. Sanghvi College of Engineering",
+    institution: "University of Mumbai",
     location: "Mumbai, India",
     start: "December 2021",
     end: "June 2025",
