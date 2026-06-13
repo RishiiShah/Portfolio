@@ -29,14 +29,14 @@ export function HeroSignalPanel() {
         <Row
           eyebrow="Latest"
           title={latest?.title ?? "In Development"}
-          badge={latest?.metrics?.[0]?.value ?? "Shipping"}
+          badge="Active"
           badgeTone="signal"
         />
         <Divider />
         <Row
           eyebrow="Published"
           title={`${publications.length} papers`}
-          badge={publications.find((p) => p.publisher)?.publisher}
+          badge="Research"
           badgeTone="warm"
         />
         <Divider />
