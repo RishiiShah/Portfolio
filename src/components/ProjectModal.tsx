@@ -6,6 +6,7 @@ import { projects, type Project } from "@/data";
 import { FiX, FiGithub, FiExternalLink, FiBookOpen } from "react-icons/fi";
 import { TechChip } from "@/components/ui/TechChip";
 import { AnimatedMetric } from "@/components/ui/AnimatedMetric";
+import { trapFocus } from "@/lib/focus";
 
 const linkIcon = {
   source: FiGithub,
@@ -40,27 +41,41 @@ const TAB_COLORS: Record<TabId, string> = {
 };
 
 export function ProjectModal({ project, onClose }: ProjectModalProps) {
+  const dialogRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const shouldRestoreFocusRef = useRef(true);
   const [tab, setTab] = useState<TabId>("architecture");
 
   useEffect(() => {
     if (!project) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") {
+        onClose();
+      } else if (dialogRef.current) {
+        trapFocus(e, dialogRef.current);
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [project, onClose]);
 
   useEffect(() => {
-    if (project) {
-      document.body.style.overflow = "hidden";
-      closeBtnRef.current?.focus();
-    } else {
-      document.body.style.overflow = "";
-    }
+    if (!project) return;
+
+    const previousFocus =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previousOverflow = document.body.style.overflow;
+    const frame = requestAnimationFrame(() => closeBtnRef.current?.focus());
+
+    shouldRestoreFocusRef.current = true;
+    document.body.style.overflow = "hidden";
+
     return () => {
-      document.body.style.overflow = "";
+      cancelAnimationFrame(frame);
+      document.body.style.overflow = previousOverflow;
+      if (shouldRestoreFocusRef.current && previousFocus?.isConnected) {
+        previousFocus.focus({ preventScroll: true });
+      }
     };
   }, [project]);
 
@@ -102,6 +117,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
   const metrics = project.metrics ?? [];
 
   const handleRelatedClick = (slug: string) => {
+    shouldRestoreFocusRef.current = false;
     onClose();
     setTimeout(() => {
       window.location.hash = `project/${slug}`;
@@ -124,6 +140,7 @@ export function ProjectModal({ project, onClose }: ProjectModalProps) {
 
           <div className="fixed inset-0 z-[71] flex items-center justify-center p-4 pointer-events-none">
             <m.div
+              ref={dialogRef}
               key="modal-dialog"
               role="dialog"
               aria-modal="true"

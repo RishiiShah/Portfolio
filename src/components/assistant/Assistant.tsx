@@ -146,7 +146,7 @@ export function Assistant() {
         aria-label="Open portfolio assistant"
         aria-expanded={open}
         aria-controls="jarvis-panel"
-        className="fixed bottom-5 right-5 md:bottom-6 md:right-6 z-40 flex items-center gap-2 rounded-full glass-panel-interactive px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.15em] text-[var(--ink)] hover:text-[var(--ink)] transition-all"
+        className="fixed bottom-[5.25rem] right-4 z-40 flex items-center gap-2 rounded-full glass-panel-interactive px-4 py-2.5 font-mono text-[11px] uppercase tracking-[0.15em] text-[var(--ink)] hover:text-[var(--ink)] transition-all md:bottom-6 md:right-6"
         style={{
           boxShadow:
             "0 8px 28px 0 rgba(0,0,0,0.45), 0 0 0 1px var(--line-strong)",

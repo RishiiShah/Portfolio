@@ -1,6 +1,6 @@
 "use client";
 
-import { m, useReducedMotion } from "framer-motion";
+import { m, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import dynamic from "next/dynamic";
 import { bio } from "@/data";
 import { FiGithub, FiLinkedin, FiMail } from "react-icons/fi";
@@ -39,6 +39,8 @@ const fadeUp = (delay = 0, duration = 0.78) => ({
 
 export function Hero() {
   const reduce = useReducedMotion();
+  const { scrollY } = useScroll();
+  const shaderOpacity = useTransform(scrollY, [0, 360, 720], [1, 0.52, 0.12]);
   const nameLetters = bio.name.split("");
   const handleContactClick = () => {
     document.getElementById("contact-form")?.scrollIntoView({
@@ -50,10 +52,16 @@ export function Hero() {
   return (
     <section
       id="top"
-      className="relative flex min-h-screen min-h-[100svh] items-start md:items-center"
+      className="relative flex min-h-screen min-h-[100svh] items-start overflow-hidden md:items-center"
     >
       {/* WebGL shader background */}
-      <HeroShader className="z-0" />
+      <m.div
+        aria-hidden
+        className="absolute inset-0 z-0"
+        style={{ opacity: reduce ? 1 : shaderOpacity }}
+      >
+        <HeroShader />
+      </m.div>
 
       {/* Veil to ensure legibility */}
       <div
@@ -62,6 +70,15 @@ export function Hero() {
         style={{
           background:
             "linear-gradient(180deg, rgba(7,9,15,0.25) 0%, rgba(7,9,15,0.55) 100%)",
+        }}
+      />
+
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[36vh]"
+        style={{
+          background:
+            "linear-gradient(180deg, rgba(7,9,15,0) 0%, rgba(7,9,15,0.62) 56%, var(--bg) 100%)",
         }}
       />
 

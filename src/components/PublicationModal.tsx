@@ -3,8 +3,9 @@
 import { useEffect, useRef } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import type { Publication } from "@/data";
-import { bio } from "@/data";
+import { bio, projects } from "@/data";
 import { FiX, FiBookOpen, FiExternalLink } from "react-icons/fi";
+import { trapFocus } from "@/lib/focus";
 
 const linkIcon = {
   paper: FiBookOpen,
@@ -25,26 +26,49 @@ interface Props {
 }
 
 export function PublicationModal({ publication, onClose }: Props) {
+  const dialogRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const shouldRestoreFocusRef = useRef(true);
+  const relatedProject = publication?.projectSlug
+    ? projects.find((project) => project.slug === publication.projectSlug)
+    : null;
+
+  const openRelatedProject = (slug: string) => {
+    shouldRestoreFocusRef.current = false;
+    window.location.hash = `project/${slug}`;
+    onClose();
+  };
 
   useEffect(() => {
     if (!publication) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") {
+        onClose();
+      } else if (dialogRef.current) {
+        trapFocus(e, dialogRef.current);
+      }
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [publication, onClose]);
 
   useEffect(() => {
-    if (publication) {
-      document.body.style.overflow = "hidden";
-      closeBtnRef.current?.focus();
-    } else {
-      document.body.style.overflow = "";
-    }
+    if (!publication) return;
+
+    const previousFocus =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const previousOverflow = document.body.style.overflow;
+    const frame = requestAnimationFrame(() => closeBtnRef.current?.focus());
+
+    shouldRestoreFocusRef.current = true;
+    document.body.style.overflow = "hidden";
+
     return () => {
-      document.body.style.overflow = "";
+      cancelAnimationFrame(frame);
+      document.body.style.overflow = previousOverflow;
+      if (shouldRestoreFocusRef.current && previousFocus?.isConnected) {
+        previousFocus.focus({ preventScroll: true });
+      }
     };
   }, [publication]);
 
@@ -64,6 +88,7 @@ export function PublicationModal({ publication, onClose }: Props) {
 
           <div className="fixed inset-0 z-[71] flex items-center justify-center p-4 pointer-events-none">
             <m.div
+              ref={dialogRef}
               key="pub-dialog"
               role="dialog"
               aria-modal="true"
@@ -165,6 +190,16 @@ export function PublicationModal({ publication, onClose }: Props) {
 
                 {publication.links && publication.links.length > 0 && (
                   <div className="flex flex-wrap gap-3 pt-5 border-t border-[var(--line)]">
+                    {relatedProject && (
+                      <button
+                        type="button"
+                        onClick={() => openRelatedProject(relatedProject.slug)}
+                        className="ghost-button px-5 py-2.5 text-sm flex items-center gap-2"
+                      >
+                        <FiExternalLink size={13} />
+                        View project case study
+                      </button>
+                    )}
                     {publication.links.map((l) => {
                       const Icon = linkIcon[l.type] ?? FiExternalLink;
                       const label = linkLabel[l.type] ?? "Link";
@@ -181,6 +216,18 @@ export function PublicationModal({ publication, onClose }: Props) {
                         </a>
                       );
                     })}
+                  </div>
+                )}
+                {relatedProject && (!publication.links || publication.links.length === 0) && (
+                  <div className="flex flex-wrap gap-3 pt-5 border-t border-[var(--line)]">
+                    <button
+                      type="button"
+                      onClick={() => openRelatedProject(relatedProject.slug)}
+                      className="ghost-button px-5 py-2.5 text-sm flex items-center gap-2"
+                    >
+                      <FiExternalLink size={13} />
+                      View project case study
+                    </button>
                   </div>
                 )}
               </div>

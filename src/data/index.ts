@@ -471,6 +471,7 @@ export interface Publication {
   publishedAt?: string;
   authors: string[];
   links?: PublicationLink[];
+  projectSlug?: Project["slug"];
   abstract?: string;
   featured?: boolean;
 }
@@ -492,6 +493,7 @@ export const publications: Publication[] = [
     ],
     abstract:
       "This paper proposes an intelligent, vision-based traffic surveillance system designed to automatically detect, classify and report violations like red light jumping, speeding, helmet-less riding, lack of valid insurance, and non-compliance of pollution control. The system utilizes a custom-trained YOLOv12 object detection algorithm, integrating real-time object tracking with license plate extraction via vision-based models and OCR. Experimental evaluation achieves 93.76% overall accuracy across multiple test cases.",
+    projectSlug: "traffic-violation-detection",
     featured: false,
     links: [{ type: "paper", url: "https://ieeexplore.ieee.org/document/11371065/" }],
   },
@@ -513,6 +515,7 @@ export const publications: Publication[] = [
     ],
     abstract:
       "We propose a methodology to synthesize financial time series data using a Wasserstein Generative Adversarial Network with Gradient Penalty (WGAN-GP), demonstrating the ability to recreate real-world data and augment available datasets. The framework enhances predictive model capabilities by 0.9% in accuracy, leading to more reliable forecasting and improved event classification, including identification of rare events such as recessions or pandemics.",
+    projectSlug: "wgan-gp-financial-timeseries",
     featured: true,
     links: [],
   },
@@ -524,6 +527,7 @@ export const publications: Publication[] = [
     authors: ["Rishabh Shah", "Alan George", "Yukta Saraf", "Rujuta Jariwala"],
     abstract:
       "This paper explores the integration of virtual assistant technology with home automation systems. JARVIS leverages NLP to understand user requests and perform tasks such as information retrieval, media control, and mathematical calculations. We utilize AI and NLP libraries for improving speech recognition, utilizing Raspberry Pi 3B+ for IoT device control. The system prioritizes user security by ensuring data privacy and is deployed over the Internet for home automation.",
+    projectSlug: "jarvis-voice-assistant",
     featured: false,
     links: [
       {

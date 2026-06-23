@@ -3,11 +3,12 @@
 import { m } from "framer-motion";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Parallax } from "@/components/ui/ParallaxSection";
-import { bio, projects } from "@/data";
+import { bio, projects, publications } from "@/data";
 import { sanitizeForMeta } from "@/lib/site";
 
 export function About() {
   const latest = projects.find((p) => p.latest);
+  const featuredPublication = publications.find((p) => p.featured) ?? publications[0];
 
   const facts: { label: string; value: string }[] = [
     { label: "Based in", value: bio.location },
@@ -21,10 +22,27 @@ export function About() {
       value: "SWE · Systems · AI/ML · FT + internships",
     },
   ];
+  const aboutHighlights = [
+    {
+      label: "Latest build",
+      value: latest ? latest.title : "Active projects",
+      detail: latest ? latest.tagline : "Current portfolio work in progress.",
+    },
+    {
+      label: "Research record",
+      value: `${publications.length} peer-reviewed papers`,
+      detail: `Featured: ${featuredPublication.title}`,
+    },
+    {
+      label: "Current base",
+      value: bio.location,
+      detail: "Open to SWE, systems, AI/ML, full-time, and internship roles.",
+    },
+  ] as const;
 
   return (
-    <section id="about" className="relative py-24 md:py-32">
-      <div className="mx-auto max-w-6xl px-6">
+    <section id="about" className="relative min-h-[68svh] overflow-hidden py-16 md:min-h-[72svh] md:py-20">
+      <div className="relative z-[1] mx-auto max-w-6xl px-6">
         <m.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -95,6 +113,31 @@ export function About() {
             </m.aside>
           </Parallax>
         </div>
+
+        <m.div
+          initial={{ opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+          className="mt-8 grid gap-3 md:grid-cols-3"
+        >
+          {aboutHighlights.map((item) => (
+            <div
+              key={item.label}
+              className="rounded-xl border border-[var(--line)] bg-[var(--bg-elev-1)]/35 px-4 py-4"
+            >
+              <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--accent-warm)]">
+                {item.label}
+              </p>
+              <p className="mt-2 text-sm font-medium leading-snug text-[var(--ink)]">
+                {item.value}
+              </p>
+              <p className="mt-1.5 line-clamp-3 text-xs leading-relaxed text-[var(--ink-dim)]">
+                {item.detail}
+              </p>
+            </div>
+          ))}
+        </m.div>
       </div>
     </section>
   );

@@ -66,47 +66,56 @@ export function PublicationCard({
           }}
         />
         <div className="p-8 md:p-12">
-          <div className="flex items-center gap-2 mb-4">
-            <span className="font-mono text-[10px] uppercase tracking-[0.18em] px-2.5 py-1 rounded-full bg-[var(--accent-warm)]/10 border border-[var(--accent-warm)]/30 text-[var(--accent-warm)]">
-              Featured paper
-            </span>
-            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--ink-mute)]">
-              · {publication.venue}
-            </span>
-          </div>
-
-          <h3
-            className="font-serif text-[var(--ink)] leading-[1.1] mb-4"
-            style={{ fontSize: "clamp(1.6rem, 3vw, 2.2rem)" }}
+          <button
+            type="button"
+            onClick={onOpen}
+            aria-haspopup="dialog"
+            aria-label={`Read full abstract of ${publication.title}`}
+            className="group block w-full cursor-pointer text-left"
           >
-            {publication.title}
-          </h3>
+            <div className="mb-4 flex items-center gap-2">
+              <span className="rounded-full border border-[var(--accent-warm)]/30 bg-[var(--accent-warm)]/10 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--accent-warm)]">
+                Featured paper
+              </span>
+              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--ink-mute)]">
+                · {publication.venue}
+              </span>
+            </div>
 
-          <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-6 text-xs">
-            <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--ink-mute)]">
-              {publication.publishedAt ?? publication.year}
-            </span>
-            <span className="text-[var(--line-strong)]">·</span>
-            <span>{authors}</span>
-          </div>
-
-          {publication.abstract && (
-            <p
-              className="drop-cap text-lg text-[var(--ink-dim)] leading-[1.65] mb-7"
-              style={{
-                display: "-webkit-box",
-                WebkitLineClamp: 5,
-                WebkitBoxOrient: "vertical",
-                overflow: "hidden",
-              }}
+            <h3
+              className="mb-4 font-serif leading-[1.1] text-[var(--ink)] transition-colors group-hover:text-[var(--accent-warm)]"
+              style={{ fontSize: "clamp(1.6rem, 3vw, 2.2rem)" }}
             >
-              {publication.abstract}
-            </p>
-          )}
+              {publication.title}
+            </h3>
+
+            <div className="mb-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs">
+              <span className="font-mono text-[10px] uppercase tracking-[0.14em] text-[var(--ink-mute)]">
+                {publication.publishedAt ?? publication.year}
+              </span>
+              <span className="text-[var(--line-strong)]">·</span>
+              <span>{authors}</span>
+            </div>
+
+            {publication.abstract && (
+              <p
+                className="drop-cap mb-7 text-lg leading-[1.65] text-[var(--ink-dim)]"
+                style={{
+                  display: "-webkit-box",
+                  WebkitLineClamp: 5,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                }}
+              >
+                {publication.abstract}
+              </p>
+            )}
+          </button>
 
           <div className="flex flex-wrap items-center gap-3 pt-5 border-t border-[var(--line)]">
             {onOpen && (
               <button
+                type="button"
                 onClick={onOpen}
                 className="warm-button px-5 py-2 text-sm flex items-center gap-2 group"
               >

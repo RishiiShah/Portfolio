@@ -109,8 +109,8 @@ export function Contact() {
   }
 
   return (
-    <section id="contact" className="relative py-24 md:py-32">
-      <div className="mx-auto max-w-6xl px-6">
+    <section id="contact" className="relative overflow-hidden py-16 md:py-20">
+      <div className="relative z-[1] mx-auto max-w-6xl px-6">
         <m.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
