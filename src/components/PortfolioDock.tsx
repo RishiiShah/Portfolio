@@ -54,10 +54,65 @@ export function PortfolioDock() {
   }, []);
 
   return (
-    <nav
-      aria-label="Primary"
-      className="fixed bottom-5 left-1/2 z-40 hidden -translate-x-1/2 md:flex"
-    >
+    <>
+      <nav
+        aria-label="Primary mobile"
+        className="fixed bottom-[calc(0.75rem+env(safe-area-inset-bottom))] left-1/2 z-40 w-fit max-w-[calc(100vw-1.5rem)] -translate-x-1/2 md:hidden"
+      >
+        <div className="absolute inset-0 rounded-2xl bg-[var(--accent)]/5 blur-xl" />
+        <div className="relative overflow-hidden rounded-2xl border border-[var(--line-strong)] bg-[var(--bg-elev-1)]/90 px-2 py-2 shadow-[0_18px_48px_rgba(0,0,0,0.48)] backdrop-blur-xl">
+          <div className="absolute left-3 right-3 top-0 h-[2px] overflow-hidden rounded-full">
+            <m.div
+              className="h-full origin-left rounded-full"
+              style={{
+                scaleX: progress,
+                background:
+                  "linear-gradient(90deg, var(--accent), var(--accent-warm))",
+              }}
+            />
+          </div>
+
+          <div className="flex items-center gap-1 overflow-x-auto scrollbar-hide">
+            {NAV_ITEMS.map((item) => {
+              const isActive = activeSection === item.id;
+              const Icon = item.icon;
+
+              return (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  aria-label={item.label}
+                  title={item.label}
+                  className={`relative flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors duration-200 ${
+                    isActive
+                      ? "text-[var(--accent)]"
+                      : "text-[var(--ink-mute)] hover:text-[var(--ink)]"
+                  }`}
+                  style={
+                    isActive
+                      ? { filter: "drop-shadow(0 0 6px rgba(122,162,255,0.7))" }
+                      : undefined
+                  }
+                >
+                  {isActive && (
+                    <m.span
+                      layoutId="activeMobileNavLink"
+                      className="absolute inset-1 rounded-full bg-[var(--accent)]/10 ring-1 ring-[var(--accent)]/25"
+                      transition={{ type: "spring", stiffness: 420, damping: 32 }}
+                    />
+                  )}
+                  <Icon size={15} className="relative z-10" />
+                </a>
+              );
+            })}
+          </div>
+        </div>
+      </nav>
+
+      <nav
+        aria-label="Primary"
+        className="fixed bottom-5 left-1/2 z-40 hidden -translate-x-1/2 md:flex"
+      >
       {/* Outer glow */}
       <div className="absolute inset-0 rounded-2xl bg-[var(--accent)]/5 blur-xl" />
 
@@ -140,6 +195,7 @@ export function PortfolioDock() {
           })}
         </Dock>
       </div>
-    </nav>
+      </nav>
+    </>
   );
 }

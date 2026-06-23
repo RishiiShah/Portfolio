@@ -82,11 +82,6 @@ body::before {
   background: rgba(122, 162, 255, 0.5);
 }
 
-/* Section scroll offset for fixed nav */
-section[id] {
-  scroll-margin-top: 80px;
-}
-
 /* Selection */
 ::selection {
   background: rgba(122, 162, 255, 0.22);

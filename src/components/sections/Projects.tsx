@@ -66,11 +66,14 @@ export function Projects() {
   useEffect(() => {
     const sync = () => {
       const hash = window.location.hash;
-      if (hash.startsWith("#project/")) {
-        const slug = hash.slice("#project/".length);
-        const p = projects.find((p) => p.slug === slug);
-        if (p) setActive(p);
+      if (!hash.startsWith("#project/")) {
+        setActive(null);
+        return;
       }
+
+      const slug = hash.slice("#project/".length);
+      const p = projects.find((p) => p.slug === slug);
+      setActive(p ?? null);
     };
     sync();
     window.addEventListener("hashchange", sync);
@@ -92,8 +95,8 @@ export function Projects() {
   };
 
   return (
-    <section id="work" className="relative py-24 md:py-32">
-      <div className="mx-auto max-w-6xl px-6">
+    <section id="work" className="relative overflow-hidden py-16 md:py-20">
+      <div className="relative z-[1] mx-auto max-w-6xl px-6">
         <m.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
