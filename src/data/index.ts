@@ -38,15 +38,23 @@ export const education = [
 export const skills = [
   {
     category: "Languages",
-    items: ["Python", "C++", "Java", "TypeScript", "SQL", "C"],
+    items: ["Python", "Java", "C++", "C", "TypeScript", "JavaScript", "SQL"],
   },
   {
     category: "Frameworks & Tools",
     items: [
       "Django",
+      "Django ORM",
       "Next.js",
+      "React",
       "REST APIs",
       "JWT Auth",
+      "OAuth2",
+      "RBAC",
+      "Zod",
+      "Tailwind CSS",
+      "HTML",
+      "CSS",
       "Docker",
       "Git",
       "GitHub",
@@ -56,11 +64,32 @@ export const skills = [
   },
   {
     category: "Databases & Cloud",
-    items: ["PostgreSQL", "MySQL", "MongoDB", "AWS", "Azure", "GCP"],
+    items: [
+      "PostgreSQL",
+      "MySQL",
+      "MongoDB",
+      "SQLite",
+      "Redis",
+      "Prisma",
+      "AWS",
+      "AWS EC2",
+      "AWS S3",
+      "Azure",
+      "GCP",
+      "Google Cloud Run",
+      "Vercel",
+    ],
   },
   {
     category: "Testing",
-    items: ["Pytest", "Vitest", "Playwright", "Postman"],
+    items: [
+      "Pytest",
+      "unittest",
+      "Vitest",
+      "Playwright",
+      "React Testing Library",
+      "Postman",
+    ],
   },
   {
     category: "AI/ML",
@@ -89,28 +118,29 @@ export const experience: ExperienceItem[] = [
     start: "January 2025",
     end: "July 2025",
     summary:
-      "Python and Next.js backend services, JWT-secured APIs, Docker, AWS release workflows, and Postman-tested performance improvements.",
+      "Service-oriented Python and Next.js backends with JWT/RBAC auth, MySQL API optimization, Docker, and AWS EC2/S3 deployments.",
     bullets: [
-      "Reduced API response times exceeding 400ms by restructuring MySQL schemas and rewriting critical SQL paths in Python and Next.js, cutting average latency by 22% in Postman API tests.",
-      "Eliminated unauthorized cross-service requests across 4 backend services by building JWT-authenticated REST APIs with role-based access control, enforcing identity verification on every internal call.",
-      "Containerized 4 backend services with Docker and built AWS release workflows, reducing manual per-release deployment setup by 65% for a 4-person backend team.",
+      "Developed service-oriented backend modules using Python, Next.js, and MySQL for authentication, authorization, business workflows, and reporting across internal and client-facing systems.",
+      "Implemented JWT-based authentication and RBAC middleware for admin, staff, and client-user roles, securing protected API routes and centralizing authorization checks across backend workflows.",
+      "Optimized dashboard, listing, search, and reporting APIs by indexing database columns, rewriting SQL queries, adding pagination, trimming response payloads, and batching recurring calls, reducing average response time by 22%.",
+      "Containerized backend services with Docker and supported AWS EC2-hosted environments with S3-backed storage by configuring environment variables, debugging logs, and standardizing deployment steps, lowering setup effort by 65%.",
     ],
-    tech: ["Python", "Next.js", "MySQL", "Docker", "AWS", "JWT", "Postman"],
+    tech: ["Python", "Next.js", "MySQL", "Docker", "AWS", "JWT", "RBAC"],
   },
   {
-    role: "Web Development Intern",
+    role: "Web Developer Intern",
     organization: "Creative Line",
     location: "Mumbai, India",
     start: "June 2024",
     end: "September 2024",
     summary:
-      "Next.js performance optimization, security hardening, and reliability-focused delivery.",
+      "React/Next.js product UI, shared-component refactoring, and MySQL-backed API performance work.",
     bullets: [
-      "Resolved a coupling bottleneck across 3 features by refactoring 7 shared-logic components into isolated responsibilities, cutting per-file size by 70% and reducing review complexity.",
-      "Traced P95 latency above 3100ms to missing indexes and absent connection pooling, then rebuilt 3 Next.js routes with indexed queries and pooled connections, reducing P95 latency to 420ms.",
-      "Closed SQL injection exposure in user-facing forms by switching to parameterized queries and adding input validation across authentication and CRUD endpoints, eliminating direct raw-input-to-database paths.",
+      "Built React/Next.js interfaces for dashboard views, data management pages, and form-based CRUD flows using reusable tables, forms, modals, filters, and pagination controls.",
+      "Refactored page-level UI and request-handling logic into 7 shared components across 3 feature areas, shrinking individual feature file size by 70% and improving maintainability.",
+      "Improved MySQL-backed Next.js API routes with parameterized queries, input validation, indexing, connection pooling, and smaller payloads, bringing P95 latency for targeted data-loading paths from 3100ms to 420ms.",
     ],
-    tech: ["Next.js", "MySQL", "TypeScript", "REST APIs"],
+    tech: ["React", "Next.js", "MySQL", "TypeScript"],
   },
 ];
 
@@ -148,52 +178,52 @@ export interface Project {
 export const projects: Project[] = [
   {
     slug: "csegraph",
-    year: "2025",
+    year: "2026",
     title: "CseGraph",
     tagline:
-      "Local-first repository context engine for coding agents that parses code with Tree-sitter, stores dependency graphs in SQLite, and returns task-specific context.",
+      "Local-first code context engine and developer tooling: CLI, MCP server, SDK, SQLite graph index, and VS Code wrapper for coding agents.",
     tech: ["Python", "SQLite", "Tree-sitter", "FTS5", "MCP", "VS Code Extension"],
     tags: ["Systems", "Backend", "Developer Tools"],
     latest: true,
     impact:
-      "Reduced agent context from a 394,638-token repository baseline to 6,564-12,891 retrieved tokens across benchmark runs, cutting token load by 96.73-98.34% while preserving 100% expected-hit coverage across 5 self-corpus tasks.",
+      "Adaptive FTS/BM25 and graph-proximity retrieval with token budgets and strict schemas, serving task-scoped context across 9 CLI commands and 6 MCP tools.",
     links: [{ type: "source", url: "https://github.com/RishiiShah/Csegraph" }],
     featured: false,
     metrics: [
-      { label: "Token Reduction", value: "96.73-98.34%" },
-      { label: "Expected-Hit Coverage", value: "100%" },
-      { label: "Baseline Tokens", value: "394,638" },
+      { label: "CLI Commands", value: "9" },
       { label: "MCP Tools", value: "6" },
+      { label: "Languages Indexed", value: "Python, JS, TS" },
+      { label: "Index Store", value: "SQLite" },
     ],
     problem:
       "Coding agents waste tool calls and prompt tokens searching repositories for context. Brute-force file reads miss dependencies, and embedding-only approaches lose structural relationships between symbols.",
-    role: "Sole developer. Designed and built the full system: multi-language Tree-sitter parsing, WAL-mode SQLite graph storage, FTS5 retrieval pipeline, 6-tool MCP stdio server, CLI, SDK, and a VS Code extension.",
+    role: "Sole developer. Engineered a local-first Python developer tool spanning a CLI, MCP stdio server, SDK facade, SQLite graph index, and VS Code wrapper to generate compact repository context for coding agents.",
     architectureNotes: [
-      "Indexing pipeline parses code with Tree-sitter into a WAL-mode SQLite dependency graph, with SHA256 incremental refresh and a lexical index over symbols, signatures, and docstrings.",
-      "Retrieval combines FTS5 BM25 ranking with exact-name and path boosting, hub-aware BFS traversal that refuses to expand through high-degree utility nodes, and deterministic token-budgeted context selection.",
-      "A 6-tool MCP stdio server (index, refresh, minimal, context, graph, path) provides session-aware suggestion filtering and confidence tiers that distinguish AST-proven edges from inferred ones.",
+      "Tree-sitter indexing pipeline for Python, JavaScript, and TypeScript extracts files, symbols, imports, calls, inheritance, tests, and source references into a transactional SQLite graph.",
+      "Adaptive retrieval combines FTS/BM25, graph proximity, token budgets, and strict schemas to return task-scoped context.",
+      "Surfaces compact context through 9 CLI commands and 6 MCP tools for agent workflows.",
     ],
     challenges: [
-      "Supporting 22 languages with a single retrieval pipeline required a language-neutral representation that preserves structural fidelity.",
-      "Keeping responses budget-safe for agents: a hard byte cap with a deterministic drop order (source text, then explanations, then trailing nodes and edges) guarantees the response never blows the context window.",
-      "Balancing context precision against recall: returning too little misses critical dependencies, returning too much wastes agent tokens.",
+      "Keeping a single retrieval pipeline accurate across Python, JavaScript, and TypeScript while preserving structural fidelity in the graph.",
+      "Returning budget-safe context: too little misses critical dependencies, too much wastes agent tokens.",
+      "Exposing the same index consistently through CLI, MCP, SDK, and a VS Code wrapper without drifting schemas.",
     ],
     lessons: [
-      "Graph structure captures relationships that pure text search cannot. Even a shallow BFS over a dependency graph surfaces context that keyword matching misses entirely.",
-      "Hub-aware traversal matters: without suppressing expansion through high-degree utility nodes, every query drags in logging and config helpers.",
-      "Edge trust should be explicit. Tagging edges as AST-proven versus inferred lets agents gate decisions on confidence instead of treating all relationships as equally reliable.",
+      "Graph structure captures relationships that pure text search cannot. Even shallow graph proximity surfaces context keyword matching misses.",
+      "Strict response schemas make agent tooling reliable; free-form dumps create brittle consumers.",
+      "Local-first indexing keeps agent context fast and private without shipping whole repositories to a model.",
     ],
   },
   {
     slug: "snap-interview",
-    year: "2025",
-    title: "Snap-Interview",
+    year: "2026",
+    title: "SnapInterview",
     tagline:
-      "AI interview practice platform with voice-based mock interviews, LLM streaming, TTS synthesis, S3 uploads, and structured evaluations.",
+      "Backend-heavy full-stack AI interview platform with layered APIs, Prisma/PostgreSQL persistence, and secure account lifecycle features.",
     tech: ["Next.js", "TypeScript", "PostgreSQL", "Prisma", "Groq API", "AWS S3", "ElevenLabs", "BetterAuth"],
     tags: ["Full-stack", "AI/ML"],
     impact:
-      "Live at snapinterview.app: an async interview pipeline coordinating microphone capture, LLM streaming, TTS synthesis, and S3 uploads, eliminating audio lag and race conditions.",
+      "End-to-end interview pipeline for resume PDF parsing, streaming LLM responses via Groq, transcript and evaluation persistence, shareable results, and S3 multipart recording uploads.",
     links: [
       { type: "demo", url: "https://snapinterview.app" },
       { type: "source", url: "https://github.com/RishiiShah/SnapInterview" },
@@ -206,22 +236,21 @@ export const projects: Project[] = [
     ],
     problem:
       "Early-career engineers practicing for interviews get either generic AI feedback or nothing at all. Existing tools grade correctness but miss communication, structure, and per-skill signal.",
-    role: "Full-stack build: Next.js 16 App Router with a layered backend (API routes, services, repositories, Prisma), Groq Llama 3.3 70B for interview chat and evaluation, Web Speech API recognition, ElevenLabs TTS, presigned AWS S3 uploads, Better Auth sessions, and a CI pipeline covering lint, typecheck, unit, and e2e tests.",
+    role: "Architected a full-stack Next.js and TypeScript platform using layered API routes, service logic, repository modules, Prisma models, and PostgreSQL persistence for interview sessions, transcripts, feedback, users, and admin operations.",
     architectureNotes: [
-      "Async interview pipeline coordinates microphone capture, LLM streaming, TTS synthesis, and S3 uploads; frontend state is composed from specialized hooks chained by a single page controller, eliminating audio lag and race conditions.",
-      "Production session-validation issue was resolved by redesigning revocation checks with a 5-minute cache, preventing repeated database checks during route transitions.",
-      "Schema-enforced evaluation engine scores responses from 0 to 100 with structured feedback across communication, technical depth, and clarity, eliminating malformed AI output.",
-      "Hardened upload and auth surface: presigned S3 keys scoped to per-user prefixes, origin-based CSRF protection and Postgres-backed rate limits across 4 endpoint types, and a nonce-based CSP served through the Next.js 16 proxy.",
+      "Secure account lifecycle with Better Auth, Google OAuth, OTP email verification, password reset, account lockout, protected route gating, and admin-only access controls.",
+      "Interview pipeline covers resume PDF parsing, streaming LLM responses via Groq, transcript and evaluation persistence, shareable results, and S3 multipart recording uploads for reviewable mock interviews.",
+      "Hardened upload and auth surface: presigned S3 keys scoped to per-user prefixes, origin-based CSRF protection and Postgres-backed rate limits across 4 endpoint types.",
     ],
     challenges: [
-      "Chaining speech recognition, LLM streaming, and TTS without race conditions required an explicitly async pipeline instead of ad-hoc event handlers.",
+      "Coordinating resume parsing, LLM streaming, evaluation persistence, and multipart S3 uploads without race conditions.",
       "Open-ended answers drift between sessions; calibration with role-specific prompts and schema enforcement was essential for consistency.",
       "Security surface spans login, OTP, eval, and upload endpoints, and each required independent rate limiting and CSRF hardening.",
     ],
     lessons: [
-      "Schema-enforced AI outputs are dramatically more reliable than parsing free-text prose. Never parse prose when you can enforce a schema.",
-      "Users value per-skill breakdowns more than a single overall score. That was the biggest retention lever in user testing.",
-      "A CI pipeline covering lint, typecheck, unit, and e2e tests catches regressions earlier than any manual review cadence.",
+      "Layered API, service, and repository boundaries keep a backend-heavy Next.js app maintainable as auth and interview flows grow.",
+      "Schema-enforced AI outputs are dramatically more reliable than parsing free-text prose.",
+      "Account lockout, OTP, and admin gating belong in the core auth design, not as afterthought middleware.",
     ],
   },
   {
@@ -229,7 +258,7 @@ export const projects: Project[] = [
     year: "2025",
     title: "Traffic Violation Detection & Automated Ticketing",
     tagline:
-      "YOLO-based vision system for five-rule enforcement with OCR/ANPR and automated challan workflows.",
+      "Computer vision backend pipeline for red-light, helmet, and speeding detection with OCR, PDF challans, cloud storage, and SMS delivery.",
     tech: [
       "Python",
       "YOLOv12x",
@@ -241,7 +270,7 @@ export const projects: Project[] = [
     ],
     tags: ["MLOps", "Systems", "Research"],
     impact:
-      "End-to-end traffic enforcement achieving 93.76% accuracy across five violation classes, completing the violation-to-notification pipeline within source-video duration plus 10 seconds.",
+      "Modular Python pipeline coordinating detection workflows through OCR, validation, PDF generation, AWS S3 storage, and Twilio SMS into an automated ticketing workflow.",
     links: [
       {
         type: "source",
@@ -260,11 +289,11 @@ export const projects: Project[] = [
     ],
     problem:
       "Automate traffic violation detection and evidence-backed ticketing at scale by detecting multiple violation types from live video feeds and delivering verifiable digital challans.",
-    role: "Led the full computer vision pipeline: YOLO model evaluation and selection, vision-based license plate extraction via Groq Llama-4 Scout, challan metadata automation, and end-to-end cloud storage plus SMS notification.",
+    role: "Orchestrated a modular Python processing pipeline coordinating red-light, helmet, and speeding detection before routing violation data through OCR, validation, PDF generation, cloud storage, and SMS delivery.",
     architectureNotes: [
-      "YOLOv12x selected through an automated evaluation harness across YOLOv11x/v12x nano-to-XL variants, fine-tuned on a custom traffic dataset covering red light jumping, speeding, helmet-less riding, missing insurance, and pollution non-compliance.",
-      "Replaced traditional OCR that failed on angled low-light plates with the Groq Llama-4 Scout vision model as a fallback, followed by regex post-validation against Indian BH and state plate formats, reaching 92.7% plate extraction with 98% localization.",
-      "Violation-to-notification pipeline runs frame-by-frame detection with trigger-point violation logic, stores evidence frames in AWS S3 with presigned URLs, and delivers Twilio SMS challans with fine amounts and evidence links.",
+      "Integrated Llama 4 Scout via Groq for license plate OCR, regex-based plate validation, vehicle registration verification, Jinja2/pdfkit document generation, AWS S3 storage, and Twilio messaging.",
+      "Stateful video-processing with ByteTrack object tracking, per-vehicle state management, duplicate-ticket suppression, and frame-skipping for automated speeding enforcement.",
+      "YOLOv12x fine-tuned on a custom traffic dataset covering red light jumping, speeding, helmet-less riding, missing insurance, and pollution non-compliance.",
     ],
     challenges: [
       "Real-time detection under uncontrolled lighting, weather variations, and diverse camera angles.",
@@ -274,7 +303,7 @@ export const projects: Project[] = [
     lessons: [
       "ANPR must validate through multiple stages (vision extraction, regex, and structural checks) because raw model predictions frequently contain errors.",
       "Evidence collection and notification are as important as detection accuracy; a perfect detector creates no value if frames are lost or SMS delivery is unreliable.",
-      "Model selection is a trade-off curve, not a single answer: extra-large variants earned their cost only on plate detection, while medium variants matched them on vehicle detection at a fraction of the memory.",
+      "Duplicate-ticket suppression and per-vehicle state are required for trustworthy automated enforcement over long video streams.",
     ],
   },
   {
