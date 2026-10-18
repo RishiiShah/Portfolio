@@ -2,7 +2,6 @@
 
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
-import { motion } from "@/lib/motion";
 
 /*
  * Fixed full-viewport particle field. Every particle has a home position in
@@ -33,7 +32,6 @@ const vertex = /* glsl */ `
   attribute float aRand;
   uniform float uShape;
   uniform float uTime;
-  uniform float uFly;
   uniform float uSize;
   uniform float uMaxSize;
   uniform float uAspect;
@@ -56,10 +54,10 @@ const vertex = /* glsl */ `
 
     // Each shape gets its own motion before blending.
     vec3 s0 = rotX(rotY(position, uTime * 0.12), 0.35 + sin(uTime * 0.2) * 0.1);
-    // Tunnel: particles stream toward the camera as the visitor scrolls (uFly), wrapping at the far end.
-    float a = atan(p1.y, p1.x) + uFly * 0.04 + uTime * 0.03;
+    // Tunnel: particles stream slowly toward the camera, wrapping at the far end.
+    float a = atan(p1.y, p1.x) + uTime * 0.03;
     float rr = length(p1.xy);
-    vec3 s1 = vec3(cos(a) * rr, sin(a) * rr, mod(p1.z + uFly + uTime * 0.6, ${TUNNEL_LENGTH}.0) - ${TUNNEL_LENGTH - 6}.0);
+    vec3 s1 = vec3(cos(a) * rr, sin(a) * rr, mod(p1.z + uTime * 0.6, ${TUNNEL_LENGTH}.0) - ${TUNNEL_LENGTH - 6}.0);
     vec3 s2 = p2;
     s2.y += sin(p2.x * 1.3 + uTime * 0.9) * 0.22 + cos(p2.z * 1.7 + uTime * 0.6) * 0.18;
     vec3 s3 = rotX(rotY(p3, uTime * 0.35), 0.25);
@@ -194,7 +192,6 @@ export function Scene() {
     const uniforms = {
       uShape: { value: 0 },
       uTime: { value: 0 },
-      uFly: { value: 0 },
       uSize: { value: 26 * renderer.getPixelRatio() },
       uMaxSize: { value: 7 * renderer.getPixelRatio() },
       uAspect: { value: 1 },
@@ -263,11 +260,11 @@ export function Scene() {
       if (!running) return;
       const dt = Math.min(clock.getDelta(), 0.05);
       if (!reduced) uniforms.uTime.value += dt;
-      uniforms.uFly.value += (motion.fly - uniforms.uFly.value) * Math.min(1, dt * 4);
       const target = targetShape();
       uniforms.uShape.value += (target - uniforms.uShape.value) * (reduced ? 1 : Math.min(1, dt * 2.2));
       // Narrow screens put text on top of the shapes, so keep them faint there.
-      const targetOpacity = window.innerWidth < 768 ? 0.35 : 1;
+      // Fade out entirely in the project flythrough (shape 1), which has its own scene.
+      const targetOpacity = (window.innerWidth < 768 ? 0.35 : 1) * Math.min(1, Math.abs(uniforms.uShape.value - 1) * 1.5);
       uniforms.uOpacity.value += (targetOpacity - uniforms.uOpacity.value) * Math.min(1, dt * 1.2);
       mouse.x += (mouse.tx - mouse.x) * 0.12;
       mouse.y += (mouse.ty - mouse.y) * 0.12;

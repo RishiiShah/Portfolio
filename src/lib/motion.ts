@@ -2,8 +2,8 @@ import type Lenis from "lenis";
 
 /** Shared, mutable motion state read by the WebGL scene and other animated pieces. */
 export const motion = {
-  /** Distance travelled through the project flythrough tunnel (scene units). */
-  fly: 0,
+  /** Flythrough progress, 0 … number of legs (see lib/flight.ts). */
+  flight: 0,
   lenis: null as Lenis | null,
 };
 

@@ -161,13 +161,14 @@ html.lenis body {
   }
 }
 
-/* Project flythrough: a plain list by default, a 3D stage when JS + motion are available */
+/* Project flythrough: a plain list by default, a pinned 3D flight when JS + motion are available */
 .fly-stage {
   display: grid;
   gap: 4vh;
   padding: 6vh max(1rem, 4vw);
 }
-.fly-hud {
+.fly-hud,
+.fly-canvas {
   display: none;
 }
 @media (prefers-reduced-motion: no-preference) {
@@ -177,21 +178,35 @@ html.lenis body {
     height: 100svh;
     padding: 0;
     overflow: hidden;
-    perspective: 1000px;
-  }
-  .js .fly-card {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: min(46rem, 46vw);
-    will-change: transform, opacity;
   }
   .js .fly-hud {
     display: flex;
   }
+  .js .fly-canvas {
+    display: block;
+  }
+  .js .fly-card {
+    position: absolute;
+    top: 50%;
+    width: min(32rem, 36vw);
+    opacity: 0;
+    transform: translateY(calc(-50% + var(--fly-y, 0px)));
+    will-change: transform, opacity;
+  }
+  .js .fly-card[data-side="left"] {
+    left: max(1rem, 4vw);
+  }
+  .js .fly-card[data-side="right"] {
+    right: max(1rem, 4vw);
+  }
 }
 @media (prefers-reduced-motion: no-preference) and (max-width: 767px) {
   .js .fly-card {
-    width: 90vw;
+    top: auto;
+    bottom: 4vh;
+    left: max(1rem, 4vw);
+    right: max(1rem, 4vw);
+    width: auto;
+    transform: translateY(var(--fly-y, 0px));
   }
 }
