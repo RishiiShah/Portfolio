@@ -1,6 +1,10 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+/* Side-by-side scroll scenes: wider than a phone and not an upright tablet (see STACKED in lib/motion.ts). */
+@custom-variant split (@media (min-width: 768px) and ((orientation: landscape) or (min-width: 1101px)));
+/* Split and tall enough for a card's full detail. */
+@custom-variant roomy (@media (min-width: 768px) and ((orientation: landscape) or (min-width: 1101px)) and (min-height: 860px));
 
 @theme inline {
   --font-sans: var(--font-archivo);
@@ -195,7 +199,7 @@ html.lenis body {
     right: max(1rem, 4vw);
   }
 }
-@media (prefers-reduced-motion: no-preference) and (max-width: 767px) {
+@media (prefers-reduced-motion: no-preference) and (max-width: 767px), (prefers-reduced-motion: no-preference) and (max-width: 1100px) and (orientation: portrait) {
   .js .fly-card {
     top: auto;
     bottom: 4vh;
@@ -315,7 +319,7 @@ html.lenis body {
     will-change: transform, opacity;
   }
 }
-@media (prefers-reduced-motion: no-preference) and (max-width: 767px) {
+@media (prefers-reduced-motion: no-preference) and (max-width: 767px), (prefers-reduced-motion: no-preference) and (max-width: 1100px) and (orientation: portrait) {
   .js .space-card {
     top: auto;
     bottom: 3vh;

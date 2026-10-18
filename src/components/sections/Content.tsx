@@ -9,8 +9,8 @@ import { WorkIndex } from "./WorkIndex";
 export function Archive() {
   return (
     <section data-shape="2" className="relative px-[max(1rem,4vw)] pb-[16vh]">
-      <div className="grid gap-[4vh] md:grid-cols-12">
-        <div className="md:col-span-4">
+      <div className="grid gap-[4vh] xl:grid-cols-12 xl:gap-x-[min(4vh,2.5vw)]">
+        <div className="xl:col-span-4">
           <p className="label text-ink-3">Full index</p>
           <RevealText
             as="h3"
@@ -21,7 +21,7 @@ export function Archive() {
             Open any row for the problem, my role, the architecture, and what I learned building it.
           </p>
         </div>
-        <div className="md:col-span-8">
+        <div className="xl:col-span-8">
           <WorkIndex />
         </div>
       </div>

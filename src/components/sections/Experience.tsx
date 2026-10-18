@@ -8,7 +8,7 @@ import { useGSAP } from "@gsap/react";
 import { education, experience, publications } from "@/data";
 import { toIsoDate } from "@/lib/dates";
 import { D, isoFrame } from "@/lib/iso";
-import { scrollToY } from "@/lib/motion";
+import { isStacked, scrollToY } from "@/lib/motion";
 import { RevealText } from "../anim";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -464,7 +464,7 @@ export function Experience() {
           // Camera: follow the ship. Desktop keeps the planet right of the card; phones keep it above.
           const box = stage.current;
           if (box) {
-            const narrow = box.clientWidth < 768;
+            const narrow = isStacked();
             const k = box.clientWidth / (narrow ? 720 : 1500); // px per world unit
             if (k !== scale) {
               scale = k;
@@ -603,9 +603,9 @@ export function Experience() {
           </svg>
         </div>
 
-        <div className="space-hud label pointer-events-none absolute inset-x-[max(1rem,4vw)] top-[11vh] items-start justify-between text-ink-3 md:top-auto md:bottom-[5vh] md:items-end">
+        <div className="space-hud label pointer-events-none absolute inset-x-[max(1rem,4vw)] top-[11vh] items-start justify-between text-ink-3 split:top-auto split:bottom-[5vh] split:items-end">
           <div>
-            <p className="wide text-3xl font-bold text-ink md:text-4xl">
+            <p className="wide text-3xl font-bold text-ink split:text-4xl">
               <span ref={counter}>01</span>
               <span className="text-ink-3">/{String(N).padStart(2, "0")}</span>
             </p>
@@ -613,7 +613,7 @@ export function Experience() {
               {short(STOPS[0].start)}
             </span>
           </div>
-          <ol className="pointer-events-auto hidden flex-col items-end gap-1.5 md:flex">
+          <ol className="pointer-events-auto hidden flex-col items-end gap-1.5 split:flex">
             {STOPS.map((s, i) => (
               <li key={s.title}>
                 <button
@@ -657,8 +657,8 @@ function Card({ stop: s, index }: { stop: Stop; index: number }) {
           ))}
         </dl>
       )}
-      <p className="mt-4 text-[15px] leading-relaxed text-ink-2 md:hidden">{s.summary}</p>
-      <ul className="mt-5 hidden space-y-2 text-[14px] leading-relaxed text-ink-2 md:block">
+      <p className="mt-4 text-[15px] leading-relaxed text-ink-2 roomy:hidden">{s.summary}</p>
+      <ul className="mt-5 hidden space-y-2 text-[14px] leading-relaxed text-ink-2 roomy:block">
         {s.bullets.map((b) => (
           <li key={b} className="relative pl-5 before:absolute before:top-[0.7em] before:left-0 before:h-px before:w-2.5 before:bg-accent">
             {b}

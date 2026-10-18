@@ -117,20 +117,20 @@ export function FeaturedWork({ items }: { items: Project[] }) {
           <Panel key={p.slug} project={p} index={i + 1} side={i % 2 ? "right" : "left"} />
         ))}
 
-        <div className="fly-hud label pointer-events-none absolute inset-x-[max(1rem,4vw)] top-[11vh] items-start justify-between text-ink-3 md:top-auto md:bottom-[5vh] md:items-end">
+        <div className="fly-hud label pointer-events-none absolute inset-x-[max(1rem,4vw)] top-[11vh] items-start justify-between text-ink-3 split:top-auto split:bottom-[5vh] split:items-end">
           <div className="flex items-end gap-4">
             <span className="relative block h-14 w-px bg-line">
               <span ref={bar} className="absolute inset-0 origin-top scale-y-0 bg-accent" />
             </span>
             <div>
-              <p className="wide text-3xl font-bold text-ink md:text-4xl">
+              <p className="wide text-3xl font-bold text-ink split:text-4xl">
                 <span ref={counter}>01</span>
                 <span className="text-ink-3">/{String(items.length).padStart(2, "0")}</span>
               </p>
               <span ref={distance} className="mt-1 block">0.00 km flown</span>
             </div>
           </div>
-          <ol className="pointer-events-auto hidden flex-col items-end gap-1.5 md:flex">
+          <ol className="pointer-events-auto hidden flex-col items-end gap-1.5 split:flex">
             {items.map((p, i) => (
               <li key={p.slug}>
                 <button
@@ -169,9 +169,9 @@ function Panel({ project: p, index, side }: { project: Project; index: number; s
       <p className="mt-3 text-[clamp(0.9rem,1vw,1.05rem)] leading-snug text-ink-2">{p.tagline}</p>
 
       {p.metrics && (
-        <dl className="mt-6 grid grid-cols-2 gap-x-5 gap-y-3">
+        <dl className="mt-6 grid grid-cols-2 gap-x-5 gap-y-3 [@media(max-height:700px)]:hidden">
           {p.metrics.slice(0, 4).map((m, i) => (
-            <div key={m.label} className={`flex flex-col-reverse border-t border-line pt-2 ${i > 1 ? "hidden md:flex" : ""}`}>
+            <div key={m.label} className={`flex flex-col-reverse border-t border-line pt-2 ${i > 1 ? "hidden split:flex" : ""}`}>
               <dt className="label mt-1 text-ink-3">{m.label}</dt>
               <dd className="wide text-[clamp(1rem,1.3vw,1.4rem)] font-bold tracking-tight">{m.value}</dd>
             </div>
@@ -180,7 +180,7 @@ function Panel({ project: p, index, side }: { project: Project; index: number; s
       )}
 
       <div className="mt-6 flex flex-wrap items-end justify-between gap-3">
-        <ul className="hidden max-w-[62%] flex-wrap gap-1.5 md:flex">
+        <ul className="hidden max-w-[62%] flex-wrap gap-1.5 split:flex">
           {p.tech.slice(0, 4).map((t) => (
             <li key={t} className="label border border-line px-2 py-1 text-ink-2">
               {t}
