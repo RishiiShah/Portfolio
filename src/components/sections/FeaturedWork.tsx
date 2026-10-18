@@ -84,7 +84,7 @@ export function FeaturedWork({ items }: { items: Project[] }) {
 
   return (
     <section ref={root} id="work" data-shape="1" className="relative">
-      <div className="px-[max(1rem,4vw)] pt-[16vh]">
+      <div className="px-[max(1rem,4vw)] pt-[12vh]">
         <div className="label flex items-center justify-between border-t border-line pt-4 text-ink-3">
           <span>
             <span className="text-accent">(01)</span> Selected work

@@ -22,6 +22,8 @@
   --ink-2: #4f4c45;
   --ink-3: #85817a;
   --line: rgba(20, 20, 20, 0.14);
+  --grid: rgba(20, 20, 20, 0.05);
+  --grid-major: rgba(20, 20, 20, 0.09);
   --accent: #2a36f0;
   --accent-ink: #ffffff;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
@@ -35,6 +37,8 @@
   --ink-2: #a8a69f;
   --ink-3: #6c6b66;
   --line: rgba(236, 235, 230, 0.13);
+  --grid: rgba(236, 235, 230, 0.045);
+  --grid-major: rgba(236, 235, 230, 0.09);
   --accent: #7d87ff;
   --accent-ink: #0e0f11;
   color-scheme: dark;
@@ -84,14 +88,6 @@ body {
   text-transform: uppercase;
 }
 
-@keyframes scroll-tick {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(200%); }
-}
-.scroll-tick {
-  animation: scroll-tick 1.6s cubic-bezier(0.65, 0, 0.35, 1) infinite;
-}
-
 /* Height animation for expandable rows */
 .expander {
   display: grid;
@@ -119,8 +115,7 @@ body {
     scroll-behavior: auto;
   }
   .expander,
-  .pulse-dot,
-  .scroll-tick {
+  .pulse-dot {
     transition: none;
     animation: none;
   }
@@ -209,4 +204,15 @@ html.lenis body {
     width: auto;
     transform: translateY(var(--fly-y, 0px));
   }
+}
+
+/* Lab-notebook graph paper: fine grid with a heavier line every fifth square */
+.graph-paper {
+  background-image:
+    linear-gradient(var(--grid-major) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-major) 1px, transparent 1px),
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
+  background-position: -1px -1px;
 }

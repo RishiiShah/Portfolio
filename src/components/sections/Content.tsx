@@ -1,7 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
-import { bio, education, experience, projects, publications, skills } from "@/data";
+import { bio, education, experience, publications, skills } from "@/data";
 import { Section } from "../Section";
-import { CountUp, DrawLine, Marquee, RevealText, ScrubText, Stagger } from "../anim";
+import { DrawLine, RevealText, ScrubText, Stagger } from "../anim";
 import { WorkIndex } from "./WorkIndex";
 
 const shortDate = (d: string) => {
@@ -11,45 +11,6 @@ const shortDate = (d: string) => {
 
 const bullet =
   "relative pl-5 before:absolute before:left-0 before:top-[0.7em] before:h-px before:w-2.5 before:bg-accent";
-
-export function Statement() {
-  const stats = [
-    { value: String(publications.length).padStart(2, "0"), label: "Publications" },
-    { value: String(experience.length).padStart(2, "0"), label: "Engineering internships" },
-    { value: String(projects.length).padStart(2, "0"), label: "Projects shipped" },
-    { value: education[0].gpa.split(" ")[0], label: "M.S. GPA at Rutgers" },
-  ];
-  return (
-    <section data-shape="0" className="relative px-[max(1rem,4vw)] py-[18vh]">
-      <p className="label text-accent">(00) Intro</p>
-      <ScrubText
-        className="wide mt-[4vh] max-w-[22ch] text-[clamp(2rem,5.4vw,6.5rem)] leading-[1] font-semibold tracking-tight md:ml-[16vw]"
-        text="Graduate CS student turning research-grade models into dependable software."
-      />
-      <Stagger as="dl" className="mt-[14vh] grid grid-cols-2 border-t border-line md:ml-[16vw] md:grid-cols-4">
-        {stats.map((s) => (
-          <div key={s.label} className="flex flex-col-reverse border-b border-line py-6 pr-4 md:border-b-0">
-            <dt className="label mt-2 text-ink-3">{s.label}</dt>
-            <dd className="wide text-[clamp(2.5rem,5vw,5.5rem)] leading-none font-bold tracking-tight">
-              <CountUp value={s.value} />
-            </dd>
-          </div>
-        ))}
-      </Stagger>
-    </section>
-  );
-}
-
-export function FocusMarquee() {
-  return (
-    <div className="relative border-y border-line bg-bg/70 py-[3vh] backdrop-blur-sm">
-      <Marquee
-        className="wide text-[clamp(2rem,6vw,6rem)] leading-none font-bold tracking-tight uppercase"
-        items={["Backend systems", "Computer vision", "Developer tools", "Generative models", "Applied AI"]}
-      />
-    </div>
-  );
-}
 
 export function Archive() {
   return (

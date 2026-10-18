@@ -6,7 +6,8 @@ import { Cursor } from "@/components/Cursor";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { Hero } from "@/components/sections/Hero";
 import { FeaturedWork } from "@/components/sections/FeaturedWork";
-import { About, Archive, Experience, FocusMarquee, Research, Skills, Statement } from "@/components/sections/Content";
+import { About, Archive, Experience, Research, Skills } from "@/components/sections/Content";
+import { Intro } from "@/components/sections/Intro";
 import { Contact } from "@/components/sections/Contact";
 import { projects } from "@/data";
 
@@ -22,8 +23,7 @@ export default function Page() {
       <Nav />
       <main className="relative z-10">
         <Hero />
-        <Statement />
-        <FocusMarquee />
+        <Intro />
         <FeaturedWork items={featured} />
         <Archive />
         <Research />
