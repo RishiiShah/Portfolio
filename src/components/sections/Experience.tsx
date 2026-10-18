@@ -5,10 +5,11 @@ import { ArrowRight } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
-import { education, experience, publications } from "@/data";
+import { education, experience, publications, teaching } from "@/data";
 import { toIsoDate } from "@/lib/dates";
 import { D, isoFrame } from "@/lib/iso";
 import { isStacked, scrollToY } from "@/lib/motion";
+import { headingFromScreen, shipMarkup } from "./ship";
 import { RevealText } from "../anim";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -25,6 +26,8 @@ interface Stop {
   highlights: { value: string; label: string }[];
   tech?: string[];
   next?: boolean;
+  /** Ongoing: shown as "from … — present". */
+  current?: boolean;
 }
 
 const [rutgers, mumbai] = education;
@@ -63,6 +66,17 @@ const STOPS: Stop[] = [
     highlights: [{ value: rutgers.gpa.split(" ")[0], label: "GPA, of 4.0" }],
   },
   {
+    start: teaching.start,
+    end: "",
+    place: teaching.location,
+    title: teaching.role,
+    role: teaching.organization,
+    bullets: ["Teaching Assistant at Rutgers alongside the M.S. in Computer Science."],
+    summary: "Teaching Assistant at Rutgers alongside the M.S.",
+    highlights: [],
+    current: true,
+  },
+  {
     start: rutgers.end,
     end: "",
     place: "",
@@ -90,6 +104,7 @@ const PLANETS = [
   { r: 52, ring: true, moons: 0, station: false, lats: [-0.8, -0.6, -0.38, -0.16, 0.12, 0.36, 0.58, 0.8], meridians: 0, sites: 8 }, // Creative Line: banded giant
   { r: 104, ring: false, moons: 0, station: true, lats: [-0.5, 0.5], meridians: 6, sites: 22 }, // Aaditya Technologies
   { r: 78, ring: true, moons: 2, station: false, lats: [-0.66, -0.33, 0.33, 0.66], meridians: 3, sites: 14 }, // Rutgers
+  { r: 100, ring: false, moons: 0, station: false, outpost: true, lats: [], meridians: 0, sites: 0 }, // Teaching Assistant: orbital outpost
   { r: 64, ring: false, moons: 0, station: false, lats: [-0.5, 0.5], meridians: 3, sites: 0 }, // Next stop: uncharted
 ].slice(0, N);
 const centers = PLANETS.map((p, i) => [i * GAP, i % 2 ? -50 : 40]);
@@ -168,7 +183,7 @@ const STAR_LAYERS = [
 // of radius s·√1.5, and its latitudes and meridians are traced in 3D so only the
 // half facing the viewer (+x +y +z) is drawn. Rings and orbits lie on the TOP plane.
 const ISO = Math.sqrt(1.5);
-const { Box, TOP, path, P: P0 } = isoFrame([[0, 0, 0]], 0); // kernel at the origin, inside a translate()
+const { Box, TOP, FRONT, SIDE, P: P0 } = isoFrame([[0, 0, 0]], 0); // kernel at the origin, inside a translate()
 type P3 = [number, number, number];
 const TAU = Math.PI * 2;
 const loop = (f: (t: number) => P3, from = 0, n = 96) => Array.from({ length: n + 1 }, (_, i) => f(from + (i / n) * TAU));
@@ -255,10 +270,57 @@ function Station({ path, dur, front }: { path: string; dur: number; front?: bool
   );
 }
 
+/** Grid of lit windows on one face plane (FRONT or SIDE), u across, v down. */
+const windows = (cols: number[], rows: number[]) =>
+  rows.flatMap((v) => cols.map((u) => <rect key={`${u}-${v}`} className="space-window" x={u} y={v} width={3.2} height={4.6} />));
+
+/** A spoke of the habitat ring at angle a, from the hub out to the ring. */
+const spoke = (a: number) => trace([[12 * Math.cos(a), 12 * Math.sin(a), 0], [44 * Math.cos(a), 44 * Math.sin(a), 0]]);
+
+/** Solar wing on the TOP plane, cells drawn as hairlines. */
+function SolarWing({ x }: { x: number }) {
+  return (
+    <g transform={TOP(x, -9, 44)}>
+      <rect className="iso-face iso-top space-panel" width={40} height={18} />
+      {[8, 16, 24, 32].map((u) => (
+        <line key={u} className="iso-detail" x1={u} x2={u} y1={0} y2={18} />
+      ))}
+      <line className="iso-detail" x1={0} x2={40} y1={9} y2={9} />
+    </g>
+  );
+}
+
+/** The teaching outpost: a hub with lit decks, a habitat ring on spokes, and solar wings on a mast. */
+function Outpost() {
+  return (
+    <>
+      <path className="space-annulus" d={band(44, 54, false)} />
+      <path className="space-grid" d={trace(half(flat(49), false))} />
+      {[Math.PI, 1.5 * Math.PI].map((a) => (
+        <path key={a} className="space-equator" d={spoke(a)} />
+      ))}
+      <SolarWing x={-58} />
+      <line className="space-mast" x1={P0(-18, 0, 45)[0]} y1={P0(-18, 0, 45)[1]} x2={P0(-2, 0, 45)[0]} y2={P0(-2, 0, 45)[1]} />
+      <Box x={-12} y={-12} z={-26} w={24} d={24} h={52} />
+      <g transform={FRONT(-12, 12, 26)}>{windows([4, 10.5, 17], [8, 17, 26, 35])}</g>
+      <g transform={SIDE(12, 12, 26)}>{windows([4, 10.5, 17], [8, 17, 26, 35])}</g>
+      <Box x={-2} y={-2} z={26} w={4} d={4} h={18} />
+      <circle className="space-light space-beacon" cx={P0(0, 0, 47)[0]} cy={P0(0, 0, 47)[1]} r={2.6} />
+      {[0, 0.5 * Math.PI].map((a) => (
+        <path key={a} className="space-equator" d={spoke(a)} />
+      ))}
+      <path className="space-annulus" d={band(44, 54, true)} />
+      <path className="space-grid" d={trace(half(flat(49), true))} />
+      <line className="space-mast" x1={P0(2, 0, 45)[0]} y1={P0(2, 0, 45)[1]} x2={P0(18, 0, 45)[0]} y2={P0(18, 0, 45)[1]} />
+      <SolarWing x={18} />
+    </>
+  );
+}
+
 /** An iso-glow planet: wireframe globe, optional flat ring, moons or a station on dashed orbits. */
 function Planet({ i }: { i: number }) {
   const [cx, cy] = centers[i];
-  const { r, ring } = PLANETS[i];
+  const { r, ring, outpost } = PLANETS[i];
   const s = r / ISO;
   const uncharted = i === N - 1;
   const orbits = orbitsOf(i);
@@ -292,15 +354,20 @@ function Planet({ i }: { i: number }) {
       {[0, 1].map((k) => (
         <ellipse key={k} className="space-ripple" rx={s * 1.2 * ISO} ry={s * 1.2 * Math.SQRT1_2} style={{ animationDelay: `${k * 0.4}s` }} />
       ))}
+      {outpost && (
+        <g transform="scale(1.7)">
+          <Outpost />
+        </g>
+      )}
       {/* Globe */}
-      <circle className={uncharted ? "space-uncharted" : "space-body"} r={r} />
+      {!outpost && <circle className={uncharted ? "space-uncharted" : "space-body"} r={r} />}
       {lats.map((k) => (
         <path key={k} className="space-grid" d={trace(loop(flat(s * Math.sqrt(1 - k * k), s * k)), facing)} />
       ))}
       {Array.from({ length: meridians }, (_, m) => (
         <path key={m} className="space-grid space-meridian" d={meridianD(s, (m * Math.PI) / meridians)} />
       ))}
-      <path className="space-equator" d={trace(loop(flat(s)), facing)} />
+      {!outpost && <path className="space-equator" d={trace(loop(flat(s)), facing)} />}
       {SITES[i].map((site, k) => {
         const at = sitePos(s, site, 0);
         return <circle key={k} className="space-site" r={2.6} cx={at ? at[0].toFixed(1) : 0} cy={at ? at[1].toFixed(1) : 0} opacity={at ? 1 : 0} />;
@@ -335,33 +402,13 @@ function Planet({ i }: { i: number }) {
   );
 }
 
-/** Wing on the z = 0 plane, on the far (−y) or near (+y) side of the hull. */
-const wing = (side: number) => path([[-24, 8 * side, 0], [-4, 8 * side, 0], [-18, 28 * side, 0], [-30, 28 * side, 0]]) + "Z";
-/** Crossed flat fins behind the engine, so the exhaust reads as a cone. */
-const flame = (len: number) => path([[-40, -5, 0], [-40 - len, 0, 0], [-40, 5, 0]]) + path([[-40, 0, 5], [-40 - len, 0, 0], [-40, 0, -5]]);
+const PARKED = shipMarkup(0);
 
-/** The ship as an iso-glow model, nose along +x (down-right on screen), painted back to front. */
-function Ship() {
+/** The ship: a 3D mesh (see ship.ts) redrawn as it turns, inside the idle float. */
+function Ship({ model }: { model: React.Ref<SVGGElement> }) {
   return (
     <g className="space-ship-bob">
-      <path className="space-flame" d={flame(16)} />
-      <path className="space-flame space-flame-burn" d={flame(44)} />
-      <path className="iso-face iso-top" d={wing(-1)} />
-      <Box x={-40} y={-6} z={-5} w={10} d={12} h={10} />
-      <Box x={-30} y={-8} z={-6} w={44} d={16} h={12} />
-      {/* Nose: a pyramid on the hull's front end; only its top and near faces show */}
-      <path className="iso-face iso-top" d={path([[14, -8, 6], [14, 8, 6], [38, 0, 0]]) + "Z"} />
-      <path className="iso-face" d={path([[14, 8, 6], [14, 8, -6], [38, 0, 0]]) + "Z"} />
-      <g transform={TOP(-2, -5, 6)}>
-        <rect className="iso-glass is-hot" width={14} height={10} rx={2} />
-      </g>
-      <g transform={TOP(-30, -8, 6)}>
-        {[8, 14, 20].map((u) => (
-          <line key={u} className="iso-detail" x1={u} x2={u} y1={2} y2={14} />
-        ))}
-      </g>
-      <path className="iso-face iso-top" d={wing(1)} />
-      <circle className="space-light" cx={P0(-26, 28, 0)[0]} cy={P0(-26, 28, 0)[1]} r={2.5} />
+      <g ref={model} dangerouslySetInnerHTML={{ __html: PARKED }} />
     </g>
   );
 }
@@ -375,6 +422,8 @@ const monthIndex = (d: string) => {
 const fmtMonth = (m: number) => `${MONTHS[Math.round(m) % 12]} ${Math.floor(Math.round(m) / 12)}`;
 const short = (d: string) => (d ? fmtMonth(monthIndex(d)) : "");
 const stopMonths = STOPS.map((s) => monthIndex(s.start));
+
+const wrap = (a: number) => Math.atan2(Math.sin(a), Math.cos(a));
 
 const smooth = (x: number) => {
   const t = Math.max(0, Math.min(1, x));
@@ -394,6 +443,7 @@ export function Experience() {
   const stage = useRef<HTMLDivElement>(null);
   const svg = useRef<SVGSVGElement>(null);
   const ship = useRef<SVGGElement>(null);
+  const model = useRef<SVGGElement>(null);
   const date = useRef<HTMLSpanElement>(null);
   const counter = useRef<HTMLSpanElement>(null);
   const trigger = useRef<ScrollTrigger | null>(null);
@@ -452,9 +502,13 @@ export function Experience() {
           active = now;
 
           const { x, y, angle } = along(leg, eased);
-          // Parked, the ship sits in its iso pose (nose 30° down-right); in flight it turns to follow the curve.
-          const tilt = (angle - 30) * Math.sin(Math.PI * eased);
-          ship.current?.setAttribute("transform", `translate(${x} ${y}) rotate(${tilt}) scale(1.3)`);
+          // Parked, the ship faces +x; in flight it turns to its heading and banks into the curve.
+          const w = Math.sin(Math.PI * eased);
+          const yaw = wrap(headingFromScreen(angle)) * w;
+          const ahead = wrap(headingFromScreen(along(leg, Math.min(1, eased + 0.02)).angle)) * w;
+          const bank = Math.max(-0.7, Math.min(0.7, wrap(ahead - yaw) * 9)) * w;
+          ship.current?.setAttribute("transform", `translate(${x} ${y}) scale(1.6)`);
+          if (model.current) model.current.innerHTML = shipMarkup(yaw, bank);
           ship.current?.toggleAttribute("data-burn", eased > 0.02 && eased < 0.98);
           trails.forEach((path) => {
             const i = Number(path.dataset.leg);
@@ -597,8 +651,8 @@ export function Experience() {
               </g>
             ))}
 
-            <g ref={ship} className="space-ship" transform={`translate(${parks[0][0]} ${parks[0][1]}) scale(1.3)`}>
-              <Ship />
+            <g ref={ship} className="space-ship" transform={`translate(${parks[0][0]} ${parks[0][1]}) scale(1.6)`}>
+              <Ship model={model} />
             </g>
           </svg>
         </div>
@@ -642,7 +696,7 @@ function Card({ stop: s, index }: { stop: Stop; index: number }) {
     <article className="space-card border border-line bg-bg/90 p-[clamp(1.25rem,2vw,2rem)]">
       <p className="label text-ink-3">
         <span className="text-accent">Stop {String(index + 1).padStart(2, "0")}</span> ·{" "}
-        {s.next ? `from ${short(s.start)}` : `${short(s.start)} — ${short(s.end)}`}
+        {s.next ? `from ${short(s.start)}` : `${short(s.start)} — ${s.current ? "Present" : short(s.end)}`}
         {s.place && ` · ${s.place}`}
       </p>
       <h3 className="wide mt-4 text-[clamp(1.5rem,2.4vw,2.6rem)] leading-[1] font-bold tracking-tight">{s.title}</h3>

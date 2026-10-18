@@ -112,6 +112,14 @@ export interface ExperienceItem {
   highlights?: { value: string; label: string }[];
 }
 
+/** Current campus role; kept apart from `experience`, which lists engineering internships. */
+export const teaching = {
+  role: "Teaching Assistant",
+  organization: "Rutgers University",
+  location: "New Brunswick, NJ",
+  start: "September 2026",
+} as const;
+
 export const experience: ExperienceItem[] = [
   {
     role: "Software Engineering Intern",
