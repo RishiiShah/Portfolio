@@ -1,29 +1,21 @@
 import Link from "next/link";
-import { Tilt } from "@/components/ui/Tilt";
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-[100svh] flex-col items-center justify-center p-4">
-      <Tilt max={7} perspective={1600} className="inline-block">
-        <h1
-          className="font-serif leading-[1.02] tracking-tight text-[var(--ink)] mb-4 text-center"
-          style={{
-            fontSize: "clamp(3rem, 9vw, 5.5rem)",
-            textShadow: "0 2px 40px rgba(122,162,255,0.15)",
-          }}
-        >
-          404.
-        </h1>
-      </Tilt>
-      <p className="max-w-xl text-center text-base leading-relaxed text-[var(--ink-dim)] sm:text-lg mb-8">
-        The page you are looking for doesn&apos;t exist or has been moved.
+    <main className="flex min-h-[100svh] flex-col justify-center px-4 md:px-10">
+      <p className="label text-accent">Error 404 · no detections</p>
+      <h1 className="display mt-4 text-[clamp(4rem,18vw,14rem)]">
+        Lost<span className="text-accent">.</span>
+      </h1>
+      <p className="mt-6 max-w-md text-lg text-ink-2">
+        Nothing matched this URL. The page may have moved, or it never existed.
       </p>
       <Link
         href="/"
-        className="hero-shader-button px-7 py-3 text-sm font-medium flex items-center"
+        className="mt-10 flex h-12 w-fit items-center bg-ink px-6 text-sm font-medium text-bg transition-colors hover:bg-accent hover:text-accent-ink"
       >
-        Return Home
+        Back to the portfolio
       </Link>
-    </div>
+    </main>
   );
 }

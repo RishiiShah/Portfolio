@@ -1,49 +1,40 @@
-import dynamic from "next/dynamic";
+import { Nav } from "@/components/Nav";
+import { Footer } from "@/components/Footer";
+import { Scene } from "@/components/Scene";
+import { Loader } from "@/components/Loader";
+import { Cursor } from "@/components/Cursor";
+import { SmoothScroll } from "@/components/SmoothScroll";
 import { Hero } from "@/components/sections/Hero";
-import { ClientOnlyUI } from "@/components/ClientOnlyUI";
-import { SiteLoader } from "@/components/SiteLoader";
+import { FeaturedWork } from "@/components/sections/FeaturedWork";
+import { About, Archive, Experience, FocusMarquee, Research, Skills, Statement } from "@/components/sections/Content";
+import { Contact } from "@/components/sections/Contact";
+import { projects } from "@/data";
 
-const Projects = dynamic(() =>
-  import("@/components/sections/Projects").then((m) => ({ default: m.Projects }))
-);
-const Publications = dynamic(() =>
-  import("@/components/sections/Publications").then((m) => ({ default: m.Publications }))
-);
-const Experience = dynamic(() =>
-  import("@/components/sections/Experience").then((m) => ({ default: m.Experience }))
-);
-const Skills = dynamic(() =>
-  import("@/components/sections/Skills").then((m) => ({ default: m.Skills }))
-);
-const Education = dynamic(() =>
-  import("@/components/sections/Education").then((m) => ({ default: m.Education }))
-);
-const About = dynamic(() =>
-  import("@/components/sections/About").then((m) => ({ default: m.About }))
-);
-const Contact = dynamic(() =>
-  import("@/components/sections/Contact").then((m) => ({ default: m.Contact }))
-);
-const Footer = dynamic(() =>
-  import("@/components/Footer").then((m) => ({ default: m.Footer }))
-);
+const featured = projects.filter((p) => p.problem);
 
 export default function Page() {
   return (
     <>
-      <SiteLoader />
-      <ClientOnlyUI />
-      <main>
+      <Loader />
+      <SmoothScroll />
+      <Scene />
+      <Cursor />
+      <Nav />
+      <main className="relative z-10">
         <Hero />
-        <Projects />
-        <Publications />
+        <Statement />
+        <FocusMarquee />
+        <FeaturedWork items={featured} />
+        <Archive />
+        <Research />
         <Experience />
         <Skills />
-        <Education />
         <About />
         <Contact />
       </main>
-      <Footer />
+      <div className="relative z-10">
+        <Footer />
+      </div>
     </>
   );
 }

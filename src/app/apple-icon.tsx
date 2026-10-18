@@ -4,7 +4,12 @@ export const runtime = "edge";
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
+const corner = (pos: Record<string, number>, borders: Record<string, string>) => (
+  <div style={{ position: "absolute", width: 26, height: 26, ...pos, ...borders }} />
+);
+
 export default function AppleIcon() {
+  const b = "7px solid #7d87ff";
   return new ImageResponse(
     (
       <div
@@ -14,28 +19,19 @@ export default function AppleIcon() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background:
-            "linear-gradient(135deg, #0e1220 0%, #07090f 100%)",
-          fontFamily: "Georgia, serif",
+          background: "#141414",
           position: "relative",
         }}
       >
+        {corner({ top: 34, left: 34 }, { borderTop: b, borderLeft: b })}
+        {corner({ top: 34, right: 34 }, { borderTop: b, borderRight: b })}
+        {corner({ bottom: 34, left: 34 }, { borderBottom: b, borderLeft: b })}
+        {corner({ bottom: 34, right: 34 }, { borderBottom: b, borderRight: b })}
         <div
           style={{
-            position: "absolute",
-            inset: 0,
-            background:
-              "radial-gradient(ellipse at 30% 20%, rgba(122,162,255,0.25), transparent 60%), radial-gradient(ellipse at 70% 80%, rgba(230,185,128,0.22), transparent 60%)",
-          }}
-        />
-        <div
-          style={{
-            fontSize: 96,
-            fontWeight: 400,
-            background:
-              "linear-gradient(135deg, #7aa2ff 0%, #e6b980 100%)",
-            backgroundClip: "text",
-            color: "transparent",
+            fontSize: 58,
+            fontWeight: 800,
+            color: "#ecebe6",
             letterSpacing: "-0.04em",
             display: "flex",
           }}
