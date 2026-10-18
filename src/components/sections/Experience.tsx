@@ -402,6 +402,111 @@ function Planet({ i }: { i: number }) {
   );
 }
 
+// ─── Things between the worlds ───────────────────────────────────────────────
+// Each gap above the route gets one object, so the voyage passes more than planets.
+const gapX = (i: number) => (i + 0.5) * GAP;
+const rockRand = seeded(33);
+/** A faceted rock: an irregular outline with three facet lines meeting at a raised point. */
+function rock(r: number) {
+  const n = 7;
+  const pts = Array.from({ length: n }, (_, k) => {
+    const a = (k / n) * TAU + rockRand() * 0.5;
+    const rr = r * (0.75 + rockRand() * 0.4);
+    return [rr * Math.cos(a), rr * Math.sin(a) * 0.8] as V;
+  });
+  const apex: V = [-r * 0.15, -r * 0.25];
+  const outline = "M" + pts.map((p) => p.map((v) => v.toFixed(1)).join(" ")).join("L") + "Z";
+  const facets = [1, 3, 5].map((k) => `M${apex.join(" ")}L${pts[k].map((v) => v.toFixed(1)).join(" ")}`).join("");
+  return { outline, facets };
+}
+const BELT = Array.from({ length: 11 }, () => ({
+  x: gapX(0) - 150 + rockRand() * 300,
+  y: -130 + rockRand() * 150,
+  r: 5 + rockRand() * 13,
+  spin: (rockRand() < 0.5 ? -1 : 1) * (40 + rockRand() * 60),
+  lit: rockRand() < 0.25,
+})).map((b) => ({ ...b, ...rock(b.r) }));
+const DRIFT = Array.from({ length: 7 }, () => ({
+  x: gapX(4) - 120 + rockRand() * 240,
+  y: -110 + rockRand() * 130,
+  r: 4 + rockRand() * 9,
+  spin: (rockRand() < 0.5 ? -1 : 1) * (50 + rockRand() * 50),
+  lit: false,
+})).map((b) => ({ ...b, ...rock(b.r) }));
+
+/** Two-armed spiral, flattened onto the orbital plane. */
+const spiralArm = (phase: number) =>
+  "M" +
+  Array.from({ length: 60 }, (_, k) => {
+    const t = k / 59;
+    const a = phase + t * 3.4 * Math.PI;
+    const rr = 6 + t * 74;
+    return `${(rr * Math.cos(a)).toFixed(1)} ${(rr * Math.sin(a) * 0.45).toFixed(1)}`;
+  }).join("L");
+
+function Debris() {
+  const rocks = (list: typeof BELT) =>
+    list.map((b, k) => (
+      <g key={k} transform={`translate(${b.x.toFixed(0)} ${b.y.toFixed(0)})`}>
+        <g className="space-rock" style={{ animationDuration: `${Math.abs(b.spin)}s`, animationDirection: b.spin < 0 ? "reverse" : "normal" }}>
+          <path className="space-rock-body" d={b.outline} />
+          <path className="space-grid" d={b.facets} />
+          {b.lit && <circle className="space-light" cx={-b.r * 0.15} cy={-b.r * 0.25} r={1.6} />}
+        </g>
+      </g>
+    ));
+  return (
+    <g className="space-debris">
+      {/* Asteroid belt between home and the first internship */}
+      {rocks(BELT)}
+
+      {/* A comet crossing the second gap, on a slow loop */}
+      <g>
+        <animateMotion dur="16s" repeatCount="indefinite" path={`M${gapX(1) + 250} -190 L${gapX(1) - 250} 10`} />
+        <animate attributeName="opacity" values="0;1;1;0" keyTimes="0;0.15;0.8;1" dur="16s" repeatCount="indefinite" />
+        <path className="space-comet-tail" d="M0 -4 L150 -58 L156 -50 L0 4 Z" />
+        <path className="space-orbit" d="M10 0 L120 -42" />
+        <circle className="space-rock-body" r={6} />
+        <circle className="space-light" r={2.6} />
+      </g>
+
+      {/* A relay satellite in the third gap: body, solar wings, dish, blinking light */}
+      <g transform={`translate(${gapX(2)} -60) scale(1.7)`}>
+        <g className="space-sat">
+          <g transform={TOP(-46, -6, 4)}>
+            <rect className="iso-face iso-top space-panel" width={30} height={12} />
+            <line className="iso-detail" x1={10} x2={10} y1={0} y2={12} />
+            <line className="iso-detail" x1={20} x2={20} y1={0} y2={12} />
+          </g>
+          <Box x={-8} y={-8} z={-8} w={16} d={16} h={14} />
+          <g transform={FRONT(-8, 8, 6)}>{windows([3, 9], [4])}</g>
+          <ellipse className="space-rock-body" cx={P0(0, 0, 14)[0]} cy={P0(0, 0, 14)[1]} rx={11} ry={5} />
+          <line className="space-mast" x1={P0(0, 0, 6)[0]} y1={P0(0, 0, 6)[1]} x2={P0(0, 0, 22)[0]} y2={P0(0, 0, 22)[1]} />
+          <circle className="space-light space-beacon" cx={P0(0, 0, 22)[0]} cy={P0(0, 0, 22)[1]} r={2.2} />
+          <g transform={TOP(16, -6, 4)}>
+            <rect className="iso-face iso-top space-panel" width={30} height={12} />
+            <line className="iso-detail" x1={10} x2={10} y1={0} y2={12} />
+            <line className="iso-detail" x1={20} x2={20} y1={0} y2={12} />
+          </g>
+        </g>
+      </g>
+
+      {/* A distant spiral galaxy in the fourth gap, turning very slowly */}
+      <g transform={`translate(${gapX(3)} -50) scale(1.9)`}>
+        <ellipse className="space-galaxy-core" rx={34} ry={16} fill="url(#space-halo-grad)" />
+        <g>
+          <path className="space-orbit" d={spiralArm(0)} />
+          <path className="space-orbit" d={spiralArm(Math.PI)} />
+        </g>
+        <circle className="space-light" r={2.4} />
+      </g>
+
+      {/* Loose rocks drifting before the uncharted world */}
+      {rocks(DRIFT)}
+    </g>
+  );
+}
+
 const PARKED = shipMarkup(0);
 
 /** The ship: a 3D mesh (see ship.ts) redrawn as it turns, inside the idle float. */
@@ -635,6 +740,8 @@ export function Experience() {
                 <path className="space-trail-lit" data-leg={i} d={legD(leg)} pathLength={1} strokeDasharray="1 1" />
               </g>
             ))}
+
+            <Debris />
 
             {STOPS.map((s, i) => (
               <Planet key={s.title} i={i} />
