@@ -10,8 +10,8 @@ export function legAt(f: number, legs: number) {
   return { leg, eased: t * t * (3 - 2 * t) };
 }
 
-/** How visible station i's panel is at progress f (1 while the camera is parked there). */
+/** How visible station i's panel is at progress f: fully shown while the camera is parked there (|d| ≤ 0.2), gone soon after it leaves. */
 export function stationVisibility(f: number, i: number) {
   const d = Math.abs(f - (i + 1));
-  return Math.max(0, Math.min(1, (0.45 - d) / 0.2));
+  return Math.max(0, Math.min(1, (0.34 - d) / 0.14));
 }
