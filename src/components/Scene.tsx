@@ -220,7 +220,7 @@ export function Scene() {
 
     const readColors = () => {
       const s = getComputedStyle(document.documentElement);
-      uniforms.uInk.value.set(s.getPropertyValue("--ink").trim());
+      uniforms.uInk.value.set(s.getPropertyValue("--field-ink").trim());
       uniforms.uAccent.value.set(s.getPropertyValue("--accent").trim());
     };
     readColors();

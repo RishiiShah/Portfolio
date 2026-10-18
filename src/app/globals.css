@@ -20,21 +20,23 @@
 }
 
 :root {
-  --bg: #eeebe3;
-  --bg-2: #e4e0d5;
-  --ink: #141414;
-  --ink-2: #4f4c45;
-  --ink-3: #85817a;
-  --line: rgba(20, 20, 20, 0.14);
+  --bg: #f2efe8;
+  --bg-2: #e8e4da;
+  --ink: #15141a;
+  --ink-2: #48453f;
+  --ink-3: #6e6a62;
+  --line: rgba(21, 20, 26, 0.15);
+  --field-ink: #9a948a;
   --grid: rgba(20, 20, 20, 0.05);
   --grid-major: rgba(20, 20, 20, 0.09);
-  --accent: #2a36f0;
+  --accent: #2f37d6;
   --accent-ink: #ffffff;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   color-scheme: light;
 }
 
 [data-theme="dark"] {
+  --field-ink: #ecebe6;
   --bg: #0e0f11;
   --bg-2: #17181b;
   --ink: #ecebe6;
@@ -131,7 +133,7 @@ body {
   --accent-ink: #0e0f11;
 }
 [data-theme="dark"] .invert-accent {
-  --accent: #2a36f0;
+  --accent: #2f37d6;
   --accent-ink: #ffffff;
 }
 
@@ -216,11 +218,11 @@ html.lenis body {
 
 /* Experience voyage: the whole system above a plain list by default, a pinned flight with JS + motion */
 .space-stage {
-  --space-line: rgba(20, 20, 20, 0.45);
-  --space-detail: rgba(20, 20, 20, 0.14);
-  --space-body: #e4e1d8;
-  --space-star: rgba(20, 20, 20, 0.35);
-  --space-dim: rgba(42, 54, 240, 0.45);
+  --space-line: rgba(21, 20, 26, 0.55);
+  --space-detail: rgba(21, 20, 26, 0.18);
+  --space-body: #faf8f3;
+  --space-star: rgba(21, 20, 26, 0.16);
+  --space-dim: rgba(47, 55, 214, 0.45);
   display: grid;
   gap: 4vh;
   padding: 6vh max(1rem, 4vw);
@@ -360,16 +362,16 @@ html.lenis body {
 
 /* Iso-glow figure (Toolkit stack): hairline faces, accent only on what is live */
 .iso {
-  --iso-body: #e4e1d8;
-  --iso-deck: #f3f0e9;
-  --iso-line: rgba(20, 20, 20, 0.42);
-  --iso-detail: rgba(20, 20, 20, 0.16);
+  --iso-body: #f4f1ea;
+  --iso-deck: #fdfbf7;
+  --iso-line: rgba(21, 20, 26, 0.55);
+  --iso-detail: rgba(21, 20, 26, 0.2);
   --iso-print: rgba(20, 20, 20, 0.55);
   --iso-accent-hi: #5c66ff;
-  --iso-lit-top: rgba(42, 54, 240, 0.14);
-  --iso-glass: #d9d6cc;
-  --iso-glass-on: #e6e6f3;
-  --iso-side: #d3d0c6;
+  --iso-lit-top: rgba(47, 55, 214, 0.12);
+  --iso-glass: #e2ded3;
+  --iso-glass-on: #ebebf8;
+  --iso-side: #e3dfd4;
 }
 [data-theme="dark"] .iso {
   --iso-body: #16171a;
