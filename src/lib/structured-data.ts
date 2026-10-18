@@ -30,6 +30,7 @@ function personSchema(site: string): JsonLd {
       addressCountry: "US",
     },
     sameAs: [bio.github, bio.linkedin].filter(Boolean),
+    award: projects.filter((p) => p.award).map((p) => `${p.award} (${p.title})`),
     knowsAbout: [
       "Software Engineering",
       "Machine Learning",
@@ -130,6 +131,7 @@ function projectSchemas(site: string): JsonLd[] {
         headline: project.title,
         description: sanitizeForMeta(project.tagline),
         ...(source ? { codeRepository: source } : {}),
+        ...(project.award ? { award: project.award } : {}),
         programmingLanguage: project.tech,
         keywords: [...project.tags, ...project.tech].join(", "),
         author: { "@id": `${site}/#person` },

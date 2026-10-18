@@ -5,7 +5,7 @@ export const bio = {
   title: "Software Engineer & ML Researcher",
   tagline: "Building at the intersection of engineering and intelligence.",
   description:
-    "M.S. Computer Science student at Rutgers University building scalable backend systems, AI-enabled full-stack products, and research-grade computer vision pipelines.",
+    "Rutgers M.S. Computer Science student and two-time hackathon winner building scalable backends, AI-enabled full-stack products, and computer vision research.",
   github: "https://github.com/RishiiShah",
   linkedin: "https://www.linkedin.com/in/rishabh-shah1/",
   resume: "/resume.pdf",
@@ -176,6 +176,7 @@ export interface Project {
   links?: ProjectLink[];
   featured?: boolean;
   latest?: boolean;
+  award?: string;
   metrics?: ProjectMetric[];
   problem?: string;
   role?: string;
@@ -195,8 +196,9 @@ export const projects: Project[] = [
     tech: ["Python", "FastAPI", "PostgreSQL", "React", "TypeScript", "Flutter", "ECharts", "Docker"],
     tags: ["Full-stack", "Backend", "Systems"],
     latest: true,
+    award: "Winner, Sevaro × Rutgers Health Hack",
     impact:
-      "Built for the Sevaro / Rutgers Health Hack: detects breaching consults, demand surges, and coverage gaps up to 90 minutes ahead, then proposes the cheapest safe fix and runs it end to end with an append-only audit log.",
+      "Won the Sevaro / Rutgers Health Hack: detects breaching consults, demand surges, and coverage gaps up to 90 minutes ahead, then proposes the cheapest safe fix and runs it end to end with an append-only audit log.",
     links: [
       { type: "demo", url: "https://cerevia.dev" },
       { type: "source", url: "https://github.com/RishiiShah/Health-Hack" },
@@ -228,8 +230,9 @@ export const projects: Project[] = [
       "Plans a day in New York from one sentence, ordering the stops around travel time, opening hours, and how crowded each neighborhood is.",
     tech: ["Next.js", "Google Maps Platform", "OpenStreetMap", "MTA open data", "Open-Meteo", "Vercel"],
     tags: ["Full-stack"],
+    award: "Best Use of Backboard (MLH), DivHacks 2026",
     impact:
-      "Built for DivHacks 2026 (Move Smarter track): one sentence in, a whole day out, with each stop timed for its quiet hour and crowd levels drawn from MTA subway ridership.",
+      "Won Best Use of Backboard (MLH) at DivHacks 2026, built for the Move Smarter track: one sentence in, a whole day out, with each stop timed for its quiet hour and crowd levels drawn from MTA subway ridership.",
     links: [{ type: "demo", url: "https://planyt.tech" }],
     metrics: [
       { label: "Input", value: "1 sentence" },

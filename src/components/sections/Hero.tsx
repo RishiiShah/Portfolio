@@ -4,10 +4,12 @@ import { useRef } from "react";
 import { ArrowDown } from "lucide-react";
 import { gsap } from "gsap";
 import { useGSAP } from "@gsap/react";
-import { bio } from "@/data";
+import { bio, projects } from "@/data";
 import { INTRO_DONE } from "../Loader";
 import { LocalTime } from "../LocalTime";
 import { Decode, Magnetic } from "../anim";
+
+const wins = projects.filter((p) => p.award).length;
 
 export function Hero() {
   const root = useRef<HTMLElement>(null);
@@ -66,7 +68,7 @@ export function Hero() {
       <h1 className="hero-name display mt-auto text-[15.5vw] leading-[0.82] md:text-[13.5vw]" aria-label={bio.name}>
         <span className="hero-l1 block overflow-hidden pb-[0.04em]" aria-hidden="true">
           {chars("Rishabh")}
-        </span>
+        </span>{" "}
         <span className="hero-l2 block overflow-hidden pb-[0.04em] md:pl-[12vw]" aria-hidden="true">
           {chars("Shah")}
           <span className="hero-char inline-block text-accent">.</span>
@@ -79,7 +81,10 @@ export function Hero() {
           I build the parts underneath the interface: <span className="text-ink">APIs, auth, data,</span> and the{" "}
           <span className="text-ink">pipelines that turn models into products.</span>
         </p>
-        <div className="flex md:col-span-6 md:justify-end">
+        <div className="flex items-center gap-6 md:col-span-6 md:justify-end">
+          <span className="hero-fade label text-ink-2">
+            <span className="text-accent">{wins}×</span> hackathon winner
+          </span>
           <Magnetic>
             <a
               href="#work"
