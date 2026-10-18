@@ -83,12 +83,14 @@ const SCROLL_PER_STOP = 1.2; // viewport heights of scrolling per stop
 // One planet per stop, left to right. The ship parks below each planet and
 // swoops between them on cubic curves.
 const GAP = 760;
+// Each world has its own surface: latitudes, meridians (which turn as the globe
+// spins) and sites, the lights that switch on while the ship is docked.
 const PLANETS = [
-  { r: 82, ring: false, moons: 1, station: false }, // Mumbai: home world
-  { r: 52, ring: true, moons: 0, station: false }, // Creative Line
-  { r: 104, ring: false, moons: 0, station: true }, // Aaditya Technologies
-  { r: 78, ring: true, moons: 2, station: false }, // Rutgers
-  { r: 64, ring: false, moons: 0, station: false }, // Next stop: uncharted
+  { r: 82, ring: false, moons: 1, station: false, lats: [-0.66, -0.33, 0.33, 0.66], meridians: 4, sites: 14 }, // Mumbai: home world
+  { r: 52, ring: true, moons: 0, station: false, lats: [-0.8, -0.6, -0.38, -0.16, 0.12, 0.36, 0.58, 0.8], meridians: 0, sites: 8 }, // Creative Line: banded giant
+  { r: 104, ring: false, moons: 0, station: true, lats: [-0.5, 0.5], meridians: 6, sites: 22 }, // Aaditya Technologies
+  { r: 78, ring: true, moons: 2, station: false, lats: [-0.66, -0.33, 0.33, 0.66], meridians: 3, sites: 14 }, // Rutgers
+  { r: 64, ring: false, moons: 0, station: false, lats: [-0.5, 0.5], meridians: 3, sites: 0 }, // Next stop: uncharted
 ].slice(0, N);
 const centers = PLANETS.map((p, i) => [i * GAP, i % 2 ? -50 : 40]);
 const parks = PLANETS.map((p, i) => [centers[i][0], centers[i][1] + p.r + 110]);
@@ -199,6 +201,21 @@ function orbitsOf(i: number) {
 /** How far the planet and its orbits reach above its centre on screen, for placing the label. */
 const reach = (i: number) => Math.max(PLANETS[i].r, ...orbitsOf(i).map((o) => o.rho * Math.SQRT1_2 + 8));
 
+/** A meridian (great circle through the poles) at longitude phi, front half only. */
+const meridianD = (s: number, phi: number) =>
+  trace(loop((t) => [s * Math.sin(t) * Math.cos(phi), s * Math.sin(t) * Math.sin(phi), s * Math.cos(t)]), facing);
+const SPIN = 0.22; // radians per second for the docked planet
+const siteRand = seeded(21);
+const SITES = PLANETS.map((p) =>
+  Array.from({ length: p.sites }, () => ({ lon: siteRand() * TAU, k: (siteRand() * 2 - 1) * 0.78 }))
+);
+/** Screen position of a surface site at the given spin, or null while it's on the far side. */
+function sitePos(s: number, site: { lon: number; k: number }, rot: number) {
+  const rho = s * Math.sqrt(1 - site.k * site.k);
+  const p: P3 = [rho * Math.cos(site.lon + rot), rho * Math.sin(site.lon + rot), s * site.k];
+  return p[0] + p[1] + p[2] > s * 0.35 ? D(...p) : null;
+}
+
 function Moon({ path, dur, size, front }: { path: string; dur: number; size: number; front?: boolean }) {
   return (
     <g>
@@ -238,8 +255,7 @@ function Planet({ i }: { i: number }) {
   const orbits = orbitsOf(i);
   // Orbits start at the left end of the ellipse, so the first half of each lap is the front half.
   const orbitPath = (rho: number) => trace(loop(flat(rho), -0.25 * Math.PI, 64)) + "Z";
-  const lats = [-0.66, -0.33, 0.33, 0.66];
-  const meridians = [0, 0.25, 0.5, 0.75].map((k) => k * Math.PI);
+  const { lats, meridians } = PLANETS[i];
   const sats = (front: boolean) =>
     orbits.map((o) =>
       o.kind === "moon" ? (
@@ -263,19 +279,23 @@ function Planet({ i }: { i: number }) {
         <path key={o.rho} className="space-orbit" d={trace(half(flat(o.rho), false))} />
       ))}
       {sats(false)}
+      {/* Arrival: two shock rings on the orbital plane, played when the planet becomes active */}
+      {[0, 1].map((k) => (
+        <ellipse key={k} className="space-ripple" rx={s * 1.2 * ISO} ry={s * 1.2 * Math.SQRT1_2} style={{ animationDelay: `${k * 0.4}s` }} />
+      ))}
       {/* Globe */}
       <circle className={uncharted ? "space-uncharted" : "space-body"} r={r} />
       {lats.map((k) => (
         <path key={k} className="space-grid" d={trace(loop(flat(s * Math.sqrt(1 - k * k), s * k)), facing)} />
       ))}
-      {meridians.map((phi) => (
-        <path
-          key={phi}
-          className="space-grid"
-          d={trace(loop((t) => [s * Math.sin(t) * Math.cos(phi), s * Math.sin(t) * Math.sin(phi), s * Math.cos(t)]), facing)}
-        />
+      {Array.from({ length: meridians }, (_, m) => (
+        <path key={m} className="space-grid space-meridian" d={meridianD(s, (m * Math.PI) / meridians)} />
       ))}
       <path className="space-equator" d={trace(loop(flat(s)), facing)} />
+      {SITES[i].map((site, k) => {
+        const at = sitePos(s, site, 0);
+        return <circle key={k} className="space-site" r={2.6} cx={at?.[0] ?? 0} cy={at?.[1] ?? 0} opacity={at ? 1 : 0} />;
+      })}
       {uncharted && (
         <>
           <text className="space-mark" y={r * 0.22} textAnchor="middle" fontSize={r * 0.7}>
@@ -297,6 +317,11 @@ function Planet({ i }: { i: number }) {
         <path key={o.rho} className="space-orbit" d={trace(half(flat(o.rho), true))} />
       ))}
       {sats(true)}
+      {/* Docking beam down to the parked ship, with a signal travelling up it */}
+      <g className="space-dock">
+        <path className="space-beam" d={`M-5 ${parks[i][1] - cy - 14} L-${r * 0.32} ${r * 0.96} L${r * 0.32} ${r * 0.96} L5 ${parks[i][1] - cy - 14}Z`} />
+        <line className="space-link" y1={r + 4} y2={parks[i][1] - cy - 16} pathLength={1} />
+      </g>
     </g>
   );
 }
@@ -309,7 +334,7 @@ const flame = (len: number) => path([[-40, -5, 0], [-40 - len, 0, 0], [-40, 5, 0
 /** The ship as an iso-glow model, nose along +x (down-right on screen), painted back to front. */
 function Ship() {
   return (
-    <>
+    <g className="space-ship-bob">
       <path className="space-flame" d={flame(16)} />
       <path className="space-flame space-flame-burn" d={flame(44)} />
       <path className="iso-face iso-top" d={wing(-1)} />
@@ -328,7 +353,7 @@ function Ship() {
       </g>
       <path className="iso-face iso-top" d={wing(1)} />
       <circle className="space-light" cx={P0(-26, 28, 0)[0]} cy={P0(-26, 28, 0)[1]} r={2.5} />
-    </>
+    </g>
   );
 }
 
@@ -375,6 +400,34 @@ export function Experience() {
         const layers = gsap.utils.toArray<SVGGElement>(".space-stars");
         const navItems = gsap.utils.toArray<HTMLElement>(".space-nav-item");
         let last = 0;
+        let active = 0;
+
+        // Spin the docked planet: its meridians and surface sites turn about the vertical axis.
+        const globes = gsap.utils.toArray<SVGGElement>(".space-planet").map((g) => ({
+          meridians: [...g.querySelectorAll<SVGPathElement>(".space-meridian")],
+          sites: [...g.querySelectorAll<SVGCircleElement>(".space-site")],
+        }));
+        const rot = PLANETS.map(() => 0);
+        let prev = performance.now();
+        let raf = requestAnimationFrame(function spin(time) {
+          raf = requestAnimationFrame(spin);
+          const dt = Math.min(0.1, (time - prev) / 1000);
+          prev = time;
+          if (!trigger.current?.isActive) return;
+          const i = active;
+          const s = PLANETS[i].r / ISO;
+          rot[i] += dt * SPIN;
+          const { meridians, sites } = globes[i];
+          meridians.forEach((el, m) => el.setAttribute("d", meridianD(s, rot[i] + (m * Math.PI) / meridians.length)));
+          sites.forEach((el, k) => {
+            const at = sitePos(s, SITES[i][k], rot[i]);
+            el.setAttribute("opacity", at ? "1" : "0");
+            if (at) {
+              el.setAttribute("cx", at[0].toFixed(1));
+              el.setAttribute("cy", at[1].toFixed(1));
+            }
+          });
+        });
 
         const render = (progress: number) => {
           last = progress;
@@ -384,6 +437,7 @@ export function Experience() {
           const eased = smooth((t - leg - 0.15) / 0.7);
           const p = leg + eased;
           const now = Math.round(p);
+          active = now;
 
           const { x, y, angle } = along(leg, eased);
           // Parked, the ship sits in its iso pose (nose 30° down-right); in flight it turns to follow the curve.
@@ -412,6 +466,7 @@ export function Experience() {
           planets.forEach((g) => {
             const i = Number(g.dataset.i);
             g.toggleAttribute("data-active", now === i);
+            g.toggleAttribute("data-docked", now === i && (eased < 0.03 || eased > 0.97));
             g.toggleAttribute("data-passed", p > i + 0.02);
           });
           cards.forEach((card, i) => {
@@ -439,6 +494,7 @@ export function Experience() {
         const onResize = () => render(last);
         window.addEventListener("resize", onResize);
         return () => {
+          cancelAnimationFrame(raf);
           window.removeEventListener("resize", onResize);
           svg.current?.setAttribute("viewBox", WORLD_VIEW);
           layers.forEach((g) => g.removeAttribute("transform"));

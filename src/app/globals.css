@@ -240,6 +240,22 @@ html.lenis body {
 .space-uncharted ~ .space-grid, .space-uncharted ~ .space-equator { stroke-dasharray: 3 6; }
 .space-mark { fill: var(--space-line); font-family: var(--font-archivo), system-ui, sans-serif; font-weight: 800; }
 .space-orbit { fill: none; stroke: var(--space-line); stroke-width: 1; stroke-dasharray: 2 6; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.space-site { fill: var(--space-line); transition: fill 0.6s; }
+.space-planet[data-active] .space-site { fill: var(--accent); }
+.space-ripple { fill: none; stroke: var(--accent); stroke-width: 1.5; vector-effect: non-scaling-stroke; opacity: 0; transform-box: fill-box; transform-origin: center; }
+.space-planet[data-active] .space-ripple { animation: space-ripple 2s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+@keyframes space-ripple {
+  0% { opacity: 0; transform: scale(1); }
+  10% { opacity: 0.9; }
+  100% { opacity: 0; transform: scale(2.3); }
+}
+.space-dock { opacity: 0; transition: opacity 0.5s; }
+.space-planet[data-docked] .space-dock { opacity: 1; }
+.space-beam { fill: var(--accent); fill-opacity: 0.07; }
+.space-link { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 0.08 0.12; vector-effect: non-scaling-stroke; animation: space-signal 1.2s linear infinite; }
+@keyframes space-signal { to { stroke-dashoffset: 0.4; } }
+.space-ship-bob { animation: space-bob 3.2s ease-in-out infinite alternate; }
+@keyframes space-bob { to { transform: translateY(-5px); } }
 .space-mast { stroke: var(--space-line); stroke-width: 1; vector-effect: non-scaling-stroke; }
 .space-light { fill: var(--accent); }
 .space-beacon { animation: space-twinkle 1.6s ease-in-out infinite; }
@@ -263,6 +279,8 @@ html.lenis body {
 .space-planet[data-active] .space-grid { stroke: var(--space-dim); }
 .space-planet[data-active] .space-mark { fill: var(--accent); }
 .space-label[data-active] text { fill: var(--accent); }
+.space-label { transition: opacity 0.5s; }
+.space-label[data-passed]:not([data-active]) { opacity: 0; }
 .space-ship .iso-face { stroke: var(--ink); }
 .space-flame { fill: var(--accent); fill-opacity: 0.55; }
 .space-flame-burn { opacity: 0; transition: opacity 0.3s; }
@@ -271,11 +289,12 @@ html.lenis body {
 [data-theme="dark"] .space-planet[data-active] .space-halo { opacity: 0.6; }
 [data-theme="dark"] .space-trail-glow { stroke-opacity: 0.18; }
 @media (prefers-reduced-motion: reduce) {
-  .space-star.is-lit, .space-beacon, .space-flame { animation: none; }
+  .space-star.is-lit, .space-beacon, .space-flame, .space-ripple, .space-link, .space-ship-bob { animation: none; }
 }
 @media (prefers-reduced-motion: no-preference) {
   .js .space-stage {
     position: relative;
+    background: var(--bg);
     display: block;
     height: 100svh;
     padding: 0;
