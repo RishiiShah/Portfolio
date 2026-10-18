@@ -40,6 +40,7 @@ const vertex = /* glsl */ `
   uniform vec2 uOff[${SHAPES}];
   varying float vRand;
   varying float vAlpha;
+  varying float vGlow;
 
   vec3 rotY(vec3 p, float a) { float c = cos(a), s = sin(a); return vec3(c*p.x + s*p.z, p.y, -s*p.x + c*p.z); }
   vec3 rotX(vec3 p, float a) { float c = cos(a), s = sin(a); return vec3(p.x, c*p.y - s*p.z, s*p.y + c*p.z); }
@@ -82,10 +83,11 @@ const vertex = /* glsl */ `
     d.x *= uAspect;
     float dist = length(d);
     float push = smoothstep(0.28, 0.0, dist) * 0.12;
+    vGlow = smoothstep(0.32, 0.05, dist);
     clip.xy += normalize(d + 1e-5) * push * clip.w;
 
     gl_Position = clip;
-    gl_PointSize = min(uSize * (0.45 + aRand) / -mv.z, uMaxSize);
+    gl_PointSize = min(uSize * (0.45 + aRand) / -mv.z, uMaxSize) * (1.0 + vGlow * 0.8);
     vRand = aRand;
     vAlpha = smoothstep(14.0 + w1 * 6.0, 3.0, -mv.z) * smoothstep(0.3, 1.8, -mv.z);
   }
@@ -97,11 +99,14 @@ const fragment = /* glsl */ `
   uniform float uOpacity;
   varying float vRand;
   varying float vAlpha;
+  varying float vGlow;
   void main() {
     float d = length(gl_PointCoord - 0.5);
     if (d > 0.5) discard;
-    vec3 color = vRand > 0.86 ? uAccent : uInk;
-    gl_FragColor = vec4(color, smoothstep(0.5, 0.15, d) * vAlpha * uOpacity * (vRand > 0.86 ? 1.0 : 0.7));
+    // Accent particles, plus any particle the cursor is near, light up.
+    float lit = max(step(0.86, vRand), vGlow);
+    vec3 color = mix(uInk, uAccent, lit);
+    gl_FragColor = vec4(color, smoothstep(0.5, 0.15, d) * vAlpha * uOpacity * mix(0.7, 1.0, lit));
   }
 `;
 
