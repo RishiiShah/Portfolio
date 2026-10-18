@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { legAt } from "@/lib/flight";
-import { motion } from "@/lib/motion";
+import { isStacked, motion } from "@/lib/motion";
 import { buildVisual, palette, type Materials } from "./visuals";
 
 const SPACING = 30; // distance between stations along -z
@@ -122,7 +122,7 @@ export function Flight({ slugs, className }: { slugs: string[]; className?: stri
     });
 
     // Path-dependent pieces are rebuilt when the layout flips between wide and narrow.
-    let narrow = window.innerWidth < 768;
+    let narrow = isStacked();
     let layout = buildLayout(stations, narrow);
     const pathGroup = new THREE.Group();
     scene.add(pathGroup);
@@ -154,7 +154,7 @@ export function Flight({ slugs, className }: { slugs: string[]; className?: stri
       renderer.setSize(w, h, false);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
-      const nowNarrow = window.innerWidth < 768;
+      const nowNarrow = isStacked();
       if (nowNarrow !== narrow) {
         narrow = nowNarrow;
         layout = buildLayout(stations, narrow);

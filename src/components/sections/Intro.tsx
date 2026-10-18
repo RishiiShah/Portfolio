@@ -60,7 +60,7 @@ export function Intro() {
           <span>p. 01</span>
         </div>
 
-        <div className="mt-[10vh] grid gap-[6vh] md:grid-cols-12">
+        <div className="mt-[10vh] grid gap-[6vh] md:grid-cols-12 md:gap-x-[min(6vh,3.75vw)]">
           <div className="md:col-span-3">
             <p className="label text-ink-3">Summary</p>
             <p className="mt-3 max-w-[30ch] text-[15px] leading-relaxed text-ink-2">

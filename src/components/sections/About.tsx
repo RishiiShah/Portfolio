@@ -111,7 +111,7 @@ export function About() {
 
   return (
     <Section id="about" index="05" title="About" shape={5}>
-      <div className="grid gap-[8vh] md:grid-cols-12">
+      <div className="grid gap-[8vh] md:grid-cols-12 md:gap-x-[min(8vh,5vw)]">
         <div className="md:col-span-6">
           <ScrubText
             className="wide text-[clamp(1.6rem,2.8vw,3rem)] leading-[1.08] font-semibold tracking-tight"

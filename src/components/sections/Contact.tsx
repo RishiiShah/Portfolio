@@ -50,7 +50,7 @@ export function Contact() {
         <RevealText text="something." className="block md:pl-[4vw]" delay={0.15} />
       </h2>
 
-      <div className="mt-[12vh] grid gap-[8vh] md:grid-cols-12">
+      <div className="mt-[12vh] grid gap-[8vh] md:grid-cols-12 md:gap-x-[min(8vh,5vw)]">
         <Stagger className="md:col-span-4">
           <p className="max-w-[34ch] text-lg leading-snug text-ink-2">
             Hiring for a software, systems, or ML role? Want to talk about a project or paper? Send a note.
