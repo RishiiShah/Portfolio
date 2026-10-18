@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { skills } from "@/data";
+import { D, isoFrame } from "@/lib/iso";
 import { Section } from "../Section";
 import { Stagger } from "../anim";
 
@@ -11,11 +12,6 @@ import { Stagger } from "../anim";
  * figure or the list, pulls that slab out and lights it; a signal pulse runs
  * down the riser into it.
  */
-
-// Isometric kernel (from iso-figure / iso-glow): +x down-right, +y down-left, +z up.
-const C = Math.cos(Math.PI / 6);
-const S = Math.sin(Math.PI / 6);
-const D = (x: number, y: number, z: number) => [(x - y) * C, (x + y) * S - z];
 
 const W = 220; // slab width (x)
 const DEPTH = 150; // slab depth (y)
@@ -29,44 +25,14 @@ const PULL = 18; // how far the active slab slides out (+y)
 const slabZ = (i: number) => BASE + 16 + (skills.length - 1 - i) * (H + GAP);
 const TOP_Z = slabZ(0) + H;
 
-// Frame the extreme corners into a padded viewBox.
-const corners = [
+const { P, TOP, FRONT, SIDE, path, Box, viewBox } = isoFrame([
   [-30, -30, 0],
   [W + 60, -20, 0],
   [-30, DEPTH + PULL + 30, 0],
   [W + 60, DEPTH + 20, 0],
   [0, 0, TOP_Z + 20],
   [RISER, BUS_Y, TOP_Z + 20],
-].map(([x, y, z]) => D(x, y, z));
-const pad = 16;
-const minX = Math.min(...corners.map((p) => p[0])) - pad;
-const minY = Math.min(...corners.map((p) => p[1])) - pad;
-const VB_W = Math.max(...corners.map((p) => p[0])) + pad - minX;
-const VB_H = Math.max(...corners.map((p) => p[1])) + pad - minY;
-const P = (x: number, y: number, z: number) => {
-  const [a, b] = D(x, y, z);
-  return [a - minX, b - minY];
-};
-const plane = (o: number[], u: number[], v: number[]) => {
-  const [ox, oy] = P(o[0], o[1], o[2]);
-  const [ux, uy] = D(u[0], u[1], u[2]);
-  const [vx, vy] = D(v[0], v[1], v[2]);
-  return `matrix(${ux} ${uy} ${vx} ${vy} ${ox} ${oy})`;
-};
-const TOP = (x: number, y: number, z: number) => plane([x, y, z], [1, 0, 0], [0, 1, 0]);
-const FRONT = (x: number, y: number, z: number) => plane([x, y, z], [1, 0, 0], [0, 0, -1]);
-const SIDE = (x: number, y: number, z: number) => plane([x, y, z], [0, -1, 0], [0, 0, -1]);
-const path = (pts: number[][]) => "M" + pts.map((p) => P(p[0], p[1], p[2]).map((n) => n.toFixed(2)).join(" ")).join("L");
-
-function Box({ x, y, z, w, d, h }: { x: number; y: number; z: number; w: number; d: number; h: number }) {
-  return (
-    <>
-      <rect className="iso-face" transform={SIDE(x + w, y + d, z + h)} width={d} height={h} />
-      <rect className="iso-face" transform={FRONT(x, y + d, z + h)} width={w} height={h} />
-      <rect className="iso-face iso-top" transform={TOP(x, y, z + h)} width={w} height={d} />
-    </>
-  );
-}
+]);
 
 const short = (c: string) => c.replace(" & ", " + ").replace("Frameworks + Tools", "Frameworks");
 
@@ -112,7 +78,7 @@ export function Skills() {
       <div className="grid gap-[6vh] md:grid-cols-12 md:gap-[4vw]">
         <figure className="md:col-span-5 md:self-start md:sticky md:top-[14vh]">
           <svg
-            viewBox={`0 0 ${VB_W.toFixed(1)} ${VB_H.toFixed(1)}`}
+            viewBox={viewBox}
             role="img"
             aria-label={`Isometric stack of ${skills.length} toolkit layers. Click a layer or use the arrow keys to light it.`}
             tabIndex={0}
