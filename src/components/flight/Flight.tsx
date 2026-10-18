@@ -5,6 +5,7 @@ import * as THREE from "three";
 import { legAt } from "@/lib/flight";
 import { isStacked, motion } from "@/lib/motion";
 import { buildVisual, palette, type Materials } from "./visuals";
+import { hueOf } from "@/lib/hues";
 
 const SPACING = 30; // distance between stations along -z
 const VIEW_DISTANCE = 8.5; // how far in front of each visual the camera parks
@@ -80,6 +81,19 @@ export function Flight({ slugs, className }: { slugs: string[]; className?: stri
       // Light spill draws over geometry (no depth test), so it never gets cut by a face.
       glow: new THREE.SpriteMaterial({ map: dot, transparent: true, depthTest: false, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0.35 }),
     };
+    // Each project draws in its own hue: its own copy of every material.
+    const tinted: Materials[] = slugs.map(() => ({
+      line: mats.line.clone(),
+      lineDim: mats.lineDim.clone(),
+      lineAccent: mats.lineAccent.clone(),
+      point: mats.point.clone(),
+      pointAccent: mats.pointAccent.clone(),
+      face: mats.face.clone(),
+      faceLit: mats.faceLit.clone(),
+      glow: mats.glow.clone(),
+    }));
+    // Canvas screens read the shared palette, so each object's colours are swapped in before it repaints.
+    const screenInk = slugs.map(() => ({ accent: "", dim: "" }));
     const trailMat = new THREE.LineDashedMaterial({ dashSize: 0.5, gapSize: 0.35, transparent: true, opacity: 0.9 });
     const dustMat = new THREE.PointsMaterial({ size: 0.05, map: dot, transparent: true, depthWrite: false, opacity: 0.55 });
 
@@ -106,6 +120,20 @@ export function Flight({ slugs, className }: { slugs: string[]; className?: stri
       palette.mono = getComputedStyle(document.body).getPropertyValue("--font-jetbrains").trim() || "monospace";
       trailMat.color.copy(accent);
       dustMat.color.copy(ink);
+      const bg2 = new THREE.Color(s.getPropertyValue("--bg-2").trim());
+      slugs.forEach((slug, i) => {
+        const hue = new THREE.Color(hueOf(slug)[dark ? "dark" : "light"]);
+        const t = tinted[i];
+        // Hairlines take the hue instead of plain ink; faces carry a faint wash of it.
+        t.line.color.copy(ink).lerp(hue, dark ? 0.7 : 0.75);
+        t.lineDim.color.copy(hue);
+        t.point.color.copy(hue);
+        [t.lineAccent, t.pointAccent, t.faceLit, t.glow].forEach((m) => m.color.copy(hue));
+        t.face.color.copy(bg2).lerp(hue, dark ? 0.025 : 0.05);
+        t.glow.opacity = mats.glow.opacity;
+        const hex = hue.getHexString(); // sRGB, as the canvas expects
+        screenInk[i] = { accent: `#${hex}`, dim: `#${hex}61` };
+      });
     };
     applyColors();
     const themeObserver = new MutationObserver(applyColors);
@@ -115,7 +143,7 @@ export function Flight({ slugs, className }: { slugs: string[]; className?: stri
       (_, i) => new THREE.Vector3((i % 2 ? -1 : 1) * 6, Math.sin(i * 1.7) * 2, -i * SPACING)
     );
     const visuals = slugs.map((slug, i) => {
-      const v = buildVisual(slug, mats);
+      const v = buildVisual(slug, tinted[i]);
       v.group.position.add(stations[i]);
       scene.add(v.group);
       return v;
@@ -217,7 +245,10 @@ export function Flight({ slugs, className }: { slugs: string[]; className?: stri
 
       visuals.forEach((v, i) => {
         // Only animate visuals near the camera.
-        if (Math.abs(stations[i].z - pos.z) < 50) v.update(time);
+        if (Math.abs(stations[i].z - pos.z) < 50) {
+          Object.assign(palette, screenInk[i]);
+          v.update(time);
+        }
       });
       renderer.render(scene, camera);
     };
@@ -237,7 +268,7 @@ export function Flight({ slugs, className }: { slugs: string[]; className?: stri
           o.material.dispose();
         }
       });
-      [...Object.values(mats), trailMat, dustMat].forEach((m) => m.dispose());
+      [...Object.values(mats), ...tinted.flatMap((t) => Object.values(t)), trailMat, dustMat].forEach((m) => m.dispose());
       dot.dispose();
       renderer.dispose();
       renderer.domElement.remove();

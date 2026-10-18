@@ -10,6 +10,7 @@ import { stationVisibility } from "@/lib/flight";
 import { motion, scrollToY } from "@/lib/motion";
 import { RevealText } from "../anim";
 import { Flight } from "../flight/Flight";
+import { hueOf } from "@/lib/hues";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -136,6 +137,7 @@ export function FeaturedWork({ items }: { items: Project[] }) {
                 <button
                   type="button"
                   onClick={() => jumpTo(i)}
+                  style={{ "--hue-dark": hueOf(p.slug).dark, "--hue-light": hueOf(p.slug).light } as React.CSSProperties}
                   className="fly-nav-item group flex items-center gap-2 transition-colors hover:text-ink data-[active]:text-accent"
                 >
                   {shortTitle(p.title)}
@@ -155,6 +157,7 @@ function Panel({ project: p, index, side }: { project: Project; index: number; s
   return (
     <article
       data-side={side}
+      style={{ "--hue-dark": hueOf(p.slug).dark, "--hue-light": hueOf(p.slug).light } as React.CSSProperties}
       className="fly-card group relative flex flex-col border border-line bg-bg/90 p-[clamp(1.25rem,2vw,2.25rem)]"
     >
       <div className="label flex items-center justify-between gap-4 text-ink-3">
