@@ -1,4 +1,4 @@
-import { bio, education, publications, projects, experience } from "@/data";
+import { bio, education, publications, projects, teaching } from "@/data";
 import { getSiteUrl, sanitizeForMeta } from "@/lib/site";
 
 type JsonLd = Record<string, unknown>;
@@ -48,11 +48,8 @@ function personSchema(site: string): JsonLd {
         ? { sameAs: UNIVERSITY_SAMEAS[edu.institution] }
         : {}),
     })),
-    worksFor: experience.slice(0, 1).map((e) => ({
-      "@type": "Organization",
-      name: e.organization,
-      ...(e.location ? { address: e.location } : {}),
-    })),
+    hasOccupation: { "@type": "Occupation", name: teaching.role },
+    worksFor: { "@type": "CollegeOrUniversity", name: teaching.organization, address: teaching.location },
   };
 }
 
