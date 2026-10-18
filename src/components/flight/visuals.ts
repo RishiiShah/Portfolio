@@ -278,8 +278,112 @@ function spectrogram(m: Materials): Visual {
   };
 }
 
+/** Cerevia: a hospital network fed by physicians above it; consults are reassigned in accent as gaps open. */
+function careNetwork(m: Materials): Visual {
+  const group = new THREE.Group();
+  const hospitals = Array.from({ length: 14 }, (_, i) => {
+    const a = (i / 14) * Math.PI * 2 + gauss() * 0.15;
+    const r = 1.6 + rand() * 1.3;
+    return new THREE.Vector3(Math.cos(a) * r, 0, Math.sin(a) * r);
+  });
+  const doctors = Array.from({ length: 5 }, (_, i) => {
+    const a = (i / 5) * Math.PI * 2 + 0.3;
+    return new THREE.Vector3(Math.cos(a) * 1.1, 1.7 + gauss() * 0.2, Math.sin(a) * 1.1);
+  });
+  // Each hospital is covered by the nearest physician; those links sit dim.
+  const coverBy = hospitals.map((h) => doctors.reduce((best, d, j) => (d.distanceTo(h) < doctors[best].distanceTo(h) ? j : best), 0));
+  const dim: number[] = [];
+  hospitals.forEach((h, i) => dim.push(doctors[coverBy[i]].x, doctors[coverBy[i]].y, doctors[coverBy[i]].z, h.x, h.y, h.z));
+  group.add(lines(dim, m.lineDim));
+  group.add(points(hospitals.flatMap((h) => [h.x, h.y, h.z]), m.point));
+  group.add(points(doctors.flatMap((d) => [d.x, d.y, d.z]), m.pointAccent));
+  const rings = hospitals.map((h) => {
+    const ring = circle(0.28, 40, m.lineDim);
+    ring.rotation.x = Math.PI / 2;
+    ring.position.copy(h);
+    group.add(ring);
+    return ring;
+  });
+  // The live fix: one accent link from a physician to the hospital with a gap, re-picked every few seconds.
+  const fixGeo = new THREE.BufferGeometry();
+  const fixPos = new Float32Array(6);
+  fixGeo.setAttribute("position", new THREE.BufferAttribute(fixPos, 3));
+  group.add(new THREE.LineSegments(fixGeo, m.lineAccent));
+  const gapRing = circle(0.28, 40, m.lineAccent);
+  gapRing.rotation.x = Math.PI / 2;
+  group.add(gapRing);
+  group.rotation.x = 0.35;
+  group.position.y = -0.6;
+  let shown = -1;
+  return {
+    group,
+    update(t) {
+      const beat = Math.floor(t / 2.6);
+      if (beat !== shown) {
+        shown = beat;
+        const h = (beat * 5) % hospitals.length;
+        const d = doctors[(coverBy[h] + 1 + (beat % 3)) % doctors.length];
+        fixPos.set([d.x, d.y, d.z, hospitals[h].x, hospitals[h].y, hospitals[h].z]);
+        fixGeo.attributes.position.needsUpdate = true;
+        gapRing.position.copy(hospitals[h]);
+        rings.forEach((r, i) => (r.visible = i !== h));
+      }
+      // The gap ring swells while the offer is out, then settles once it's filled.
+      const phase = (t / 2.6) % 1;
+      gapRing.scale.setScalar(1 + 1.4 * Math.sin(Math.min(1, phase * 1.6) * Math.PI));
+      group.rotation.y = t * 0.12;
+    },
+  };
+}
+
+/** PlaNYt: a street grid of wireframe blocks, with the day's route lit across it and a marker walking it. */
+function cityRoute(m: Materials): Visual {
+  const group = new THREE.Group();
+  const cols = 9;
+  const rows = 7;
+  const step = 0.72;
+  for (let c = 0; c < cols; c++) {
+    for (let r = 0; r < rows; r++) {
+      if (rand() < 0.2) continue; // parks and plazas
+      const h = 0.12 + Math.pow(rand(), 3) * 1.7;
+      const box = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(0.5, h, 0.5)), m.lineDim);
+      box.position.set((c - (cols - 1) / 2) * step, h / 2, (r - (rows - 1) / 2) * step);
+      group.add(box);
+    }
+  }
+  // The route runs down the avenues between blocks, turning at four stops.
+  const at = (c: number, r: number) => new THREE.Vector3((c - cols / 2) * step, 0.02, (r - rows / 2) * step);
+  const stops = [at(1, 1), at(1, 4), at(4, 4), at(4, 2), at(7, 2), at(7, 6)];
+  const route: number[] = [];
+  for (let i = 1; i < stops.length; i++) route.push(...stops[i - 1].toArray(), ...stops[i].toArray());
+  group.add(lines(route, m.lineAccent));
+  const pins: number[] = [];
+  stops.forEach((s, i) => i % 2 === 0 && pins.push(s.x, 0, s.z, s.x, 0.9, s.z));
+  group.add(lines(pins, m.lineAccent));
+  group.add(points(stops.filter((_, i) => i % 2 === 0).flatMap((s) => [s.x, 0.9, s.z]), m.pointAccent));
+  const walker = points([0, 0, 0], m.pointAccent);
+  group.add(walker);
+  const lengths = stops.slice(1).map((s, i) => s.distanceTo(stops[i]));
+  const total = lengths.reduce((a, b) => a + b, 0);
+  group.rotation.set(0.5, -0.6, 0);
+  group.position.y = -0.7;
+  group.scale.setScalar(0.85);
+  return {
+    group,
+    update(t) {
+      let d = ((t * 0.9) % total + total) % total;
+      let i = 0;
+      while (d > lengths[i]) d -= lengths[i++];
+      walker.position.lerpVectors(stops[i], stops[i + 1], d / lengths[i]).setY(0.12);
+      group.rotation.y = -0.6 + Math.sin(t * 0.2) * 0.25;
+    },
+  };
+}
+
 /** Visuals keyed by project slug; anything unlisted falls back to the code graph. */
 const BUILDERS: Record<string, (m: Materials) => Visual> = {
+  cerevia: careNetwork,
+  planyt: cityRoute,
   csegraph: codeGraph,
   "snap-interview": voiceRing,
   "traffic-violation-detection": road,
