@@ -1,7 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 import { bio, education, experience, publications } from "@/data";
 import { Section } from "../Section";
-import { DrawLine, RevealText, ScrubText, Stagger } from "../anim";
+import { DrawLine, RevealText, Stagger } from "../anim";
 import { WorkIndex } from "./WorkIndex";
 
 const shortDate = (d: string) => {
@@ -144,48 +144,6 @@ export function Experience() {
               <p className="mt-1 text-ink-2">{ed.institution}</p>
               <p className="label mt-8 text-accent">GPA {ed.gpa}</p>
             </li>
-          ))}
-        </Stagger>
-      </div>
-    </Section>
-  );
-}
-
-export function About() {
-  const facts = [
-    ["Based in", bio.location],
-    ["Studying", `${education[0].degree}, Rutgers`],
-    ["Graduating", education[0].end],
-    ["Focus", "Backend systems, applied ML, computer vision"],
-    ["Open to", "SWE, systems & AI/ML roles: full-time and internships"],
-  ];
-  return (
-    <Section id="about" index="05" title="About" shape={5}>
-      <div className="grid gap-[8vh] md:grid-cols-12">
-        <div className="md:col-span-7">
-          <ScrubText
-            className="wide text-[clamp(1.6rem,3vw,3.25rem)] leading-[1.08] font-semibold tracking-tight"
-            text="I like software that holds up after the demo: clear boundaries, honest error paths, and numbers that prove it got faster."
-          />
-          <Stagger className="mt-[6vh] max-w-[62ch] space-y-5 text-lg leading-relaxed text-ink-2">
-            <p>
-              I&apos;m a Computer Science master&apos;s student at Rutgers. Before that I studied Artificial
-              Intelligence &amp; Data Science at the University of Mumbai, where I spent two internships building
-              backend modules, auth, and dashboards that real teams used every day.
-            </p>
-            <p>
-              On the research side I&apos;ve published work on computer vision for traffic enforcement, WGAN-GP for
-              synthetic financial data, and a privacy-first voice assistant. These days I&apos;m most interested in
-              developer tooling for coding agents and the infrastructure that makes AI products reliable.
-            </p>
-          </Stagger>
-        </div>
-        <Stagger as="dl" className="self-end border-t border-line md:col-span-4 md:col-start-9">
-          {facts.map(([k, v]) => (
-            <div key={k} className="grid grid-cols-[7rem_1fr] gap-4 border-b border-line py-4">
-              <dt className="label pt-1 text-ink-3">{k}</dt>
-              <dd className="text-[15px]">{v}</dd>
-            </div>
           ))}
         </Stagger>
       </div>
