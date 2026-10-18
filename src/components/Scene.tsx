@@ -268,8 +268,10 @@ export function Scene() {
       const target = targetShape();
       uniforms.uShape.value += (target - uniforms.uShape.value) * (reduced ? 1 : Math.min(1, dt * 2.2));
       // Narrow screens put text on top of the shapes, so keep them faint there.
-      // Fade out entirely in the project flythrough (shape 1), which has its own scene.
-      const targetOpacity = (window.innerWidth < 768 ? 0.35 : 1) * Math.min(1, Math.abs(uniforms.uShape.value - 1) * 1.5);
+      // Fade out entirely where a section brings its own visual: the flythrough (1) and the Toolkit figure (4).
+      const shape = uniforms.uShape.value;
+      const targetOpacity =
+        (window.innerWidth < 768 ? 0.35 : 1) * Math.min(1, Math.abs(shape - 1) * 1.5, Math.abs(shape - 4) * 1.5);
       uniforms.uOpacity.value += (targetOpacity - uniforms.uOpacity.value) * Math.min(1, dt * 1.2);
       mouse.x += (mouse.tx - mouse.x) * 0.12;
       mouse.y += (mouse.ty - mouse.y) * 0.12;
