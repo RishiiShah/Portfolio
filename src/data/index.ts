@@ -108,6 +108,8 @@ export interface ExperienceItem {
   summary?: string;
   bullets: string[];
   tech?: string[];
+  /** Headline results, each taken from a bullet. */
+  highlights?: { value: string; label: string }[];
 }
 
 export const experience: ExperienceItem[] = [
@@ -126,6 +128,10 @@ export const experience: ExperienceItem[] = [
       "Containerized backend services with Docker and supported AWS EC2-hosted environments with S3-backed storage by configuring environment variables, debugging logs, and standardizing deployment steps, lowering setup effort by 65%.",
     ],
     tech: ["Python", "Next.js", "MySQL", "Docker", "AWS", "JWT", "RBAC"],
+    highlights: [
+      { value: "−22%", label: "Avg. API response time" },
+      { value: "−65%", label: "Environment setup effort" },
+    ],
   },
   {
     role: "Web Developer Intern",
@@ -141,6 +147,10 @@ export const experience: ExperienceItem[] = [
       "Improved MySQL-backed Next.js API routes with parameterized queries, input validation, indexing, connection pooling, and smaller payloads, bringing P95 latency for targeted data-loading paths from 3100ms to 420ms.",
     ],
     tech: ["React", "Next.js", "MySQL", "TypeScript"],
+    highlights: [
+      { value: "420ms", label: "P95 latency, from 3100ms" },
+      { value: "−70%", label: "Feature file size" },
+    ],
   },
 ];
 

@@ -256,6 +256,15 @@ export function Scene() {
       }
       return uniforms.uShape.value;
     };
+    // Sections marked data-field="off" draw their own visual, so the field hides while they're centred.
+    const fieldOff = () => {
+      const mid = window.innerHeight / 2;
+      return sections.some((s) => {
+        if (s.dataset.field !== "off") return false;
+        const r = s.getBoundingClientRect();
+        return r.top <= mid && r.bottom >= mid;
+      });
+    };
 
     const clock = new THREE.Clock();
     let raf = 0;
@@ -270,8 +279,9 @@ export function Scene() {
       // Narrow screens put text on top of the shapes, so keep them faint there.
       // Fade out entirely where a section brings its own visual: the flythrough (1) and the Toolkit figure (4).
       const shape = uniforms.uShape.value;
-      const targetOpacity =
-        (window.innerWidth < 768 ? 0.35 : 1) * Math.min(1, Math.abs(shape - 1) * 1.5, Math.abs(shape - 4) * 1.5);
+      const targetOpacity = fieldOff()
+        ? 0
+        : (window.innerWidth < 768 ? 0.35 : 1) * Math.min(1, Math.abs(shape - 1) * 1.5, Math.abs(shape - 4) * 1.5);
       uniforms.uOpacity.value += (targetOpacity - uniforms.uOpacity.value) * Math.min(1, dt * 1.2);
       mouse.x += (mouse.tx - mouse.x) * 0.12;
       mouse.y += (mouse.ty - mouse.y) * 0.12;
