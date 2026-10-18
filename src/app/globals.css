@@ -224,10 +224,12 @@ html.lenis body {
   --space-star: rgba(236, 235, 230, 0.55);
   --space-dim: rgba(125, 135, 255, 0.5);
 }
+.space-view { position: relative; }
 .space-world { display: block; width: 100%; height: auto; }
+.space-sky { position: absolute; inset: 0; width: 100%; height: 100%; }
+.space-dots { fill: none; stroke: var(--space-star); stroke-linecap: round; }
 .space-hud { display: none; }
-.space-star { fill: var(--space-star); }
-.space-star.is-lit { fill: var(--accent); animation: space-twinkle 4s ease-in-out infinite; }
+.space-star { fill: var(--accent); animation: space-twinkle 4s ease-in-out infinite; }
 @keyframes space-twinkle { 50% { opacity: 0.2; } }
 .space-trail { fill: none; stroke: var(--space-line); stroke-width: 1.5; stroke-dasharray: 2 10; stroke-linecap: round; vector-effect: non-scaling-stroke; }
 .space-trail-lit { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; }
@@ -289,7 +291,7 @@ html.lenis body {
 [data-theme="dark"] .space-planet[data-active] .space-halo { opacity: 0.6; }
 [data-theme="dark"] .space-trail-glow { stroke-opacity: 0.18; }
 @media (prefers-reduced-motion: reduce) {
-  .space-star.is-lit, .space-beacon, .space-flame, .space-ripple, .space-link, .space-ship-bob { animation: none; }
+  .space-star, .space-beacon, .space-flame, .space-ripple, .space-link, .space-ship-bob { animation: none; }
 }
 @media (prefers-reduced-motion: no-preference) {
   .js .space-stage {
@@ -300,7 +302,8 @@ html.lenis body {
     padding: 0;
     overflow: hidden;
   }
-  .js .space-world { position: absolute; inset: 0; height: 100%; }
+  .js .space-view { position: absolute; inset: 0; overflow: hidden; }
+  .js .space-layer { position: absolute; top: 0; left: 0; will-change: transform; }
   .js .space-hud { display: flex; }
   .js .space-card {
     position: absolute;
