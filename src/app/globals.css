@@ -206,6 +206,103 @@ html.lenis body {
   }
 }
 
+/* Experience voyage: the whole system above a plain list by default, a pinned flight with JS + motion */
+.space-stage {
+  --space-line: rgba(20, 20, 20, 0.45);
+  --space-detail: rgba(20, 20, 20, 0.14);
+  --space-body: #e4e1d8;
+  --space-star: rgba(20, 20, 20, 0.35);
+  --space-dim: rgba(42, 54, 240, 0.45);
+  display: grid;
+  gap: 4vh;
+  padding: 6vh max(1rem, 4vw);
+}
+[data-theme="dark"] .space-stage {
+  --space-line: rgba(236, 235, 230, 0.4);
+  --space-detail: rgba(236, 235, 230, 0.12);
+  --space-body: #15161a;
+  --space-star: rgba(236, 235, 230, 0.55);
+  --space-dim: rgba(125, 135, 255, 0.5);
+}
+.space-world { display: block; width: 100%; height: auto; }
+.space-hud { display: none; }
+.space-star { fill: var(--space-star); }
+.space-star.is-lit { fill: var(--accent); animation: space-twinkle 4s ease-in-out infinite; }
+@keyframes space-twinkle { 50% { opacity: 0.2; } }
+.space-trail { fill: none; stroke: var(--space-line); stroke-width: 1.5; stroke-dasharray: 2 10; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.space-trail-lit { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; }
+.space-trail-glow { fill: none; stroke: var(--accent); stroke-width: 12; stroke-linecap: round; stroke-opacity: 0; }
+.space-body { fill: var(--space-body); stroke: var(--space-line); stroke-width: 1.5; vector-effect: non-scaling-stroke; transition: stroke 0.6s; }
+.space-grid { fill: none; stroke: var(--space-detail); stroke-width: 1; vector-effect: non-scaling-stroke; transition: stroke 0.6s; }
+.space-equator { fill: none; stroke: var(--space-line); stroke-width: 1; vector-effect: non-scaling-stroke; transition: stroke 0.6s; }
+.space-annulus { fill: var(--space-body); stroke: var(--space-line); stroke-width: 1.25; vector-effect: non-scaling-stroke; stroke-linejoin: round; transition: stroke 0.6s, fill 0.6s; }
+.space-uncharted { fill: var(--space-body); stroke: var(--space-line); stroke-width: 1.5; stroke-dasharray: 5 7; vector-effect: non-scaling-stroke; transition: stroke 0.6s; }
+.space-uncharted ~ .space-grid, .space-uncharted ~ .space-equator { stroke-dasharray: 3 6; }
+.space-mark { fill: var(--space-line); font-family: var(--font-archivo), system-ui, sans-serif; font-weight: 800; }
+.space-orbit { fill: none; stroke: var(--space-line); stroke-width: 1; stroke-dasharray: 2 6; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.space-mast { stroke: var(--space-line); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.space-light { fill: var(--accent); }
+.space-beacon { animation: space-twinkle 1.6s ease-in-out infinite; }
+.space-halo { opacity: 0; transition: opacity 0.8s; }
+.space-name, .space-date {
+  font-family: var(--font-jetbrains), ui-monospace, monospace;
+  letter-spacing: 0.08em;
+  fill: var(--space-line);
+  transition: fill 0.4s;
+}
+.space-name { font-size: 15px; }
+.space-date { font-size: 13px; opacity: 0.8; }
+.space-planet[data-passed] .space-body,
+.space-planet[data-passed] .space-equator,
+.space-planet[data-passed] .space-annulus { stroke: var(--space-dim); }
+.space-planet[data-active] .space-body,
+.space-planet[data-active] .space-equator,
+.space-planet[data-active] .space-annulus,
+.space-planet[data-active] .space-uncharted { stroke: var(--accent); }
+.space-planet[data-active] .space-annulus { fill: var(--iso-lit-top); }
+.space-planet[data-active] .space-grid { stroke: var(--space-dim); }
+.space-planet[data-active] .space-mark { fill: var(--accent); }
+.space-label[data-active] text { fill: var(--accent); }
+.space-ship .iso-face { stroke: var(--ink); }
+.space-flame { fill: var(--accent); fill-opacity: 0.55; }
+.space-flame-burn { opacity: 0; transition: opacity 0.3s; }
+.space-ship[data-burn] .space-flame-burn { opacity: 1; animation: space-flicker 0.12s steps(2) infinite; }
+@keyframes space-flicker { 50% { opacity: 0.75; } }
+[data-theme="dark"] .space-planet[data-active] .space-halo { opacity: 0.6; }
+[data-theme="dark"] .space-trail-glow { stroke-opacity: 0.18; }
+@media (prefers-reduced-motion: reduce) {
+  .space-star.is-lit, .space-beacon, .space-flame { animation: none; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .js .space-stage {
+    position: relative;
+    display: block;
+    height: 100svh;
+    padding: 0;
+    overflow: hidden;
+  }
+  .js .space-world { position: absolute; inset: 0; height: 100%; }
+  .js .space-hud { display: flex; }
+  .js .space-card {
+    position: absolute;
+    top: 50%;
+    left: max(1rem, 4vw);
+    width: min(34rem, 38vw);
+    opacity: 0;
+    transform: translateY(calc(-50% + var(--card-y, 0px)));
+    will-change: transform, opacity;
+  }
+}
+@media (prefers-reduced-motion: no-preference) and (max-width: 767px) {
+  .js .space-card {
+    top: auto;
+    bottom: 3vh;
+    right: max(1rem, 4vw);
+    width: auto;
+    transform: translateY(var(--card-y, 0px));
+  }
+}
+
 /* Lab-notebook graph paper: fine grid with a heavier line every fifth square */
 .graph-paper {
   background-image:
