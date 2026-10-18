@@ -97,6 +97,10 @@ const parks = PLANETS.map((p, i) => [centers[i][0], centers[i][1] + p.r + 110]);
 const END_X = (N - 1) * GAP;
 const WORLD = { x: -600, y: -420, w: END_X + 1200, h: 840 };
 const WORLD_VIEW = `${WORLD.x} ${WORLD.y} ${WORLD.w} ${WORLD.h}`;
+// While flying, every layer is drawn once at this size and the camera only moves
+// layers with composited transforms, so scrolling never repaints the scene.
+const CAM = { x: WORLD.x - 600, y: -1100, w: WORLD.w + 1200, h: 2600 };
+const CAM_VIEW = `${CAM.x} ${CAM.y} ${CAM.w} ${CAM.h}`;
 
 type V = [number, number];
 const legs = parks.slice(1).map((q1, i): V[] => {
@@ -141,18 +145,23 @@ function seeded(seed: number) {
 }
 const rand = seeded(7);
 const STAR_LAYERS = [
-  { depth: 0.85, count: 260, r: 0.9 },
-  { depth: 0.55, count: 140, r: 1.4 },
-  { depth: 0.2, count: 50, r: 2 },
-].map((layer) => ({
-  ...layer,
-  stars: Array.from({ length: layer.count }, () => ({
-    x: WORLD.x - 800 + rand() * (WORLD.w + 1600),
-    y: WORLD.y + rand() * WORLD.h,
-    lit: rand() < 0.08,
+  { depth: 0.85, count: 700, r: 0.9 },
+  { depth: 0.55, count: 380, r: 1.4 },
+  { depth: 0.2, count: 140, r: 2 },
+].map((layer) => {
+  const stars = Array.from({ length: layer.count }, () => ({
+    x: CAM.x + rand() * CAM.w,
+    y: CAM.y + rand() * CAM.h,
+    lit: rand() < 0.025,
     delay: rand() * 4,
-  })),
-}));
+  }));
+  return {
+    ...layer,
+    // Plain stars as one path of round-capped dots; only the few twinkling ones are elements.
+    dots: stars.filter((st) => !st.lit).map((st) => `M${st.x.toFixed(0)} ${st.y.toFixed(0)}h0`).join(""),
+    lit: stars.filter((st) => st.lit),
+  };
+});
 
 // ─── Iso-glow globes ─────────────────────────────────────────────────────────
 // Planets are true isometric spheres: a sphere of radius s projects to a circle
@@ -397,7 +406,10 @@ export function Experience() {
         const cards = gsap.utils.toArray<HTMLElement>(".space-card");
         const planets = gsap.utils.toArray<SVGGElement>(".space-planet, .space-label");
         const trails = gsap.utils.toArray<SVGPathElement>(".space-trail-lit, .space-trail-glow");
-        const layers = gsap.utils.toArray<SVGGElement>(".space-stars");
+        const layers = gsap.utils.toArray<SVGSVGElement>(".space-sky");
+        const scene = [...layers, svg.current].filter((el): el is SVGSVGElement => !!el);
+        scene.forEach((el) => el.setAttribute("viewBox", CAM_VIEW));
+        let scale = 0;
         const navItems = gsap.utils.toArray<HTMLElement>(".space-nav-item");
         let last = 0;
         let active = 0;
@@ -450,18 +462,26 @@ export function Experience() {
           });
 
           // Camera: follow the ship. Desktop keeps the planet right of the card; phones keep it above.
-          const el = svg.current;
-          let camX = x;
-          if (el) {
-            const narrow = el.clientWidth < 768;
-            const vw = narrow ? 720 : 1500;
-            const vh = (vw * el.clientHeight) / Math.max(1, el.clientWidth);
-            const x0 = x - vw * (narrow ? 0.5 : 0.62);
-            const y0 = y - vh * (narrow ? 0.4 : 0.58);
-            camX = x0;
-            el.setAttribute("viewBox", `${x0.toFixed(1)} ${y0.toFixed(1)} ${vw} ${vh.toFixed(1)}`);
+          const box = stage.current;
+          if (box) {
+            const narrow = box.clientWidth < 768;
+            const k = box.clientWidth / (narrow ? 720 : 1500); // px per world unit
+            if (k !== scale) {
+              scale = k;
+              scene.forEach((el) => {
+                el.style.width = `${CAM.w * k}px`;
+                el.style.height = `${CAM.h * k}px`;
+              });
+            }
+            const x0 = x - (box.clientWidth / k) * (narrow ? 0.5 : 0.62);
+            const y0 = y - (box.clientHeight / k) * (narrow ? 0.4 : 0.58);
+            const move = (el: SVGSVGElement, dx: number) => {
+              el.style.transform = `translate3d(${((CAM.x - x0 + dx) * k).toFixed(1)}px, ${((CAM.y - y0) * k).toFixed(1)}px, 0)`;
+            };
+            if (svg.current) move(svg.current, 0);
+            // Parallax: farther star layers ride along with the camera by their depth.
+            layers.forEach((el) => move(el, x0 * Number(el.dataset.depth)));
           }
-          layers.forEach((g) => g.setAttribute("transform", `translate(${(camX * Number(g.dataset.depth)).toFixed(1)} 0)`));
 
           planets.forEach((g) => {
             const i = Number(g.dataset.i);
@@ -496,8 +516,12 @@ export function Experience() {
         return () => {
           cancelAnimationFrame(raf);
           window.removeEventListener("resize", onResize);
-          svg.current?.setAttribute("viewBox", WORLD_VIEW);
-          layers.forEach((g) => g.removeAttribute("transform"));
+          scene.forEach((el) => {
+            el.setAttribute("viewBox", WORLD_VIEW);
+            el.style.removeProperty("width");
+            el.style.removeProperty("height");
+            el.style.removeProperty("transform");
+          });
           trigger.current = null;
         };
       });
@@ -523,59 +547,61 @@ export function Experience() {
       </div>
 
       <div ref={stage} className="space-stage">
-        <svg ref={svg} viewBox={WORLD_VIEW} preserveAspectRatio="xMidYMid slice" className="space-world iso" aria-hidden="true">
-          <defs>
-            {/* Glow without blur filters: huge filter regions tile and clip under a zoomed viewBox */}
-            <radialGradient id="space-halo-grad">
-              <stop offset="0.3" stopColor="var(--accent)" stopOpacity="0.45" />
-              <stop offset="0.6" stopColor="var(--accent)" stopOpacity="0.15" />
-              <stop offset="1" stopColor="var(--accent)" stopOpacity="0" />
-            </radialGradient>
-          </defs>
-
+        <div className="space-view">
           {STAR_LAYERS.map((layer) => (
-            <g key={layer.depth} className="space-stars" data-depth={layer.depth}>
-              {layer.stars.map((s, k) => (
+            <svg key={layer.depth} viewBox={WORLD_VIEW} className="space-layer space-sky" data-depth={layer.depth} aria-hidden="true">
+              <path className="space-dots" d={layer.dots} strokeWidth={layer.r * 2} />
+              {layer.lit.map((st, k) => (
                 <circle
                   key={k}
-                  className={s.lit ? "space-star is-lit" : "space-star"}
-                  cx={s.x.toFixed(1)}
-                  cy={s.y.toFixed(1)}
-                  r={layer.r}
-                  style={s.lit ? { animationDelay: `${s.delay.toFixed(2)}s` } : undefined}
+                  className="space-star"
+                  cx={st.x.toFixed(0)}
+                  cy={st.y.toFixed(0)}
+                  r={layer.r * 1.2}
+                  style={{ animationDelay: `${st.delay.toFixed(2)}s` }}
                 />
               ))}
+            </svg>
+          ))}
+          <svg ref={svg} viewBox={WORLD_VIEW} className="space-layer space-world iso" aria-hidden="true">
+            <defs>
+              {/* Glow without blur filters: huge filter regions tile and clip under a zoomed viewBox */}
+              <radialGradient id="space-halo-grad">
+                <stop offset="0.3" stopColor="var(--accent)" stopOpacity="0.45" />
+                <stop offset="0.6" stopColor="var(--accent)" stopOpacity="0.15" />
+                <stop offset="1" stopColor="var(--accent)" stopOpacity="0" />
+              </radialGradient>
+            </defs>
+
+            {/* Trajectory: dashed course ahead, lit where the ship has flown */}
+            {legs.map((leg, i) => (
+              <g key={i}>
+                <path className="space-trail" d={legD(leg)} />
+                <path className="space-trail-glow" data-leg={i} d={legD(leg)} pathLength={1} strokeDasharray="1 1" />
+                <path className="space-trail-lit" data-leg={i} d={legD(leg)} pathLength={1} strokeDasharray="1 1" />
+              </g>
+            ))}
+
+            {STOPS.map((s, i) => (
+              <Planet key={s.title} i={i} />
+            ))}
+
+            {STOPS.map((s, i) => (
+              <g key={s.title} className="space-label" data-i={i}>
+                <text x={centers[i][0]} y={centers[i][1] - reach(i) - 44} textAnchor="middle" className="space-name">
+                  {String(i + 1).padStart(2, "0")} · {s.title.toUpperCase()}
+                </text>
+                <text x={centers[i][0]} y={centers[i][1] - reach(i) - 24} textAnchor="middle" className="space-date">
+                  {short(s.start)}
+                </text>
+              </g>
+            ))}
+
+            <g ref={ship} className="space-ship" transform={`translate(${parks[0][0]} ${parks[0][1]}) scale(1.3)`}>
+              <Ship />
             </g>
-          ))}
-
-          {/* Trajectory: dashed course ahead, lit where the ship has flown */}
-          {legs.map((leg, i) => (
-            <g key={i}>
-              <path className="space-trail" d={legD(leg)} />
-              <path className="space-trail-glow" data-leg={i} d={legD(leg)} pathLength={1} strokeDasharray="1 1" />
-              <path className="space-trail-lit" data-leg={i} d={legD(leg)} pathLength={1} strokeDasharray="1 1" />
-            </g>
-          ))}
-
-          {STOPS.map((s, i) => (
-            <Planet key={s.title} i={i} />
-          ))}
-
-          {STOPS.map((s, i) => (
-            <g key={s.title} className="space-label" data-i={i}>
-              <text x={centers[i][0]} y={centers[i][1] - reach(i) - 44} textAnchor="middle" className="space-name">
-                {String(i + 1).padStart(2, "0")} · {s.title.toUpperCase()}
-              </text>
-              <text x={centers[i][0]} y={centers[i][1] - reach(i) - 24} textAnchor="middle" className="space-date">
-                {short(s.start)}
-              </text>
-            </g>
-          ))}
-
-          <g ref={ship} className="space-ship" transform={`translate(${parks[0][0]} ${parks[0][1]}) scale(1.3)`}>
-            <Ship />
-          </g>
-        </svg>
+          </svg>
+        </div>
 
         <div className="space-hud label pointer-events-none absolute inset-x-[max(1rem,4vw)] top-[11vh] items-start justify-between text-ink-3 md:top-auto md:bottom-[5vh] md:items-end">
           <div>
@@ -613,7 +639,7 @@ export function Experience() {
 
 function Card({ stop: s, index }: { stop: Stop; index: number }) {
   return (
-    <article className="space-card border border-line bg-bg/85 p-[clamp(1.25rem,2vw,2rem)] backdrop-blur-md">
+    <article className="space-card border border-line bg-bg/90 p-[clamp(1.25rem,2vw,2rem)]">
       <p className="label text-ink-3">
         <span className="text-accent">Stop {String(index + 1).padStart(2, "0")}</span> ·{" "}
         {s.next ? `from ${short(s.start)}` : `${short(s.start)} — ${short(s.end)}`}
