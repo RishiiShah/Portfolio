@@ -248,6 +248,12 @@ html.lenis body {
 .space-orbit { fill: none; stroke: var(--space-line); stroke-width: 1; stroke-dasharray: 2 6; stroke-linecap: round; vector-effect: non-scaling-stroke; }
 .space-site { fill: var(--space-line); transition: fill 0.6s; }
 .space-window { fill: var(--space-detail); transition: fill 0.6s; }
+.space-rock-body { fill: var(--space-body); stroke: var(--space-line); stroke-width: 1.2; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
+.space-rock { transform-box: fill-box; transform-origin: center; animation: space-turn linear infinite; }
+@keyframes space-turn { to { transform: rotate(360deg); } }
+.space-comet-tail { fill: var(--accent); fill-opacity: 0.16; }
+.space-sat { animation: space-bob 4.4s ease-in-out infinite alternate; }
+.space-galaxy-core { opacity: 0.5; }
 .space-planet[data-active] .space-window { fill: var(--accent); }
 .space-planet[data-active] .space-panel { fill: var(--iso-lit-top); }
 .space-planet[data-active] .space-site { fill: var(--accent); }
@@ -303,7 +309,7 @@ html.lenis body {
 [data-theme="dark"] .space-planet[data-active] .space-halo { opacity: 0.6; }
 [data-theme="dark"] .space-trail-glow { stroke-opacity: 0.18; }
 @media (prefers-reduced-motion: reduce) {
-  .space-star, .space-beacon, .space-ship-burn, .space-ripple, .space-link, .space-ship-bob { animation: none; }
+  .space-star, .space-beacon, .space-ship-burn, .space-rock, .space-sat, .space-ripple, .space-link, .space-ship-bob { animation: none; }
 }
 @media (prefers-reduced-motion: no-preference) {
   .js .space-stage {
