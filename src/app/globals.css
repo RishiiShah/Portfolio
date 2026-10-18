@@ -210,6 +210,10 @@ html.lenis body {
   }
 }
 
+/* Each Selected work card takes its project's hue as the accent */
+.fly-card, .fly-nav-item { --accent: var(--hue-light); }
+[data-theme="dark"] :is(.fly-card, .fly-nav-item) { --accent: var(--hue-dark); }
+
 /* Experience voyage: the whole system above a plain list by default, a pinned flight with JS + motion */
 .space-stage {
   --space-line: rgba(20, 20, 20, 0.45);
