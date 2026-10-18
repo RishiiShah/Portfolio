@@ -131,46 +131,6 @@ export function CountUp({ value, className }: { value: string; className?: strin
   );
 }
 
-/** Horizontal marquee whose speed and direction follow scroll velocity. */
-export function Marquee({ items, className }: { items: string[]; className?: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-  useGSAP(
-    () => {
-      if (reduced()) return;
-      const track = ref.current!.querySelector(".mq-track")!;
-      const tween = gsap.to(track, { xPercent: -50, ease: "none", duration: 40, repeat: -1 });
-      ScrollTrigger.create({
-        trigger: ref.current,
-        start: "top bottom",
-        end: "bottom top",
-        onUpdate: (self) => {
-          const v = self.getVelocity() / 300;
-          gsap.to(tween, { timeScale: self.direction * Math.max(1, Math.abs(v)), duration: 0.3, overwrite: true });
-        },
-      });
-    },
-    { scope: ref }
-  );
-  const row = (hidden: boolean) => (
-    <div className="flex shrink-0 items-center" aria-hidden={hidden || undefined}>
-      {items.map((it) => (
-        <span key={it} className="flex items-center">
-          <span className="px-[2vw]">{it}</span>
-          <span className="text-accent">✦</span>
-        </span>
-      ))}
-    </div>
-  );
-  return (
-    <div ref={ref} className={`overflow-hidden ${className ?? ""}`}>
-      <div className="mq-track flex w-max">
-        {row(false)}
-        {row(true)}
-      </div>
-    </div>
-  );
-}
-
 /** A rule that draws itself (vertical or horizontal) as its parent scrolls past. */
 export function DrawLine({ vertical, className }: { vertical?: boolean; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
