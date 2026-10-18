@@ -303,7 +303,7 @@ function Planet({ i }: { i: number }) {
       <path className="space-equator" d={trace(loop(flat(s)), facing)} />
       {SITES[i].map((site, k) => {
         const at = sitePos(s, site, 0);
-        return <circle key={k} className="space-site" r={2.6} cx={at?.[0] ?? 0} cy={at?.[1] ?? 0} opacity={at ? 1 : 0} />;
+        return <circle key={k} className="space-site" r={2.6} cx={at ? at[0].toFixed(1) : 0} cy={at ? at[1].toFixed(1) : 0} opacity={at ? 1 : 0} />;
       })}
       {uncharted && (
         <>
