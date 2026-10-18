@@ -25,7 +25,7 @@ const PULL = 18; // how far the active slab slides out (+y)
 const slabZ = (i: number) => BASE + 16 + (skills.length - 1 - i) * (H + GAP);
 const TOP_Z = slabZ(0) + H;
 
-const { P, TOP, FRONT, SIDE, path, Box, viewBox } = isoFrame([
+const { P, TOP, FRONT, SIDE, path, Box, viewBox, filterRegion } = isoFrame([
   [-30, -30, 0],
   [W + 60, -20, 0],
   [-30, DEPTH + PULL + 30, 0],
@@ -86,7 +86,7 @@ export function Skills() {
             className="iso w-full max-w-[560px] outline-none focus-visible:ring-1 focus-visible:ring-accent"
           >
             <defs>
-              <filter id="iso-glow" filterUnits="userSpaceOnUse" x="-2000" y="-2000" width="6000" height="6000">
+              <filter id="iso-glow" {...filterRegion}>
                 <feGaussianBlur stdDeviation="3" result="b" />
                 <feMerge>
                   <feMergeNode in="b" />

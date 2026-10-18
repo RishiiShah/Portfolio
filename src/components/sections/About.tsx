@@ -21,7 +21,7 @@ const LAP = { x: 40, y: 100, z: 10, w: 130, d: 80, h: 6 };
 const SCREEN = { x: 40, y: 94, z: 16, w: 130, d: 6, h: 86 };
 const SHADE = { x: 168, y: 34, z: 84, w: 30, d: 22, h: 16 };
 
-const { TOP, FRONT, viewBox, Box, RoundBox } = isoFrame([
+const { TOP, FRONT, viewBox, Box, RoundBox, filterRegion } = isoFrame([
   [0, 0, 0],
   [280, 0, 0],
   [0, 200, 0],
@@ -142,14 +142,14 @@ export function About() {
             className="iso w-full outline-none focus-visible:ring-1 focus-visible:ring-accent"
           >
             <defs>
-              <filter id="iso-soft" filterUnits="userSpaceOnUse" x="-2000" y="-2000" width="6000" height="6000">
+              <filter id="iso-soft" {...filterRegion}>
                 <feGaussianBlur stdDeviation="2" result="b" />
                 <feMerge>
                   <feMergeNode in="b" />
                   <feMergeNode in="SourceGraphic" />
                 </feMerge>
               </filter>
-              <filter id="iso-bloom" filterUnits="userSpaceOnUse" x="-2000" y="-2000" width="6000" height="6000">
+              <filter id="iso-bloom" {...filterRegion}>
                 <feGaussianBlur stdDeviation="14" />
               </filter>
               <clipPath id="about-screen-clip">

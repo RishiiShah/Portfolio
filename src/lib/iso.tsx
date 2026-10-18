@@ -82,5 +82,10 @@ export function isoFrame(corners: number[][], pad = 16) {
     );
   }
 
-  return { P, TOP, FRONT, SIDE, path, Box, RoundBox, viewBox: `0 0 ${width.toFixed(1)} ${height.toFixed(1)}` };
+  // Filter region sized to the drawing (plus room for the blur). A huge region makes
+  // Safari render the filter at reduced resolution, which blurs whatever it wraps.
+  const M = 60;
+  const filterRegion = { filterUnits: "userSpaceOnUse" as const, x: -M, y: -M, width: width + 2 * M, height: height + 2 * M };
+
+  return { P, TOP, FRONT, SIDE, path, Box, RoundBox, filterRegion, viewBox: `0 0 ${width.toFixed(1)} ${height.toFixed(1)}` };
 }
