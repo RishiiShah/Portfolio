@@ -24,7 +24,7 @@ export interface Visual {
 }
 
 /** Theme colours for canvas-drawn screens, kept current by Flight. */
-export const palette = { ink: "#111", dim: "rgba(0,0,0,0.3)", accent: "#2a36f0", glass: "#000", mono: "monospace" };
+export const palette = { ink: "#111", dim: "rgba(0,0,0,0.3)", accent: "#2f37d6", glass: "#000", mono: "monospace" };
 
 // ─── Kit ─────────────────────────────────────────────────────────────────────
 
