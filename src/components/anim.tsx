@@ -4,6 +4,7 @@ import { useRef, type ElementType, type ReactNode } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import { INTRO_DONE } from "./Loader";
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -215,6 +216,41 @@ export function Magnetic({ children, strength = 0.35 }: { children: ReactNode; s
   return (
     <span ref={ref} className="inline-block">
       {children}
+    </span>
+  );
+}
+
+const GLYPHS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/<>_-+*";
+
+/**
+ * Text that "decodes" from random glyphs into place once the intro finishes.
+ * The real text is server-rendered, so it's readable without JS.
+ */
+export function Decode({ text, delay = 0, className }: { text: string; delay?: number; className?: string }) {
+  const ref = useRef<HTMLSpanElement>(null);
+  useGSAP(() => {
+    const el = ref.current;
+    if (!el || reduced()) return;
+    const state = { p: 0 };
+    const draw = () => {
+      const shown = Math.floor(state.p * text.length);
+      el.textContent = text
+        .split("")
+        .map((c, i) => (i < shown || c === " " ? c : GLYPHS[Math.floor(Math.random() * GLYPHS.length)]))
+        .join("");
+    };
+    const tween = gsap.to(state, { p: 1, duration: 0.05 * text.length + 0.4, ease: "none", delay, paused: true, onUpdate: draw, onStart: draw });
+    const start = () => tween.play();
+    if (document.documentElement.dataset.intro === "done") start();
+    else window.addEventListener(INTRO_DONE, start, { once: true });
+    return () => window.removeEventListener(INTRO_DONE, start);
+  });
+  return (
+    <span className={className}>
+      <span className="sr-only">{text}</span>
+      <span ref={ref} aria-hidden="true">
+        {text}
+      </span>
     </span>
   );
 }
