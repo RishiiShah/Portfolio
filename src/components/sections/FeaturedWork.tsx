@@ -151,7 +151,7 @@ export function FeaturedWork({ items }: { items: Project[] }) {
 }
 
 function Panel({ project: p, index, side }: { project: Project; index: number; side: "left" | "right" }) {
-  const badge = p.latest ? "Latest" : p.links?.some((l) => l.type === "paper") ? "Published" : null;
+  const badge = p.award ? "Winner" : p.latest ? "Latest" : p.links?.some((l) => l.type === "paper") ? "Published" : null;
   return (
     <article
       data-side={side}
@@ -165,6 +165,7 @@ function Panel({ project: p, index, side }: { project: Project; index: number; s
       </div>
 
       <h3 className="wide mt-5 text-[clamp(1.6rem,2.6vw,3rem)] leading-[0.95] font-bold tracking-tight">{shortTitle(p.title)}</h3>
+      {p.award && <p className="label mt-2 text-accent">{p.award}</p>}
       <p className="mt-3 text-[clamp(0.9rem,1vw,1.05rem)] leading-snug text-ink-2">{p.tagline}</p>
 
       {p.metrics && (
