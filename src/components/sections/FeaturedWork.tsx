@@ -58,17 +58,33 @@ export function FeaturedWork({ items }: { items: Project[] }) {
           if (bar.current) bar.current.style.transform = `scaleY(${progress})`;
         };
 
+        // Once scrolling settles, glide to the nearest station so the camera never rests mid-flight.
+        let settle = 0;
+        const snap = () => {
+          const st = trigger.current;
+          if (!st?.isActive) return;
+          const f = st.progress * legs;
+          const station = Math.round(f);
+          if (station < 1 || Math.abs(f - station) < 0.01) return;
+          scrollToY(st.start + (station / legs) * (st.end - st.start), 0.9);
+        };
+
         trigger.current = ScrollTrigger.create({
           trigger: stage.current,
           pin: true,
           start: "top top",
           end: () => `+=${window.innerHeight * legs * SCROLL_PER_STATION}`,
           scrub: true,
-          onUpdate: (self) => render(self.progress),
+          onUpdate: (self) => {
+            render(self.progress);
+            window.clearTimeout(settle);
+            settle = window.setTimeout(snap, 180);
+          },
           onRefresh: (self) => render(self.progress),
         });
         render(0);
         return () => {
+          window.clearTimeout(settle);
           trigger.current = null;
         };
       });
@@ -139,7 +155,7 @@ function Panel({ project: p, index, side }: { project: Project; index: number; s
   return (
     <article
       data-side={side}
-      className="fly-card group relative flex flex-col border border-line bg-bg/80 p-[clamp(1.25rem,2vw,2.25rem)] backdrop-blur-md"
+      className="fly-card group relative flex flex-col border border-line bg-bg/90 p-[clamp(1.25rem,2vw,2.25rem)]"
     >
       <div className="label flex items-center justify-between gap-4 text-ink-3">
         <span>

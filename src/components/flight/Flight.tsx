@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { legAt } from "@/lib/flight";
 import { motion } from "@/lib/motion";
-import { buildVisual, type Materials } from "./visuals";
+import { buildVisual, palette, type Materials } from "./visuals";
 
 const SPACING = 30; // distance between stations along -z
 const VIEW_DISTANCE = 8.5; // how far in front of each visual the camera parks
@@ -74,6 +74,11 @@ export function Flight({ slugs, className }: { slugs: string[]; className?: stri
       lineAccent: new THREE.LineBasicMaterial({ transparent: true, opacity: 1 }),
       point: new THREE.PointsMaterial({ size: 0.07, map: dot, transparent: true, depthWrite: false, alphaTest: 0.01 }),
       pointAccent: new THREE.PointsMaterial({ size: 0.16, map: dot, transparent: true, depthWrite: false, alphaTest: 0.01 }),
+      // Faces sit just behind their edges so the hairlines stay crisp.
+      face: new THREE.MeshBasicMaterial({ polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }),
+      faceLit: new THREE.MeshBasicMaterial({ polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 }),
+      // Light spill draws over geometry (no depth test), so it never gets cut by a face.
+      glow: new THREE.SpriteMaterial({ map: dot, transparent: true, depthTest: false, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0.35 }),
     };
     const trailMat = new THREE.LineDashedMaterial({ dashSize: 0.5, gapSize: 0.35, transparent: true, opacity: 0.9 });
     const dustMat = new THREE.PointsMaterial({ size: 0.05, map: dot, transparent: true, depthWrite: false, opacity: 0.55 });
@@ -88,6 +93,17 @@ export function Flight({ slugs, className }: { slugs: string[]; className?: stri
       mats.point.color.copy(ink);
       mats.lineAccent.color.copy(accent);
       mats.pointAccent.color.copy(accent);
+      mats.face.color.set(s.getPropertyValue("--bg-2").trim());
+      mats.faceLit.color.copy(accent);
+      mats.glow.color.copy(accent);
+      // Iso-glow: light spills only in the dark theme; in light, lit parts are flat accent.
+      const dark = document.documentElement.dataset.theme === "dark";
+      mats.glow.opacity = dark ? 0.35 : 0;
+      palette.ink = s.getPropertyValue("--ink").trim();
+      palette.dim = s.getPropertyValue("--line").trim();
+      palette.accent = s.getPropertyValue("--accent").trim();
+      palette.glass = s.getPropertyValue("--bg").trim();
+      palette.mono = getComputedStyle(document.body).getPropertyValue("--font-jetbrains").trim() || "monospace";
       trailMat.color.copy(accent);
       dustMat.color.copy(ink);
     };
@@ -165,7 +181,6 @@ export function Flight({ slugs, className }: { slugs: string[]; className?: stri
     const pos = new THREE.Vector3();
     const ahead = new THREE.Vector3();
     const look = new THREE.Vector3();
-    let f = motion.flight;
     let bank = 0;
     let time = 0;
     let raf = 0;
@@ -175,7 +190,8 @@ export function Flight({ slugs, className }: { slugs: string[]; className?: stri
       const dt = Math.min(clock.getDelta(), 0.05);
       if (!visible) return;
       time += dt;
-      f += (motion.flight - f) * Math.min(1, dt * 5);
+      // Lenis already smooths the scroll; easing again here would leave the camera behind the panels.
+      const f = motion.flight;
 
       const { leg, eased } = legAt(f, legs);
       const t0 = leg === 0 ? 0 : layout.stationT[leg - 1];
@@ -214,7 +230,12 @@ export function Flight({ slugs, className }: { slugs: string[]; className?: stri
       themeObserver.disconnect();
       window.removeEventListener("pointermove", onMove);
       scene.traverse((o) => {
-        if (o instanceof THREE.Points || o instanceof THREE.Line) o.geometry.dispose();
+        if (o instanceof THREE.Points || o instanceof THREE.Line || o instanceof THREE.Mesh) o.geometry.dispose();
+        // Canvas screens own their material and texture.
+        if (o instanceof THREE.Mesh && o.material instanceof THREE.MeshBasicMaterial && o.material.map) {
+          o.material.map.dispose();
+          o.material.dispose();
+        }
       });
       [...Object.values(mats), trailMat, dustMat].forEach((m) => m.dispose());
       dot.dispose();

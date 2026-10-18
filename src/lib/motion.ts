@@ -8,7 +8,7 @@ export const motion = {
 };
 
 /** Smooth-scroll to a page offset, using Lenis when it's running. */
-export function scrollToY(y: number) {
-  if (motion.lenis) motion.lenis.scrollTo(y, { duration: 1.4 });
+export function scrollToY(y: number, duration = 1.4) {
+  if (motion.lenis) motion.lenis.scrollTo(y, { duration });
   else window.scrollTo({ top: y });
 }
