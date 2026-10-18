@@ -180,32 +180,37 @@ export function Skills() {
               <div
                 key={g.category}
                 onPointerEnter={(e) => e.pointerType === "mouse" && select(i)}
-                className="grid gap-4 border-t border-line py-[3.5vh] lg:grid-cols-[14vw_1fr]"
+                className="grid gap-5 border-t border-line py-[3.5vh] lg:grid-cols-[15vw_1fr]"
               >
                 <button
                   type="button"
                   onClick={() => select(i)}
                   aria-pressed={on}
-                  className="flex items-baseline gap-3 text-left"
+                  className="grid grid-cols-[2rem_1fr] content-start items-baseline self-start text-left"
                 >
                   <span className={`label transition-colors ${on ? "text-accent" : "text-ink-3"}`}>
                     {String(i + 1).padStart(2, "0")}
                   </span>
                   <span
-                    className={`wide text-[clamp(1.25rem,1.8vw,1.9rem)] font-bold tracking-tight transition-colors ${on ? "text-accent" : ""}`}
+                    className={`wide text-[clamp(1.25rem,1.8vw,1.9rem)] leading-[1.05] font-bold tracking-tight transition-colors ${on ? "text-accent" : ""}`}
                   >
                     {g.category}
                   </span>
+                  <span className="label col-start-2 mt-2 text-ink-3">{g.items.length} tools</span>
                 </button>
-                <Stagger as="ul" className="flex flex-wrap gap-2">
-                  {g.items.map((item) => (
+                {/* Set as running text, like the Intro's keywords, so each list fills its row */}
+                <Stagger as="ul" className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
+                  {g.items.map((item, k) => (
                     <li
                       key={item}
-                      className={`border px-3 py-1.5 text-[15px] backdrop-blur-sm transition-colors ${
-                        on ? "border-accent/60 bg-bg/80 text-ink" : "border-line bg-bg/60 text-ink-2"
+                      className={`text-[clamp(1.15rem,1.6vw,1.75rem)] leading-snug tracking-tight transition-colors ${
+                        on ? "text-ink" : "text-ink-3"
                       }`}
                     >
                       {item}
+                      {k < g.items.length - 1 && (
+                        <span className={`ml-4 transition-colors ${on ? "text-accent" : "text-line"}`}>/</span>
+                      )}
                     </li>
                   ))}
                 </Stagger>
