@@ -451,3 +451,10 @@ html.lenis body {
   .iso-slab, .iso-face, .iso-wire, .iso-led, .iso-glass, .iso-key, .iso-halo { transition: none; }
   .iso-pulse { animation: none; }
 }
+
+/* Theme switch: the toggle animates a circular reveal itself, so turn off the default crossfade */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
