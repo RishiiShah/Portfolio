@@ -1,5 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
-import { bio, education, experience, publications, skills } from "@/data";
+import { bio, education, experience, publications } from "@/data";
 import { Section } from "../Section";
 import { DrawLine, RevealText, ScrubText, Stagger } from "../anim";
 import { WorkIndex } from "./WorkIndex";
@@ -146,35 +146,6 @@ export function Experience() {
             </li>
           ))}
         </Stagger>
-      </div>
-    </Section>
-  );
-}
-
-export function Skills() {
-  return (
-    <Section id="skills" index="04" title="Toolkit" meta={`${skills.reduce((n, g) => n + g.items.length, 0)} tools`} shape={4}>
-      <div className="md:w-[60vw]">
-        {skills.map((group, i) => (
-          <div key={group.category} className="group grid gap-4 border-t border-line py-[4vh] md:grid-cols-[18vw_1fr]">
-            <p className="flex items-baseline gap-3">
-              <span className="label text-accent">{String(i + 1).padStart(2, "0")}</span>
-              <span className="wide text-[clamp(1.25rem,1.8vw,1.9rem)] font-bold tracking-tight transition-colors group-hover:text-accent">
-                {group.category}
-              </span>
-            </p>
-            <Stagger as="ul" className="flex flex-wrap gap-2">
-              {group.items.map((item) => (
-                <li
-                  key={item}
-                  className="border border-line bg-bg/60 px-3 py-1.5 text-[15px] backdrop-blur-sm transition-colors hover:border-accent hover:text-accent"
-                >
-                  {item}
-                </li>
-              ))}
-            </Stagger>
-          </div>
-        ))}
       </div>
     </Section>
   );

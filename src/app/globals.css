@@ -216,3 +216,88 @@ html.lenis body {
   background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
   background-position: -1px -1px;
 }
+
+/* Iso-glow figure (Toolkit stack): hairline faces, accent only on what is live */
+.iso {
+  --iso-body: #e4e1d8;
+  --iso-deck: #f3f0e9;
+  --iso-line: rgba(20, 20, 20, 0.42);
+  --iso-detail: rgba(20, 20, 20, 0.16);
+  --iso-print: rgba(20, 20, 20, 0.55);
+  --iso-accent-hi: #5c66ff;
+  --iso-lit-top: rgba(42, 54, 240, 0.14);
+}
+[data-theme="dark"] .iso {
+  --iso-body: #16171a;
+  --iso-deck: #1b1c20;
+  --iso-line: rgba(236, 235, 230, 0.3);
+  --iso-detail: rgba(236, 235, 230, 0.1);
+  --iso-print: rgba(236, 235, 230, 0.45);
+  --iso-accent-hi: #b4baff;
+  --iso-lit-top: rgba(125, 135, 255, 0.16);
+}
+.iso-face {
+  fill: var(--iso-body);
+  stroke: var(--iso-line);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  stroke-linejoin: round;
+  transition: fill 0.4s, stroke 0.4s;
+}
+.iso-top { fill: var(--iso-deck); }
+.iso-detail {
+  fill: none;
+  stroke: var(--iso-detail);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.iso-print {
+  fill: var(--iso-print);
+  font-family: var(--font-jetbrains), ui-monospace, monospace;
+  letter-spacing: 0.06em;
+}
+.iso-led { fill: var(--iso-detail); transition: fill 0.3s; }
+.iso-slab {
+  cursor: pointer;
+  transition: transform 0.6s var(--ease);
+}
+.iso-slab:hover .iso-top { stroke: var(--ink); }
+.iso-slab.is-on .iso-face { stroke: var(--accent); }
+.iso-slab.is-on .iso-top { fill: var(--iso-lit-top); }
+.iso-slab.is-on .iso-led,
+.iso .is-on-dot { fill: var(--accent); }
+.iso-slab.is-on .iso-name { fill: var(--accent); }
+.iso-wire {
+  fill: none;
+  stroke: var(--iso-line);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+  stroke-linecap: round;
+  transition: stroke 0.4s;
+}
+.iso-wire.is-hot { stroke: var(--accent); }
+.iso-pulse {
+  fill: none;
+  stroke: var(--iso-accent-hi);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+  stroke-dasharray: 70 1200;
+  stroke-dashoffset: 70;
+  opacity: 0;
+  animation: iso-flow 0.9s linear;
+}
+@keyframes iso-flow {
+  0% { stroke-dashoffset: 70; opacity: 1; }
+  90% { opacity: 1; }
+  100% { stroke-dashoffset: -1000; opacity: 0; }
+}
+/* Glow only in the dark theme; the light theme keeps flat accent */
+[data-theme="dark"] .iso-slab.is-on .iso-led,
+[data-theme="dark"] .iso .is-on-dot,
+[data-theme="dark"] .iso-pulse,
+[data-theme="dark"] .iso-wire.is-hot { filter: url(#iso-glow); }
+@media (prefers-reduced-motion: reduce) {
+  .iso-slab, .iso-face, .iso-wire, .iso-led { transition: none; }
+  .iso-pulse { animation: none; }
+}
