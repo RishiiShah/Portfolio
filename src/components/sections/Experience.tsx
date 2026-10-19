@@ -92,7 +92,7 @@ const STOPS: Stop[] = [
 const N = STOPS.length;
 
 const SCROLL_PER_STOP = 1.2; // viewport heights of scrolling per stop
-const GLIDE_SECONDS = 2.8; // one stop to the next
+const GLIDE_SECONDS = 2; // one stop to the next
 
 // ─── The system ──────────────────────────────────────────────────────────────
 // One planet per stop, left to right. The ship parks below each planet and
