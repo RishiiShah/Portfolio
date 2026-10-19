@@ -48,7 +48,7 @@ function personSchema(site: string): JsonLd {
         ? { sameAs: UNIVERSITY_SAMEAS[edu.institution] }
         : {}),
     })),
-    hasOccupation: { "@type": "Occupation", name: teaching.role },
+    hasOccupation: { "@type": "Occupation", name: teaching.role, description: `${teaching.role}, ${teaching.course}` },
     worksFor: { "@type": "CollegeOrUniversity", name: teaching.organization, address: teaching.location },
   };
 }

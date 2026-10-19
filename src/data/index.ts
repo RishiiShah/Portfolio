@@ -19,7 +19,7 @@ export const education = [
     degree: "M.S. in Computer Science",
     institution: "Rutgers University - New Brunswick",
     location: "New Brunswick, NJ",
-    start: "August 2025",
+    start: "September 2025",
     end: "May 2027",
     gpa: "3.83 / 4.0",
   },
@@ -45,6 +45,7 @@ export const skills = [
     items: [
       "Django",
       "Django ORM",
+      "Express.js",
       "Next.js",
       "React",
       "REST APIs",
@@ -59,6 +60,7 @@ export const skills = [
       "Git",
       "GitHub",
       "GitHub Actions",
+      "CI/CD",
       "Linux",
     ],
   },
@@ -118,6 +120,12 @@ export const teaching = {
   organization: "Rutgers University",
   location: "New Brunswick, NJ",
   start: "September 2026",
+  course: "CS205: Introduction to Discrete Structures I",
+  bullets: [
+    "Lead weekly recitations for 50+ undergraduates on set notation, propositional logic, truth tables, and Boolean circuits.",
+    "Teach first-order logic, predicates, quantifiers, and induction proofs for program correctness, trees, and grammars.",
+    "Cover relations and closures, orders, equivalence relations, functions, and finite-state machines with CS applications.",
+  ],
 } as const;
 
 export const experience: ExperienceItem[] = [
@@ -128,17 +136,17 @@ export const experience: ExperienceItem[] = [
     start: "January 2025",
     end: "July 2025",
     summary:
-      "Service-oriented Python and Next.js backends with JWT/RBAC auth, MySQL API optimization, Docker, and AWS EC2/S3 deployments.",
+      "Django backend performance, API contracts, JWT/RBAC security, and Dockerized AWS deployments.",
     bullets: [
-      "Developed service-oriented backend modules using Python, Next.js, and MySQL for authentication, authorization, business workflows, and reporting across internal and client-facing systems.",
-      "Implemented JWT-based authentication and RBAC middleware for admin, staff, and client-user roles, securing protected API routes and centralizing authorization checks across backend workflows.",
-      "Optimized dashboard, listing, search, and reporting APIs by indexing database columns, rewriting SQL queries, adding pagination, trimming response payloads, and batching recurring calls, reducing average response time by 22%.",
-      "Containerized backend services with Docker and supported AWS EC2-hosted environments with S3-backed storage by configuring environment variables, debugging logs, and standardizing deployment steps, lowering setup effort by 65%.",
+      "Reduced P95 API latency by 86% (3,100 ms to 420 ms) by profiling Django request paths, optimizing ORM-generated MySQL queries, adding targeted indexes, tuning connection pooling, and trimming response payloads.",
+      "Reduced recurring API integration defects by 30% across 12+ REST endpoints by standardizing Django serializer validation, request and response schemas, error handling, and HTTP status codes.",
+      "Secured 4 Django backend components by implementing JWT authentication and RBAC for admin, staff, and client roles.",
+      "Reduced deployment setup effort by 65% for a 4-person team by containerizing Django services with Docker and standardizing AWS EC2, S3, and environment configuration.",
     ],
-    tech: ["Python", "Next.js", "MySQL", "Docker", "AWS", "JWT", "RBAC"],
+    tech: ["Django", "Django ORM", "MySQL", "REST APIs", "JWT", "RBAC", "Docker", "AWS"],
     highlights: [
-      { value: "−22%", label: "Avg. API response time" },
-      { value: "−65%", label: "Environment setup effort" },
+      { value: "−86%", label: "P95 latency, 3,100 → 420 ms" },
+      { value: "−30%", label: "API integration defects" },
     ],
   },
   {
@@ -147,17 +155,16 @@ export const experience: ExperienceItem[] = [
     location: "Mumbai, India",
     start: "June 2024",
     end: "September 2024",
-    summary:
-      "React/Next.js product UI, shared-component refactoring, and MySQL-backed API performance work.",
+    summary: "Next.js features on Express.js services, MySQL performance work, and test-gated releases.",
     bullets: [
-      "Built React/Next.js interfaces for dashboard views, data management pages, and form-based CRUD flows using reusable tables, forms, modals, filters, and pagination controls.",
-      "Refactored page-level UI and request-handling logic into 7 shared components across 3 feature areas, shrinking individual feature file size by 70% and improving maintainability.",
-      "Improved MySQL-backed Next.js API routes with parameterized queries, input validation, indexing, connection pooling, and smaller payloads, bringing P95 latency for targeted data-loading paths from 3100ms to 420ms.",
+      "Reduced P95 API latency by 50% (620 ms to 310 ms) across 8 endpoints by optimizing Express.js handlers, indexing MySQL queries, and eliminating redundant database calls.",
+      "Shipped 4 customer-facing features across 10+ REST API endpoints by building Next.js interfaces, Express.js services, and validated MySQL CRUD workflows.",
+      "Achieved zero rollbacks across 9 production deployments by writing 55+ automated tests and enforcing regression testing, defect fixes, and pre-release validation.",
     ],
-    tech: ["React", "Next.js", "MySQL", "TypeScript"],
+    tech: ["Next.js", "Express.js", "MySQL", "REST APIs"],
     highlights: [
-      { value: "420ms", label: "P95 latency, from 3100ms" },
-      { value: "−70%", label: "Feature file size" },
+      { value: "−50%", label: "P95 latency, 620 → 310 ms" },
+      { value: "0", label: "Rollbacks in 9 deploys" },
     ],
   },
 ];
