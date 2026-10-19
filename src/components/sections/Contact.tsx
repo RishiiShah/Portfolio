@@ -1,340 +1,108 @@
 "use client";
 
+import { ArrowUpRight } from "lucide-react";
 import { useState } from "react";
-import { m } from "framer-motion";
 import { bio } from "@/data";
-import { SectionHeading } from "@/components/ui/SectionHeading";
-import dynamic from "next/dynamic";
-import { Mail, MapPin } from "lucide-react";
+import { Magnetic, RevealText, Stagger } from "../anim";
 
-const DottedMap = dynamic(() => import("@/components/ui/DottedMap").then((m) => m.DottedMap), {
-  ssr: false,
-});
-import { FiGithub, FiLinkedin } from "react-icons/fi";
+const FORM_ENDPOINT = "https://formspree.io/f/movyqpkr";
 
-type Status = "idle" | "loading" | "success" | "error";
-type FormFields = { name: string; email: string; message: string };
-type FormErrors = { name: string; email: string; message: string };
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-const MAP_MARKERS = [
-  { lat: 40.7128, lng: -74.006, size: 1.2, pulse: true, label: "NYC" },
-  { lat: 19.076, lng: 72.8777, size: 1.2, pulse: true, label: "MUMBAI" },
+const links = [
+  { label: "GitHub", href: bio.github },
+  { label: "LinkedIn", href: bio.linkedin },
+  { label: "Résumé", href: bio.resume },
 ];
 
-function validate(values: FormFields): FormErrors {
-  const errors: FormErrors = { name: "", email: "", message: "" };
-  if (values.name.trim().length < 2)
-    errors.name = "Name must be at least 2 characters.";
-  if (!EMAIL_RE.test(values.email.trim()))
-    errors.email = "Enter a valid email address.";
-  if (values.message.trim().length < 10)
-    errors.message = "Message must be at least 10 characters.";
-  return errors;
-}
-
-function hasErrors(errors: FormErrors) {
-  return Object.values(errors).some(Boolean);
-}
+const field =
+  "w-full border-b border-line bg-bg/40 py-3 text-lg backdrop-blur-sm text-ink placeholder:text-ink-3 transition-colors focus:border-accent focus:outline-none";
 
 export function Contact() {
-  const [status, setStatus] = useState<Status>("idle");
-  const [form, setForm] = useState<FormFields>({ name: "", email: "", message: "" });
-  const [errors, setErrors] = useState<FormErrors>({ name: "", email: "", message: "" });
-  const [touched, setTouched] = useState({ name: false, email: false, message: false });
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
 
-  const handleContactFormClick = () => {
-    document.getElementById("contact-form")?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-    document.getElementById("name")?.focus({ preventScroll: true });
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    const next = { ...form, [name]: value };
-    setForm(next);
-    if (touched[name as keyof typeof touched]) {
-      setErrors(validate(next));
-    }
-  };
-
-  const handleBlur = (
-    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const field = e.target.name as keyof typeof touched;
-    setTouched((prev) => ({ ...prev, [field]: true }));
-    setErrors(validate(form));
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const allTouched = { name: true, email: true, message: true };
-    setTouched(allTouched);
-    const validationErrors = validate(form);
-    setErrors(validationErrors);
-    if (hasErrors(validationErrors)) return;
-
-    setStatus("loading");
+    const form = e.currentTarget;
+    setStatus("sending");
     try {
-      const res = await fetch("https://formspree.io/f/movyqpkr", {
+      const res = await fetch(FORM_ENDPOINT, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify(form),
+        headers: { Accept: "application/json" },
+        body: new FormData(form),
       });
-      if (res.ok) {
-        setStatus("success");
-        setForm({ name: "", email: "", message: "" });
-        setTouched({ name: false, email: false, message: false });
-        setErrors({ name: "", email: "", message: "" });
-      } else {
-        setStatus("error");
-      }
+      if (!res.ok) throw new Error(String(res.status));
+      form.reset();
+      setStatus("sent");
     } catch {
       setStatus("error");
     }
-  };
-
-  function inputClass(field: keyof FormErrors) {
-    const isError = touched[field] && errors[field];
-    return `w-full rounded-lg px-4 py-2.5 text-sm text-[var(--ink)] placeholder:text-[var(--ink-mute)]
-      transition-all focus:outline-none border bg-transparent ${isError
-        ? "border-[var(--danger)]/55 focus:border-[var(--danger)]/80"
-        : "border-[var(--line)] focus:border-[var(--accent)]/60"
-      }`;
   }
 
   return (
-    <section id="contact" className="relative overflow-hidden py-16 md:py-20">
-      <div className="relative z-[1] mx-auto max-w-6xl px-6">
-        <m.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-80px" }}
-          transition={{ duration: 0.5 }}
-        >
-          <SectionHeading
-            index="07"
-            backgroundText="HELLO"
-            eyebrow="Contact"
-            title="Get in touch"
-            subtitle="Open to SWE, systems, and ML/AI opportunities. Feel free to reach out."
-          />
-        </m.div>
+    <section id="contact" data-shape="5" className="relative px-[max(1rem,4vw)] pt-[18vh] pb-[10vh]">
+      <div className="label flex items-center justify-between border-t border-line pt-4 text-ink-3">
+        <span>
+          <span className="text-accent">(06)</span> Contact
+        </span>
+        <span>Replies within ~2 days</span>
+      </div>
+      <h2 className="display mt-[5vh] text-[11vw] leading-[0.82] md:text-[10vw]">
+        <RevealText text="Let's build" className="block" />
+        <RevealText text="something." className="block md:pl-[4vw]" delay={0.15} />
+      </h2>
 
-        <div className="grid md:grid-cols-5 gap-10">
-          {/* Info */}
-          <m.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="md:col-span-2 space-y-6"
-          >
-            <p className="text-[0.9375rem] text-[var(--ink-dim)] leading-relaxed">
-              I&apos;m currently looking for full-time roles and internships in
-              software engineering, systems, and AI/ML. Whether it&apos;s a
-              project collaboration, job opportunity, or just to say hi, my
-              inbox is open.
-            </p>
-
-            <div className="space-y-3">
-              <button
-                type="button"
-                onClick={handleContactFormClick}
-                className="flex items-center gap-3 break-words [overflow-wrap:anywhere] text-sm text-[var(--ink-dim)] transition-colors hover:text-[var(--ink)]"
-              >
-                <Mail size={13} className="text-[var(--accent)] shrink-0" />
-                Use the contact form
-              </button>
-              <div className="flex items-center gap-3 text-sm text-[var(--ink-mute)]">
-                <MapPin size={13} className="text-[var(--accent)] shrink-0" />
-                {bio.location}
-              </div>
-            </div>
-
-            <div className="glass-panel overflow-hidden p-4 md:p-5 rounded-2xl">
-              <DottedMap
-                markers={MAP_MARKERS}
-                dotColor="rgba(238,242,252,0.34)"
-                markerColor="#e6b980"
-                dotRadius={0.34}
-                pulse
-                mapSamples={1200}
-                className="h-72 md:h-80"
-                renderMarkerOverlay={({ marker, x, y }) => {
-                  const isNYC = (marker as unknown as { label?: string }).label === "NYC";
-                  const offset = 2.1;
-                  return (
-                    <g pointerEvents="none">
-                      <text
-                        x={isNYC ? x + offset : x - offset}
-                        y={y + 0.8}
-                        fontSize={2.8}
-                        fontFamily="var(--font-mono)"
-                        fontWeight="800"
-                        fill="#e6b980"
-                        stroke="rgba(7,9,15,0.65)"
-                        strokeWidth={0.24}
-                        paintOrder="stroke"
-                        textAnchor={isNYC ? "start" : "end"}
-                        style={{ letterSpacing: "0.1em" }}
-                      >
-                        {(marker as unknown as { label?: string }).label}
-                      </text>
-                    </g>
-                  );
-                }}
-              />
-            </div>
-
-            <div className="flex items-center gap-5">
-              <a
-                href={bio.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-sm text-[var(--ink-mute)] hover:text-[var(--ink)] transition-colors"
-              >
-                <FiGithub size={13} /> GitHub
-              </a>
-              <a
-                href={bio.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1.5 text-sm text-[var(--ink-mute)] hover:text-[var(--ink)] transition-colors"
-              >
-                <FiLinkedin size={13} /> LinkedIn
-              </a>
-            </div>
-          </m.div>
-
-          {/* Form */}
-          <m.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="md:col-span-3"
-          >
-            {status === "success" ? (
-              <div className="flex h-full min-h-[280px] items-center justify-center rounded-2xl glass-panel p-8 text-center">
-                <div>
-                  <div className="mb-3 text-2xl text-[var(--accent-signal)]">✓</div>
-                  <p className="font-medium text-[var(--ink)]">Message sent!</p>
-                  <p className="mt-1 text-sm text-[var(--ink-mute)]">
-                    I&apos;ll get back to you shortly.
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <form
-                id="contact-form"
-                onSubmit={handleSubmit}
-                className="space-y-4 glass-panel rounded-2xl p-6 md:p-7"
-                noValidate
-              >
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div>
-                    <label
-                      htmlFor="name"
-                      className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--ink-mute)]"
-                    >
-                      Name
-                    </label>
-                    <input
-                      id="name"
-                      name="name"
-                      type="text"
-                      value={form.name}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      placeholder="Your name"
-                      className={inputClass("name")}
-                    />
-                    {touched.name && errors.name && (
-                      <p className="mt-1 text-xs text-[var(--danger)]">{errors.name}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="email"
-                      className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--ink-mute)]"
-                    >
-                      Email
-                    </label>
-                    <input
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={form.email}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      placeholder="your@email.com"
-                      className={inputClass("email")}
-                    />
-                    {touched.email && errors.email && (
-                      <p className="mt-1 text-xs text-[var(--danger)]">{errors.email}</p>
-                    )}
-                  </div>
-                </div>
-
-                <div>
-                  <label
-                    htmlFor="message"
-                    className="mb-1.5 block font-mono text-[10px] uppercase tracking-[0.16em] text-[var(--ink-mute)]"
-                  >
-                    Message
-                  </label>
-                  <textarea
-                    id="message"
-                    name="message"
-                    rows={5}
-                    value={form.message}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    placeholder="What's on your mind?"
-                    className={`resize-none ${inputClass("message")}`}
-                  />
-                  <div className="flex items-start justify-between mt-1 gap-4">
-                    {touched.message && errors.message ? (
-                      <p className="text-xs text-[var(--danger)]">{errors.message}</p>
-                    ) : (
-                      <span />
-                    )}
-                    <span
-                      className={`text-[10px] font-mono shrink-0 ${
-                        form.message.trim().length < 10
-                          ? "text-[var(--ink-mute)]"
-                          : "text-[var(--ink-dim)]"
-                      }`}
-                    >
-                      {form.message.trim().length}/10 min
-                    </span>
-                  </div>
-                </div>
-
-                {status === "error" && (
-                  <p className="text-xs text-[var(--danger)]">
-                    Something went wrong. Please try again or email directly.
-                  </p>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={status === "loading"}
-                  className="glass-button px-6 py-2.5 text-sm font-medium disabled:opacity-50"
+      <div className="mt-[12vh] grid gap-[8vh] md:grid-cols-12 md:gap-x-[min(8vh,5vw)]">
+        <Stagger className="md:col-span-4">
+          <p className="max-w-[34ch] text-lg leading-snug text-ink-2">
+            Hiring for a software, systems, or ML role? Want to talk about a project or paper? Send a note.
+          </p>
+          <ul className="mt-10 border-t border-line">
+            {links.map((l) => (
+              <li key={l.label} className="border-b border-line">
+                <a
+                  href={l.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center justify-between py-4 text-xl transition-colors hover:text-accent"
                 >
-                  {status === "loading" ? "Sending…" : "Send message"}
-                </button>
-              </form>
-            )}
-          </m.div>
-        </div>
+                  <span className="transition-transform duration-500 group-hover:translate-x-3">{l.label}</span>
+                  <ArrowUpRight size={20} className="transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" />
+                </a>
+              </li>
+            ))}
+          </ul>
+        </Stagger>
+
+        <form onSubmit={onSubmit} className="space-y-8 md:col-span-7 md:col-start-6">
+          <div className="grid gap-8 sm:grid-cols-2">
+            <label className="block">
+              <span className="label text-ink-3">Name</span>
+              <input name="name" required autoComplete="name" placeholder="Your name" className={field} />
+            </label>
+            <label className="block">
+              <span className="label text-ink-3">Email</span>
+              <input name="email" type="email" required autoComplete="email" placeholder="you@company.com" className={field} />
+            </label>
+          </div>
+          <label className="block">
+            <span className="label text-ink-3">Message</span>
+            <textarea name="message" required rows={4} placeholder="What are you working on?" className={`${field} resize-none`} />
+          </label>
+          <div className="flex flex-wrap items-center gap-5">
+            <Magnetic>
+              <button
+                type="submit"
+                disabled={status === "sending"}
+                className="flex h-14 items-center gap-2 bg-accent px-8 text-sm font-semibold text-accent-ink transition-transform hover:scale-[1.03] disabled:opacity-50"
+              >
+                {status === "sending" ? "Sending…" : "Send message"} <ArrowUpRight size={16} />
+              </button>
+            </Magnetic>
+            <p aria-live="polite" className="text-sm text-ink-2">
+              {status === "sent" && "Thanks, message received."}
+              {status === "error" && "That didn't go through. Try LinkedIn instead."}
+            </p>
+          </div>
+        </form>
       </div>
     </section>
   );

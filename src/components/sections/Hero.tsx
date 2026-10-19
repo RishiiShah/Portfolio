@@ -1,228 +1,99 @@
 "use client";
 
-import { m, useReducedMotion, useScroll, useTransform } from "framer-motion";
-import dynamic from "next/dynamic";
-import { bio } from "@/data";
-import { FiGithub, FiLinkedin, FiMail } from "react-icons/fi";
-import { ArrowDown, ArrowUpRight } from "lucide-react";
-import { Tilt } from "@/components/ui/Tilt";
-import { HeroSignalPanel } from "@/components/ui/HeroSignalPanel";
+import { useRef } from "react";
+import { ArrowDown } from "lucide-react";
+import { gsap } from "gsap";
+import { useGSAP } from "@gsap/react";
+import { bio, projects } from "@/data";
+import { INTRO_DONE } from "../Loader";
+import { LocalTime } from "../LocalTime";
+import { Decode, Magnetic } from "../anim";
 
-const HeroShader = dynamic(
-  () =>
-    new Promise<typeof import("@/components/shaders/HeroShader")>((resolve) => {
-      // Defer loading the heavy shader chunk to prioritize LCP
-      setTimeout(() => resolve(import("@/components/shaders/HeroShader")), 250);
-    }).then((m) => ({ default: m.HeroShader })),
-  {
-    ssr: false,
-    loading: () => (
-      <div
-        aria-hidden
-        className="absolute inset-0 z-0"
-        style={{
-          background:
-            "linear-gradient(135deg, rgba(122,162,255,0.06) 0%, rgba(7,9,15,0) 60%, rgba(230,185,128,0.04) 100%)",
-        }}
-      />
-    ),
-  }
-);
-
-const heroEase = [0.16, 1, 0.3, 1] as const;
-
-const fadeUp = (delay = 0, duration = 0.78) => ({
-  initial: { opacity: 0, y: 18 },
-  animate: { opacity: 1, y: 0 },
-  transition: { duration, delay, ease: heroEase },
-});
+const wins = projects.filter((p) => p.award).length;
 
 export function Hero() {
-  const reduce = useReducedMotion();
-  const { scrollY } = useScroll();
-  const shaderOpacity = useTransform(scrollY, [0, 360, 720], [1, 0.52, 0.12]);
-  const nameLetters = bio.name.split("");
-  const handleContactClick = () => {
-    document.getElementById("contact-form")?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  };
+  const root = useRef<HTMLElement>(null);
+
+  useGSAP(
+    () => {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+      const intro = gsap
+        .timeline({ paused: true })
+        .from(".hero-char", { yPercent: 120, duration: 1.3, ease: "expo.out", stagger: 0.035 })
+        .from(".hero-fade", { y: 24, opacity: 0, duration: 0.9, ease: "power3.out", stagger: 0.06 }, 0.35)
+        .from(".hero-rule", { scaleX: 0, duration: 1.2, ease: "expo.inOut", stagger: 0.1 }, 0.1);
+
+      if (document.documentElement.dataset.intro === "done") intro.play();
+      else window.addEventListener(INTRO_DONE, () => intro.play(), { once: true });
+
+      // Scrolling away pulls the name lines apart.
+      const scrub = { trigger: root.current, start: "top top", end: "bottom top", scrub: true };
+      gsap.to(".hero-l1", { xPercent: -18, ease: "none", scrollTrigger: scrub });
+      gsap.to(".hero-l2", { xPercent: 14, ease: "none", scrollTrigger: scrub });
+      gsap.to(".hero-name", { opacity: 0.15, ease: "none", scrollTrigger: scrub });
+    },
+    { scope: root }
+  );
+
+  const chars = (word: string) =>
+    word.split("").map((c, i) => (
+      <span key={i} className="hero-char inline-block transition-colors duration-300 hover:text-accent">
+        {c}
+      </span>
+    ));
 
   return (
     <section
+      ref={root}
       id="top"
-      className="relative flex min-h-screen min-h-[100svh] items-start overflow-hidden md:items-center"
+      data-shape="0"
+      className="relative flex h-[100svh] min-h-[600px] flex-col overflow-hidden px-[max(1rem,4vw)] pt-14"
     >
-      {/* WebGL shader background */}
-      <m.div
-        aria-hidden
-        className="absolute inset-0 z-0"
-        style={{ opacity: reduce ? 1 : shaderOpacity }}
-      >
-        <HeroShader />
-      </m.div>
+      <div className="hero-fade label flex justify-between gap-6 pt-4 text-ink-2">
+        <Decode text={bio.title} delay={0.3} />
+        <span className="hidden items-center gap-2 md:flex">
+          <span className="relative flex size-1.5">
+            <span className="absolute inset-0 animate-ping bg-accent opacity-60" />
+            <span className="relative size-1.5 bg-accent" />
+          </span>
+          Open to SWE, systems &amp; AI/ML roles
+        </span>
+        <span className="hidden text-ink-3 sm:inline">
+          {bio.location} · <LocalTime />
+        </span>
+      </div>
+      <div className="hero-rule mt-3 h-px origin-left bg-line" />
 
-      {/* Veil to ensure legibility */}
-      <div
-        aria-hidden
-        className="absolute inset-0 z-[1] pointer-events-none"
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(7,9,15,0.25) 0%, rgba(7,9,15,0.55) 100%)",
-        }}
-      />
+      <h1 className="hero-name display mt-auto text-[15.5vw] leading-[0.82] md:text-[13.5vw]" aria-label={bio.name}>
+        <span className="hero-l1 block overflow-hidden pb-[0.04em]" aria-hidden="true">
+          {chars("Rishabh")}
+        </span>{" "}
+        <span className="hero-l2 block overflow-hidden pb-[0.04em] md:pl-[12vw]" aria-hidden="true">
+          {chars("Shah")}
+          <span className="hero-char inline-block text-accent">.</span>
+        </span>
+      </h1>
 
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[36vh]"
-        style={{
-          background:
-            "linear-gradient(180deg, rgba(7,9,15,0) 0%, rgba(7,9,15,0.62) 56%, var(--bg) 100%)",
-        }}
-      />
-
-      <div className="relative z-[2] mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24 md:py-28">
-        <div className="flex flex-col-reverse items-center justify-between gap-10 md:flex-row lg:gap-16">
-          {/* Left: content */}
-          <div className="w-full max-w-2xl flex-1">
-            {/* Name: 3D tilted, serif, amber period */}
-            <div className="mb-7">
-              <Tilt max={7} perspective={1600} className="inline-block">
-                <h1
-                  className="font-serif leading-[1.02] tracking-tight text-[var(--ink)]"
-                  style={{
-                    fontSize: "clamp(3rem, 9vw, 5.5rem)",
-                    textShadow: "0 2px 40px rgba(122,162,255,0.15)",
-                  }}
-                >
-                  {nameLetters.map((char, i) => {
-                    if (char === " ") return <span key={i}>&nbsp;</span>;
-                    return (
-                      <m.span
-                        key={i}
-                        className="inline-block"
-                        initial={{ opacity: 0, y: 18, scale: 0.97 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        transition={{
-                          duration: 0.72,
-                          delay: i * 0.03,
-                          ease: heroEase,
-                        }}
-                      >
-                        {char}
-                      </m.span>
-                    );
-                  })}
-                  <m.span
-                    className="inline-block"
-                    style={{ color: "var(--accent-warm)" }}
-                    initial={{ opacity: 0, scale: 0.5 }}
-                    animate={
-                      reduce
-                        ? { opacity: 1, scale: 1 }
-                        : { opacity: 1, scale: [0.5, 1.25, 1] }
-                    }
-                    transition={{
-                      duration: 0.9,
-                      delay: nameLetters.length * 0.03,
-                      ease: heroEase,
-                    }}
-                  >
-                    .
-                  </m.span>
-                </h1>
-              </Tilt>
-            </div>
-
-            {/* Title subtitle */}
-            <m.p
-              {...fadeUp(0.25)}
-              className="max-w-xl text-base leading-relaxed text-[var(--ink-dim)] sm:text-lg md:text-xl"
+      <div className="hero-rule mt-[3vh] h-px origin-left bg-line" />
+      <div className="grid gap-6 py-[3vh] md:grid-cols-12 md:items-center">
+        <p className="hero-fade text-[clamp(1rem,1.35vw,1.4rem)] leading-snug text-ink-2 md:col-span-6">
+          I build the parts underneath the interface: <span className="text-ink">APIs, auth, data,</span> and the{" "}
+          <span className="text-ink">pipelines that turn models into products.</span>
+        </p>
+        <div className="flex items-center gap-6 md:col-span-6 md:justify-end">
+          <span className="hero-fade label text-ink-2">
+            <span className="text-accent">{wins}×</span> hackathon winner
+          </span>
+          <Magnetic>
+            <a
+              href="#work"
+              className="hero-fade group flex h-12 items-center gap-2 bg-ink px-6 text-sm font-medium text-bg transition-colors hover:bg-accent hover:text-accent-ink"
             >
-              <span className="text-[var(--ink)]">{bio.title}</span>
-              {". I build scalable "}
-              <span className="text-[var(--ink)]">backend systems</span>,{" "}
-              <span className="text-[var(--ink)]">ML pipelines</span>, and
-              research-grade{" "}
-              <span className="text-[var(--ink)]">computer vision</span>.
-            </m.p>
-
-            {/* CTAs */}
-            <m.div
-              {...fadeUp(0.35)}
-              className="mt-9 flex flex-wrap items-center gap-3"
-            >
-              <a
-                href="#work"
-                className="hero-shader-button px-7 py-3 text-sm font-medium flex items-center gap-2 group"
-              >
-                Explore the work
-                <ArrowDown className="w-4 h-4 transition-transform duration-500 ease-out group-hover:translate-y-1" />
-              </a>
-              <a
-                href={bio.resume}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="ghost-button px-7 py-3 text-sm font-medium flex items-center gap-2"
-              >
-                Resume <ArrowUpRight className="w-4 h-4" />
-              </a>
-            </m.div>
-
-            {/* Socials row */}
-            <m.div
-              {...fadeUp(0.55)}
-              className="mt-7 flex items-center gap-5"
-            >
-              <a
-                href={bio.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[var(--ink-mute)] hover:text-[var(--ink)] transition-colors"
-                aria-label="GitHub"
-              >
-                <FiGithub size={18} />
-              </a>
-              <a
-                href={bio.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[var(--ink-mute)] hover:text-[var(--ink)] transition-colors"
-                aria-label="LinkedIn"
-              >
-                <FiLinkedin size={18} />
-              </a>
-              <button
-                type="button"
-                onClick={handleContactClick}
-                className="text-[var(--ink-mute)] hover:text-[var(--ink)] transition-colors"
-                aria-label="Contact form"
-              >
-                <FiMail size={18} />
-              </button>
-            </m.div>
-          </div>
-
-          {/* Right: signal panel */}
-          <m.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.95, delay: 0.2, ease: heroEase }}
-            className="w-full md:w-[420px] lg:w-[460px] shrink-0"
-          >
-            <HeroSignalPanel />
-          </m.div>
+              Selected work <ArrowDown size={15} className="transition-transform group-hover:translate-y-0.5" />
+            </a>
+          </Magnetic>
         </div>
-
-        {/* Scroll hint */}
-        <m.div
-          {...fadeUp(0.7)}
-          className="mt-20 hidden md:flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.18em] text-[var(--ink-mute)]"
-        >
-          <span>scroll to begin</span>
-          <span className="h-px w-12 bg-[var(--line-strong)]" />
-        </m.div>
       </div>
     </section>
   );

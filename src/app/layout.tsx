@@ -1,32 +1,23 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import { Archivo, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
-import { AmbientBeams } from "@/components/ui/AmbientBeams";
-import { Grain } from "@/components/ui/Grain";
-import { MotionRoot } from "@/components/MotionRoot";
+import { ThemeProvider } from "next-themes";
 import { bio } from "@/data";
 import { getSiteUrl, sanitizeForMeta } from "@/lib/site";
 import { buildStructuredData } from "@/lib/structured-data";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const archivo = Archivo({
+  variable: "--font-archivo",
   subsets: ["latin"],
+  axes: ["wdth"],
   display: "swap",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const jetbrains = JetBrains_Mono({
+  variable: "--font-jetbrains",
   subsets: ["latin"],
   display: "swap",
-});
-
-const instrumentSerif = Instrument_Serif({
-  variable: "--font-instrument-serif",
-  subsets: ["latin"],
-  weight: "400",
-  display: "swap",
-  preload: true,
 });
 
 const siteUrl = getSiteUrl();
@@ -129,10 +120,10 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#07090f" },
-    { media: "(prefers-color-scheme: dark)", color: "#07090f" },
+    { media: "(prefers-color-scheme: light)", color: "#f2efe8" },
+    { media: "(prefers-color-scheme: dark)", color: "#0e0f11" },
   ],
-  colorScheme: "dark",
+  colorScheme: "light dark",
   width: "device-width",
   initialScale: 1,
 };
@@ -141,13 +132,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable}`}
+      className={`${archivo.variable} ${jetbrains.variable}`}
+      suppressHydrationWarning
     >
       <head>
+        {/* Before first paint: mark JS, and skip the intro after the first load of a browser session. */}
         <script
           dangerouslySetInnerHTML={{
             __html:
-              'if ("scrollRestoration" in history) history.scrollRestoration = "manual"; window.addEventListener("pageshow", function () { window.scrollTo(0, 0); });',
+              'var d=document.documentElement;d.classList.add("js");try{if(sessionStorage.getItem("intro"))d.classList.add("intro-seen");else sessionStorage.setItem("intro","1")}catch(e){}',
           }}
         />
         <script
@@ -157,14 +150,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="antialiased">
         <a
-          href="#top"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:rounded-md focus:bg-[var(--bg-elev-2)] focus:px-4 focus:py-2 focus:text-sm focus:text-[var(--ink)] focus:border focus:border-[var(--line-strong)]"
+          href="#main"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:bg-bg-2 focus:px-4 focus:py-2 focus:text-sm focus:text-ink focus:border focus:border-line"
         >
           Skip to content
         </a>
-        <AmbientBeams />
-        <Grain />
-        <MotionRoot>{children}</MotionRoot>
+        <ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem disableTransitionOnChange>
+          {children}
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>

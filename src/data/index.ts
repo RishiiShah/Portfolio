@@ -5,7 +5,7 @@ export const bio = {
   title: "Software Engineer & ML Researcher",
   tagline: "Building at the intersection of engineering and intelligence.",
   description:
-    "M.S. Computer Science student at Rutgers University building scalable backend systems, AI-enabled full-stack products, and research-grade computer vision pipelines.",
+    "Rutgers M.S. Computer Science student and two-time hackathon winner building scalable backends, AI-enabled full-stack products, and computer vision research.",
   github: "https://github.com/RishiiShah",
   linkedin: "https://www.linkedin.com/in/rishabh-shah1/",
   resume: "/resume.pdf",
@@ -108,7 +108,17 @@ export interface ExperienceItem {
   summary?: string;
   bullets: string[];
   tech?: string[];
+  /** Headline results, each taken from a bullet. */
+  highlights?: { value: string; label: string }[];
 }
+
+/** Current campus role; kept apart from `experience`, which lists engineering internships. */
+export const teaching = {
+  role: "Teaching Assistant",
+  organization: "Rutgers University",
+  location: "New Brunswick, NJ",
+  start: "September 2026",
+} as const;
 
 export const experience: ExperienceItem[] = [
   {
@@ -126,6 +136,10 @@ export const experience: ExperienceItem[] = [
       "Containerized backend services with Docker and supported AWS EC2-hosted environments with S3-backed storage by configuring environment variables, debugging logs, and standardizing deployment steps, lowering setup effort by 65%.",
     ],
     tech: ["Python", "Next.js", "MySQL", "Docker", "AWS", "JWT", "RBAC"],
+    highlights: [
+      { value: "−22%", label: "Avg. API response time" },
+      { value: "−65%", label: "Environment setup effort" },
+    ],
   },
   {
     role: "Web Developer Intern",
@@ -141,13 +155,17 @@ export const experience: ExperienceItem[] = [
       "Improved MySQL-backed Next.js API routes with parameterized queries, input validation, indexing, connection pooling, and smaller payloads, bringing P95 latency for targeted data-loading paths from 3100ms to 420ms.",
     ],
     tech: ["React", "Next.js", "MySQL", "TypeScript"],
+    highlights: [
+      { value: "420ms", label: "P95 latency, from 3100ms" },
+      { value: "−70%", label: "Feature file size" },
+    ],
   },
 ];
 
 // ─── Projects ────────────────────────────────────────────────────────────────
 
 export interface ProjectLink {
-  type: "demo" | "source" | "paper" | "blog";
+  type: "demo" | "video" | "source" | "paper" | "blog";
   url: string;
 }
 
@@ -166,6 +184,7 @@ export interface Project {
   links?: ProjectLink[];
   featured?: boolean;
   latest?: boolean;
+  award?: string;
   metrics?: ProjectMetric[];
   problem?: string;
   role?: string;
@@ -177,6 +196,67 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    slug: "cerevia",
+    year: "2026",
+    title: "Cerevia",
+    tagline:
+      "Tele-neurology operations command center that replays a live event stream, spots coverage gaps before they happen, and staffs them through an approval loop.",
+    tech: ["Python", "FastAPI", "PostgreSQL", "React", "TypeScript", "Flutter", "ECharts", "Docker"],
+    tags: ["Full-stack", "Backend", "Systems"],
+    latest: true,
+    award: "Winner, Sevaro × Rutgers Health Hack",
+    impact:
+      "Won the Sevaro / Rutgers Health Hack: detects breaching consults, demand surges, and coverage gaps up to 90 minutes ahead, then proposes the cheapest safe fix and runs it end to end with an append-only audit log.",
+    links: [
+      { type: "video", url: "https://youtu.be/FweJcTVSq0c" },
+      { type: "source", url: "https://github.com/RishiiShah/Health-Hack" },
+    ],
+    metrics: [
+      { label: "Lookahead", value: "90 min" },
+      { label: "Roles", value: "3" },
+      { label: "Engine", value: "Deterministic" },
+      { label: "Pipeline", value: "Detect · Decide · Act" },
+    ],
+    problem:
+      "Tele-neurology coordinators route consults across a network of hospitals in real time. A stroke consult left waiting or a shift that ends without credentialed cover is usually noticed only once it is already late.",
+    architectureNotes: [
+      "Rebuilds physician and consult state by replaying an event stream server-side, with an injected clock, so every decision is deterministic and explainable.",
+      "Detect, decide, act: flags breaching time standards, demand surges, and coverage gaps; picks the cheapest safe fix (reassign, escalate, wait, or a short split shift) and names the approver.",
+      "Act loop runs propose → clinical-lead approval → send → accept, decline, or 10-minute timeout → recompute coverage, with every step in an append-only PostgreSQL audit log.",
+      "FastAPI backend with an OpenAPI contract that generates the React dashboard's types; a Flutter app gives the clinical lead and physicians their own role-based views.",
+    ],
+    challenges: [
+      "The split-shift trap: a called-in physician can absorb every new call instead of relieving the gap, so a simulation guard checks each offer before it is sent.",
+      "Explaining why each off-shift physician was or wasn't offered a shift, rule by rule, without any ML to hide behind.",
+    ],
+  },
+  {
+    slug: "planyt",
+    year: "2026",
+    title: "PlaNYt",
+    tagline:
+      "Plans a day in New York from one sentence, ordering the stops around travel time, opening hours, and how crowded each neighborhood is.",
+    tech: ["Next.js", "Google Maps Platform", "OpenStreetMap", "MTA open data", "Open-Meteo", "Vercel"],
+    tags: ["Full-stack"],
+    award: "Best Use of Backboard (MLH), DivHacks 2026",
+    impact:
+      "Won Best Use of Backboard (MLH) at DivHacks 2026, built for the Move Smarter track: one sentence in, a whole day out, with each stop timed for its quiet hour and crowd levels drawn from MTA subway ridership.",
+    links: [{ type: "demo", url: "https://planyt.tech" }],
+    metrics: [
+      { label: "Input", value: "1 sentence" },
+      { label: "Data sources", value: "6" },
+      { label: "Crowd signal", value: "MTA ridership" },
+      { label: "Hackathon", value: "DivHacks '26" },
+    ],
+    problem:
+      "A day out in New York usually falls apart on logistics: zig-zagging between boroughs, reaching a landmark at its busiest hour, or arriving after it has closed.",
+    architectureNotes: [
+      "Turns a free-text description of the day into an ordered itinerary, timed around travel between stops and each place's opening hours.",
+      "Estimates crowds from MTA subway ridership near each stop, and schedules every stop for its quiet hour.",
+      "Shows the plan on a 3D city from Google Maps Platform, with places and streets from OpenStreetMap, weather from Open-Meteo, and photos from Wikimedia Commons.",
+    ],
+  },
+  {
     slug: "csegraph",
     year: "2026",
     title: "CseGraph",
@@ -184,7 +264,6 @@ export const projects: Project[] = [
       "Local-first code context engine and developer tooling: CLI, MCP server, SDK, SQLite graph index, and VS Code wrapper for coding agents.",
     tech: ["Python", "SQLite", "Tree-sitter", "FTS5", "MCP", "VS Code Extension"],
     tags: ["Systems", "Backend", "Developer Tools"],
-    latest: true,
     impact:
       "Adaptive FTS/BM25 and graph-proximity retrieval with token budgets and strict schemas, serving task-scoped context across 9 CLI commands and 6 MCP tools.",
     links: [{ type: "source", url: "https://github.com/RishiiShah/Csegraph" }],
@@ -226,7 +305,6 @@ export const projects: Project[] = [
       "End-to-end interview pipeline for resume PDF parsing, streaming LLM responses via Groq, transcript and evaluation persistence, shareable results, and S3 multipart recording uploads.",
     links: [
       { type: "demo", url: "https://snapinterview.app" },
-      { type: "source", url: "https://github.com/RishiiShah/SnapInterview" },
     ],
     featured: false,
     metrics: [

@@ -1,4 +1,4 @@
-import { bio, education, publications, projects, experience } from "@/data";
+import { bio, education, publications, projects, teaching } from "@/data";
 import { getSiteUrl, sanitizeForMeta } from "@/lib/site";
 
 type JsonLd = Record<string, unknown>;
@@ -30,6 +30,7 @@ function personSchema(site: string): JsonLd {
       addressCountry: "US",
     },
     sameAs: [bio.github, bio.linkedin].filter(Boolean),
+    award: projects.filter((p) => p.award).map((p) => `${p.award} (${p.title})`),
     knowsAbout: [
       "Software Engineering",
       "Machine Learning",
@@ -47,11 +48,8 @@ function personSchema(site: string): JsonLd {
         ? { sameAs: UNIVERSITY_SAMEAS[edu.institution] }
         : {}),
     })),
-    worksFor: experience.slice(0, 1).map((e) => ({
-      "@type": "Organization",
-      name: e.organization,
-      ...(e.location ? { address: e.location } : {}),
-    })),
+    hasOccupation: { "@type": "Occupation", name: teaching.role },
+    worksFor: { "@type": "CollegeOrUniversity", name: teaching.organization, address: teaching.location },
   };
 }
 
@@ -122,6 +120,7 @@ function projectSchemas(site: string): JsonLd[] {
     .map((project) => {
       const source = project.links?.find((l) => l.type === "source")?.url;
       const demo = project.links?.find((l) => l.type === "demo")?.url;
+      const video = project.links?.find((l) => l.type === "video")?.url;
       const paper = project.links?.find((l) => l.type === "paper")?.url;
       return {
         "@type": "SoftwareSourceCode",
@@ -130,12 +129,13 @@ function projectSchemas(site: string): JsonLd[] {
         headline: project.title,
         description: sanitizeForMeta(project.tagline),
         ...(source ? { codeRepository: source } : {}),
+        ...(project.award ? { award: project.award } : {}),
         programmingLanguage: project.tech,
         keywords: [...project.tags, ...project.tech].join(", "),
         author: { "@id": `${site}/#person` },
         creator: { "@id": `${site}/#person` },
         url: `${site}/#work`,
-        sameAs: [source, demo, paper].filter(Boolean),
+        sameAs: [source, demo, video, paper].filter(Boolean),
         mainEntityOfPage: { "@id": `${site}/#profile` },
       };
     });
