@@ -256,13 +256,14 @@ export function Scene() {
       }
       return uniforms.uShape.value;
     };
-    // Sections marked data-field="off" draw their own visual, so the field hides while they're centred.
+    // Sections marked data-field="off" draw their own visual, so the field hides while they
+    // fill much of the screen: it is gone before they reach the middle, scrolling either way.
     const fieldOff = () => {
-      const mid = window.innerHeight / 2;
+      const h = window.innerHeight;
       return sections.some((s) => {
         if (s.dataset.field !== "off") return false;
         const r = s.getBoundingClientRect();
-        return r.top <= mid && r.bottom >= mid;
+        return r.top < h * 0.8 && r.bottom > h * 0.2;
       });
     };
 
@@ -274,18 +275,22 @@ export function Scene() {
       if (!running) return;
       const dt = Math.min(clock.getDelta(), 0.05);
       if (!reduced) uniforms.uTime.value += dt;
-      const target = targetShape();
+      const off = fieldOff();
+      // While hidden, hold the current shape instead of morphing toward the hidden section's.
+      const target = off ? uniforms.uShape.value : targetShape();
       uniforms.uShape.value += (target - uniforms.uShape.value) * (reduced ? 1 : Math.min(1, dt * 2.2));
       // Narrow screens put text on top of the shapes, so keep them faint there.
       // Fade out entirely where a section brings its own visual: the flythrough (1) and the Toolkit figure (4).
       const shape = uniforms.uShape.value;
-      const targetOpacity = fieldOff()
+      const targetOpacity = off
         ? 0
         : (window.innerWidth < 768 ? 0.35 : 1) *
           Math.min(1, Math.abs(shape - 1) * 1.5, Math.abs(shape - 4) * 1.5) *
           // The wave sits under the Archive's long index, so it stays faint there.
           (1 - 0.5 * Math.max(0, 1 - Math.abs(shape - 2)));
-      uniforms.uOpacity.value += (targetOpacity - uniforms.uOpacity.value) * Math.min(1, dt * 1.2);
+      // Fade out quickly, fade back in gently.
+      const rate = targetOpacity < uniforms.uOpacity.value ? 5 : 1.2;
+      uniforms.uOpacity.value += (targetOpacity - uniforms.uOpacity.value) * Math.min(1, dt * rate);
       mouse.x += (mouse.tx - mouse.x) * 0.12;
       mouse.y += (mouse.ty - mouse.y) * 0.12;
       uniforms.uMouse.value.set(mouse.x, mouse.y);
