@@ -160,7 +160,18 @@ html.lenis body {
   html.js summary {
     cursor: none;
   }
+  html.js :is(input, textarea, select, [contenteditable]) { cursor: text; }
 }
+
+/* Cursor: a dot inside four corner ticks (see Cursor.tsx) */
+.cursor-dot { width: 5px; height: 5px; background: var(--accent); }
+.cursor-frame { transform-origin: center; }
+.cursor-frame i { position: absolute; width: 7px; height: 7px; border: 0 solid var(--accent); transition: width 0.3s, height 0.3s; }
+.cursor-frame i:nth-child(1) { top: 0; left: 0; border-top-width: 1.5px; border-left-width: 1.5px; }
+.cursor-frame i:nth-child(2) { top: 0; right: 0; border-top-width: 1.5px; border-right-width: 1.5px; }
+.cursor-frame i:nth-child(3) { bottom: 0; left: 0; border-bottom-width: 1.5px; border-left-width: 1.5px; }
+.cursor-frame i:nth-child(4) { bottom: 0; right: 0; border-bottom-width: 1.5px; border-right-width: 1.5px; }
+.cursor-frame[data-hot] i { width: 11px; height: 11px; }
 
 /* Project flythrough: a plain list by default, a pinned 3D flight when JS + motion are available */
 .fly-stage {
