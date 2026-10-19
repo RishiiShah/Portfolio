@@ -16,7 +16,7 @@ gsap.registerPlugin(ScrollTrigger);
 // three.js loads after hydration, off the critical path.
 const Flight = dynamic(() => import("../flight/Flight").then((m) => m.Flight), { ssr: false });
 
-const LINK_LABEL = { demo: "Live", source: "Source", paper: "Paper", blog: "Writeup" } as const;
+const LINK_LABEL = { demo: "Live", video: "Video", source: "Source", paper: "Paper", blog: "Writeup" } as const;
 const SCROLL_PER_STATION = 1.5; // viewport heights of scrolling per project
 const GLIDE_SECONDS = 2; // one project to the next
 

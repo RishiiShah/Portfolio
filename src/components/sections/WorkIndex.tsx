@@ -5,7 +5,7 @@ import { useState } from "react";
 import { projects, type Project } from "@/data";
 import { cn } from "@/lib/utils";
 
-const LINK_LABEL = { demo: "Live", source: "Source", paper: "Paper", blog: "Writeup" } as const;
+const LINK_LABEL = { demo: "Live", video: "Video", source: "Source", paper: "Paper", blog: "Writeup" } as const;
 const FILTERS = ["All", ...Array.from(new Set(projects.flatMap((p) => p.tags)))];
 
 export function WorkIndex() {
