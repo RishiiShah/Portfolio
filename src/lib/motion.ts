@@ -11,8 +11,19 @@ export const motion = {
 export const STACKED = "(max-width: 767px), (max-width: 1100px) and (orientation: portrait)";
 export const isStacked = () => window.matchMedia(STACKED).matches;
 
+interface GlideOptions {
+  easing?: (t: number) => number;
+  /** Ignore user scrolling until the glide lands. */
+  lock?: boolean;
+  onComplete?: () => void;
+}
+
 /** Smooth-scroll to a page offset, using Lenis when it's running. */
-export function scrollToY(y: number, duration = 1.4) {
-  if (motion.lenis) motion.lenis.scrollTo(y, { duration });
-  else window.scrollTo({ top: y });
+export function scrollToY(y: number, duration = 1.4, { easing, lock, onComplete }: GlideOptions = {}) {
+  if (motion.lenis) {
+    motion.lenis.scrollTo(y, { duration, easing, lock, onComplete: () => onComplete?.() });
+    return;
+  }
+  window.scrollTo({ top: y, behavior: "smooth" });
+  if (onComplete) window.setTimeout(onComplete, duration * 1000);
 }

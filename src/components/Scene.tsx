@@ -17,8 +17,8 @@ const TUNNEL_LENGTH = 36;
 const OFFSETS: [number, number][] = [
   [1.9, 0.1],
   [0, 0],
-  [0, -1.1],
-  [2.3, 0],
+  [0, -2.95],
+  [3.4, 0],
   [2.2, 0],
   [0, 0],
 ];
@@ -281,7 +281,10 @@ export function Scene() {
       const shape = uniforms.uShape.value;
       const targetOpacity = fieldOff()
         ? 0
-        : (window.innerWidth < 768 ? 0.35 : 1) * Math.min(1, Math.abs(shape - 1) * 1.5, Math.abs(shape - 4) * 1.5);
+        : (window.innerWidth < 768 ? 0.35 : 1) *
+          Math.min(1, Math.abs(shape - 1) * 1.5, Math.abs(shape - 4) * 1.5) *
+          // The wave sits under the Archive's long index, so it stays faint there.
+          (1 - 0.5 * Math.max(0, 1 - Math.abs(shape - 2)));
       uniforms.uOpacity.value += (targetOpacity - uniforms.uOpacity.value) * Math.min(1, dt * 1.2);
       mouse.x += (mouse.tx - mouse.x) * 0.12;
       mouse.y += (mouse.ty - mouse.y) * 0.12;

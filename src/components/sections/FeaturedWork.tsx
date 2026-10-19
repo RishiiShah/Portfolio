@@ -10,12 +10,12 @@ import { stationVisibility } from "@/lib/flight";
 import { motion, scrollToY } from "@/lib/motion";
 import { RevealText } from "../anim";
 import { Flight } from "../flight/Flight";
-import { hueOf } from "@/lib/hues";
 
 gsap.registerPlugin(ScrollTrigger);
 
 const LINK_LABEL = { demo: "Live", source: "Source", paper: "Paper", blog: "Writeup" } as const;
 const SCROLL_PER_STATION = 1.5; // viewport heights of scrolling per project
+const GLIDE_SECONDS = 1.8; // one project to the next
 
 const shortTitle = (t: string) => t.split(/:| via | & /)[0];
 
@@ -34,6 +34,7 @@ export function FeaturedWork({ items }: { items: Project[] }) {
   const trigger = useRef<ScrollTrigger | null>(null);
   const slugs = useMemo(() => items.map((p) => p.slug), [items]);
   const legs = items.length;
+  const glideTo = useRef<((st: ScrollTrigger, station: number) => void) | null>(null);
 
   useGSAP(
     () => {
@@ -48,7 +49,9 @@ export function FeaturedWork({ items }: { items: Project[] }) {
           panels.forEach((panel, i) => {
             const v = stationVisibility(f, i);
             panel.style.opacity = String(v);
-            panel.style.setProperty("--fly-y", `${(f - (i + 1)) * -120}px`);
+            panel.style.setProperty("--fly-y", `${(f - (i + 1)) * -60}px`);
+            // Cards soften as they leave and sharpen as they arrive.
+            panel.style.filter = v > 0.99 || v < 0.01 ? "" : `blur(${((1 - v) * 6).toFixed(1)}px)`;
             panel.style.visibility = v < 0.01 ? "hidden" : "visible";
             panel.style.pointerEvents = v > 0.6 ? "auto" : "none";
           });
@@ -59,15 +62,28 @@ export function FeaturedWork({ items }: { items: Project[] }) {
           if (bar.current) bar.current.style.transform = `scaleY(${progress})`;
         };
 
-        // Once scrolling settles, glide to the nearest station so the camera never rests mid-flight.
-        let settle = 0;
-        const snap = () => {
-          const st = trigger.current;
-          if (!st?.isActive) return;
+        // Paged flight: one scroll gesture glides to the next (or previous) project and
+        // input is locked until it lands, so the camera never rests between two projects.
+        // Scrolling up from the first project or down past the last leaves the section.
+        let home = 0;
+        let gliding = false;
+        const glide = (st: ScrollTrigger, station: number) => {
+          gliding = true;
+          home = station;
+          scrollToY(st.start + (station / legs) * (st.end - st.start), GLIDE_SECONDS, {
+            easing: (t) => t,
+            lock: true,
+            onComplete: () => (gliding = false),
+          });
+        };
+        glideTo.current = glide;
+        const steer = (st: ScrollTrigger) => {
+          if (gliding) return;
           const f = st.progress * legs;
-          const station = Math.round(f);
-          if (station < 1 || Math.abs(f - station) < 0.01) return;
-          scrollToY(st.start + (station / legs) * (st.end - st.start), 0.9);
+          if (Math.abs(f - home) < 0.03) return;
+          const target = st.direction > 0 ? Math.floor(f) + 1 : Math.ceil(f) - 1;
+          if (target < 1 || target > legs) return;
+          glide(st, target);
         };
 
         trigger.current = ScrollTrigger.create({
@@ -78,14 +94,14 @@ export function FeaturedWork({ items }: { items: Project[] }) {
           scrub: true,
           onUpdate: (self) => {
             render(self.progress);
-            window.clearTimeout(settle);
-            settle = window.setTimeout(snap, 180);
+            steer(self);
           },
+          onEnter: () => (home = 0),
+          onEnterBack: () => (home = legs),
           onRefresh: (self) => render(self.progress),
         });
         render(0);
         return () => {
-          window.clearTimeout(settle);
           trigger.current = null;
         };
       });
@@ -93,10 +109,10 @@ export function FeaturedWork({ items }: { items: Project[] }) {
     { scope: root }
   );
 
-  // Park on station i: the middle of its dwell, at f = i + 1.
+  // Park on station i (f = i + 1), through the same locked glide as scrolling.
   const jumpTo = (i: number) => {
     const st = trigger.current;
-    if (st) scrollToY(st.start + ((i + 1) / legs) * (st.end - st.start));
+    if (st) glideTo.current?.(st, i + 1);
   };
 
   return (
@@ -137,7 +153,6 @@ export function FeaturedWork({ items }: { items: Project[] }) {
                 <button
                   type="button"
                   onClick={() => jumpTo(i)}
-                  style={{ "--hue-dark": hueOf(p.slug).dark, "--hue-light": hueOf(p.slug).light } as React.CSSProperties}
                   className="fly-nav-item group flex items-center gap-2 transition-colors hover:text-ink data-[active]:text-accent"
                 >
                   {shortTitle(p.title)}
@@ -157,7 +172,6 @@ function Panel({ project: p, index, side }: { project: Project; index: number; s
   return (
     <article
       data-side={side}
-      style={{ "--hue-dark": hueOf(p.slug).dark, "--hue-light": hueOf(p.slug).light } as React.CSSProperties}
       className="fly-card group relative flex flex-col border border-line bg-bg/90 p-[clamp(1.25rem,2vw,2.25rem)]"
     >
       <div className="label flex items-center justify-between gap-4 text-ink-3">
