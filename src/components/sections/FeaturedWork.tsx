@@ -15,7 +15,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const LINK_LABEL = { demo: "Live", source: "Source", paper: "Paper", blog: "Writeup" } as const;
 const SCROLL_PER_STATION = 1.5; // viewport heights of scrolling per project
-const GLIDE_SECONDS = 1.8; // one project to the next
+const GLIDE_SECONDS = 2.6; // one project to the next
 
 const shortTitle = (t: string) => t.split(/:| via | & /)[0];
 
