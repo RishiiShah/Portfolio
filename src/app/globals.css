@@ -246,6 +246,7 @@ html.lenis body {
 .space-sky { position: absolute; inset: 0; width: 100%; height: 100%; }
 .space-dots { fill: none; stroke: var(--space-star); stroke-linecap: round; }
 .space-hud { display: none; }
+.space-ship-layer, .space-trails { display: none; }
 .space-star { fill: var(--accent); animation: space-twinkle 4s ease-in-out infinite; }
 @keyframes space-twinkle { 50% { opacity: 0.2; } }
 .space-trail { fill: none; stroke: var(--space-line); stroke-width: 1.5; stroke-dasharray: 2 10; stroke-linecap: round; vector-effect: non-scaling-stroke; }
@@ -335,6 +336,8 @@ html.lenis body {
   }
   .js .space-view { position: absolute; inset: 0; overflow: hidden; }
   .js .space-layer { position: absolute; top: 0; left: 0; will-change: transform; }
+  .js .space-ship-static { display: none; }
+  .js .space-ship-layer, .js .space-trails { display: block; overflow: visible; }
   .js .space-hud { display: flex; }
   .js .space-card {
     position: absolute;
