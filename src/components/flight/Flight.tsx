@@ -119,10 +119,15 @@ export function Flight({ slugs, className }: { slugs: string[]; className?: stri
     const stations = slugs.map(
       (_, i) => new THREE.Vector3((i % 2 ? -1 : 1) * 6, Math.sin(i * 1.7) * 2, -i * SPACING)
     );
+    // Each visual sits in a holder at its station; the holder shrinks on tall, narrow screens.
+    const holders: THREE.Group[] = [];
     const visuals = slugs.map((slug, i) => {
       const v = buildVisual(slug, mats);
-      v.group.position.add(stations[i]);
-      scene.add(v.group);
+      const holder = new THREE.Group();
+      holder.position.copy(stations[i]);
+      holder.add(v.group);
+      holders.push(holder);
+      scene.add(holder);
       return v;
     });
 
@@ -169,6 +174,9 @@ export function Flight({ slugs, className }: { slugs: string[]; className?: stri
       renderer.setSize(w, h, false);
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
+      // The field of view is vertical, so narrow screens see less width: scale objects to fit.
+      const fit = Math.max(0.5, Math.min(1, camera.aspect / 1.15));
+      holders.forEach((g) => g.scale.setScalar(fit));
       const nowNarrow = isStacked();
       if (nowNarrow !== narrow) {
         narrow = nowNarrow;

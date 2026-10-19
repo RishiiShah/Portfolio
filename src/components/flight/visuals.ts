@@ -314,7 +314,7 @@ function commandCenter(m: Materials): Visual {
  */
 function cityRoute(m: Materials): Visual {
   const group = new THREE.Group();
-  group.add(plate(m, 6.4, 5));
+  group.add(plate(m, 7.2, 5.4));
   const cols = 6;
   const rows = 5;
   const step = 0.95;
@@ -348,14 +348,16 @@ function cityRoute(m: Materials): Visual {
   const crowd = [0.5, 0.75, 0.3, 0.6, 0.9];
   const marks = [0, 2, 3, 5].map((k, n) => {
     const disc = cyl(m, 0.18, 0.03, stops[k].x, 0.14, stops[k].z, false, 24);
-    const chart = bars(m, crowd.map((h, j) => 0.12 + h * 0.5 * (1 + ((j + n) % 3) * 0.2)), stops[k].x + 0.2, 0.14, stops[k].z + 0.22);
+    // Charts sit on the inner side of their stop so they stay on the plate.
+    const cx = stops[k].x > 0 ? stops[k].x - 0.8 : stops[k].x + 0.2;
+    const chart = bars(m, crowd.map((h, j) => 0.12 + h * 0.5 * (1 + ((j + n) % 3) * 0.2)), cx, 0.14, stops[k].z + 0.22);
     group.add(disc, ...chart);
     return { k, disc, quiet: chart[2] };
   });
   const walker = solid(new THREE.SphereGeometry(0.11, 16, 12), m, true);
   const halo = glow(m, 0.9);
   group.add(walker, halo);
-  const sway = pose(group, 0.55, 0.8, 0.6);
+  const sway = pose(group, 0.55, 0.72, 0.6);
   const pos = new THREE.Vector3();
   return {
     group,
