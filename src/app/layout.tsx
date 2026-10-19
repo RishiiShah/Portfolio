@@ -116,6 +116,8 @@ export const metadata: Metadata = {
     apple: [{ url: "/apple-icon", sizes: "180x180", type: "image/png" }],
   },
   manifest: "/manifest.webmanifest",
+  // Google Search Console's HTML-tag check, if that's the method used (DNS needs nothing here).
+  ...(process.env.GOOGLE_SITE_VERIFICATION && { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } }),
 };
 
 export const viewport: Viewport = {
