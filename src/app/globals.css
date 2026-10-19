@@ -172,6 +172,9 @@ html.lenis body {
 .cursor-frame i:nth-child(3) { bottom: 0; left: 0; border-bottom-width: 1.5px; border-left-width: 1.5px; }
 .cursor-frame i:nth-child(4) { bottom: 0; right: 0; border-bottom-width: 1.5px; border-right-width: 1.5px; }
 .cursor-frame[data-hot] i { width: 11px; height: 11px; }
+.cursor-dot, .cursor-frame i { transition: background-color 0.2s, border-color 0.2s, width 0.3s, height 0.3s; }
+.cursor-dot[data-contrast] { background: var(--bg); }
+.cursor-frame[data-contrast] i { border-color: var(--bg); }
 
 /* Project flythrough: a plain list by default, a pinned 3D flight when JS + motion are available */
 .fly-stage {
