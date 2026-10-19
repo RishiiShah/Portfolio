@@ -165,7 +165,7 @@ export const experience: ExperienceItem[] = [
 // ─── Projects ────────────────────────────────────────────────────────────────
 
 export interface ProjectLink {
-  type: "demo" | "source" | "paper" | "blog";
+  type: "demo" | "video" | "source" | "paper" | "blog";
   url: string;
 }
 
@@ -208,7 +208,7 @@ export const projects: Project[] = [
     impact:
       "Won the Sevaro / Rutgers Health Hack: detects breaching consults, demand surges, and coverage gaps up to 90 minutes ahead, then proposes the cheapest safe fix and runs it end to end with an append-only audit log.",
     links: [
-      { type: "demo", url: "https://cerevia.dev" },
+      { type: "video", url: "https://youtu.be/FweJcTVSq0c" },
       { type: "source", url: "https://github.com/RishiiShah/Health-Hack" },
     ],
     metrics: [
@@ -305,7 +305,6 @@ export const projects: Project[] = [
       "End-to-end interview pipeline for resume PDF parsing, streaming LLM responses via Groq, transcript and evaluation persistence, shareable results, and S3 multipart recording uploads.",
     links: [
       { type: "demo", url: "https://snapinterview.app" },
-      { type: "source", url: "https://github.com/RishiiShah/SnapInterview" },
     ],
     featured: false,
     metrics: [

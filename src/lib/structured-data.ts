@@ -120,6 +120,7 @@ function projectSchemas(site: string): JsonLd[] {
     .map((project) => {
       const source = project.links?.find((l) => l.type === "source")?.url;
       const demo = project.links?.find((l) => l.type === "demo")?.url;
+      const video = project.links?.find((l) => l.type === "video")?.url;
       const paper = project.links?.find((l) => l.type === "paper")?.url;
       return {
         "@type": "SoftwareSourceCode",
@@ -134,7 +135,7 @@ function projectSchemas(site: string): JsonLd[] {
         author: { "@id": `${site}/#person` },
         creator: { "@id": `${site}/#person` },
         url: `${site}/#work`,
-        sameAs: [source, demo, paper].filter(Boolean),
+        sameAs: [source, demo, video, paper].filter(Boolean),
         mainEntityOfPage: { "@id": `${site}/#profile` },
       };
     });
