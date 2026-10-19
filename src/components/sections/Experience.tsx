@@ -145,7 +145,16 @@ function along(leg: number, frac: number) {
   const f = (target - cum[i - 1]) / (cum[i] - cum[i - 1] || 1);
   const x = pts[i - 1][0] + (pts[i][0] - pts[i - 1][0]) * f;
   const y = pts[i - 1][1] + (pts[i][1] - pts[i - 1][1]) * f;
-  const angle = (Math.atan2(pts[i][1] - pts[i - 1][1], pts[i][0] - pts[i - 1][0]) * 180) / Math.PI;
+  // Heading from the curve's exact tangent at the matching parameter, so it turns smoothly.
+  const [a, b, c, d] = legs[leg];
+  const tt = (i - 1 + f) / SAMPLES;
+  const u = 1 - tt;
+  const k0 = 3 * u * u;
+  const k1 = 6 * u * tt;
+  const k2 = 3 * tt * tt;
+  const dx = k0 * (b[0] - a[0]) + k1 * (c[0] - b[0]) + k2 * (d[0] - c[0]);
+  const dy = k0 * (b[1] - a[1]) + k1 * (c[1] - b[1]) + k2 * (d[1] - c[1]);
+  const angle = (Math.atan2(dy, dx) * 180) / Math.PI;
   return { x, y, angle };
 }
 const legD = (leg: V[]) => `M${leg[0].join(" ")}C${leg[1].join(" ")} ${leg[2].join(" ")} ${leg[3].join(" ")}`;
@@ -509,9 +518,10 @@ function Debris() {
 }
 
 const PARKED = shipMarkup(0);
+const SHIP_BOX = 240; // world units of the ship's own layer, enough for the mesh and its burn
 
 /** The ship: a 3D mesh (see ship.ts) redrawn as it turns, inside the idle float. */
-function Ship({ model }: { model: React.Ref<SVGGElement> }) {
+function Ship({ model }: { model?: React.Ref<SVGGElement> }) {
   return (
     <g className="space-ship-bob">
       <g ref={model} dangerouslySetInnerHTML={{ __html: PARKED }} />
@@ -550,6 +560,7 @@ export function Experience() {
   const svg = useRef<SVGSVGElement>(null);
   const ship = useRef<SVGGElement>(null);
   const model = useRef<SVGGElement>(null);
+  const shipLayer = useRef<SVGSVGElement>(null);
   const date = useRef<HTMLSpanElement>(null);
   const counter = useRef<HTMLSpanElement>(null);
   const trigger = useRef<ScrollTrigger | null>(null);
@@ -564,12 +575,14 @@ export function Experience() {
         const planets = gsap.utils.toArray<SVGGElement>(".space-planet, .space-label");
         const trails = gsap.utils.toArray<SVGPathElement>(".space-trail-lit, .space-trail-glow");
         const layers = gsap.utils.toArray<SVGSVGElement>(".space-sky");
-        const scene = [...layers, svg.current].filter((el): el is SVGSVGElement => !!el);
+        const trailLayer = root.current?.querySelector<SVGSVGElement>(".space-trails") ?? null;
+        const scene = [...layers, svg.current, trailLayer].filter((el): el is SVGSVGElement => !!el);
         scene.forEach((el) => el.setAttribute("viewBox", CAM_VIEW));
         let scale = 0;
         const navItems = gsap.utils.toArray<HTMLElement>(".space-nav-item");
         let last = 0;
         let active = 0;
+        const pose = { yaw: 0, bank: 0 };
 
         // Spin the docked planet: its meridians and surface sites turn about the vertical axis.
         const globes = gsap.utils.toArray<SVGGElement>(".space-planet").map((g) => ({
@@ -614,8 +627,12 @@ export function Experience() {
           const yaw = wrap(headingFromScreen(angle)) * w;
           const ahead = wrap(headingFromScreen(along(leg, Math.min(1, eased + 0.02)).angle)) * w;
           const bank = Math.max(-0.7, Math.min(0.7, wrap(ahead - yaw) * 9)) * w;
-          ship.current?.setAttribute("transform", `translate(${x} ${y}) scale(1.6)`);
-          if (model.current) model.current.innerHTML = shipMarkup(yaw, bank);
+          // Redraw the mesh only when its pose has actually changed.
+          if (model.current && (Math.abs(yaw - pose.yaw) > 0.002 || Math.abs(bank - pose.bank) > 0.002)) {
+            model.current.innerHTML = shipMarkup(yaw, bank);
+            pose.yaw = yaw;
+            pose.bank = bank;
+          }
           ship.current?.toggleAttribute("data-burn", eased > 0.02 && eased < 0.98);
           trails.forEach((path) => {
             const i = Number(path.dataset.leg);
@@ -640,6 +657,14 @@ export function Experience() {
               el.style.transform = `translate3d(${((CAM.x - x0 + dx) * k).toFixed(1)}px, ${((CAM.y - y0) * k).toFixed(1)}px, 0)`;
             };
             if (svg.current) move(svg.current, 0);
+            if (trailLayer) move(trailLayer, 0);
+            // The ship has its own small layer at its screen spot, so flying never repaints the world.
+            const sl = shipLayer.current;
+            if (sl) {
+              const size = SHIP_BOX * k;
+              sl.style.width = sl.style.height = `${size}px`;
+              sl.style.transform = `translate3d(${((x - x0) * k - size / 2).toFixed(1)}px, ${((y - y0) * k - size / 2).toFixed(1)}px, 0)`;
+            }
             // Parallax: farther star layers ride along with the camera by their depth.
             layers.forEach((el) => move(el, x0 * Number(el.dataset.depth)));
           }
@@ -765,13 +790,9 @@ export function Experience() {
               </radialGradient>
             </defs>
 
-            {/* Trajectory: dashed course ahead, lit where the ship has flown */}
+            {/* Trajectory: dashed course ahead (the lit part flown so far is its own layer, below) */}
             {legs.map((leg, i) => (
-              <g key={i}>
-                <path className="space-trail" d={legD(leg)} />
-                <path className="space-trail-glow" data-leg={i} d={legD(leg)} pathLength={1} strokeDasharray="1 1" />
-                <path className="space-trail-lit" data-leg={i} d={legD(leg)} pathLength={1} strokeDasharray="1 1" />
-              </g>
+              <path key={i} className="space-trail" d={legD(leg)} />
             ))}
 
             <Debris />
@@ -791,7 +812,21 @@ export function Experience() {
               </g>
             ))}
 
-            <g ref={ship} className="space-ship" transform={`translate(${parks[0][0]} ${parks[0][1]}) scale(1.6)`}>
+            <g className="space-ship space-ship-static" transform={`translate(${parks[0][0]} ${parks[0][1]}) scale(1.6)`}>
+              <Ship />
+            </g>
+          </svg>
+          {/* The lit trail redraws as the ship flies, so it lives on its own layer above the world */}
+          <svg viewBox={WORLD_VIEW} className="space-layer space-trails" aria-hidden="true">
+            {legs.map((leg, i) => (
+              <g key={i}>
+                <path className="space-trail-glow" data-leg={i} d={legD(leg)} pathLength={1} strokeDasharray="0 1" />
+                <path className="space-trail-lit" data-leg={i} d={legD(leg)} pathLength={1} strokeDasharray="0 1" />
+              </g>
+            ))}
+          </svg>
+          <svg ref={shipLayer} viewBox={`${-SHIP_BOX / 2} ${-SHIP_BOX / 2} ${SHIP_BOX} ${SHIP_BOX}`} className="space-layer iso space-ship-layer" aria-hidden="true">
+            <g ref={ship} className="space-ship" transform="scale(1.6)">
               <Ship model={model} />
             </g>
           </svg>
