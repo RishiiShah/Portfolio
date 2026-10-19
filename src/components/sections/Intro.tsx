@@ -56,7 +56,7 @@ export function Intro() {
           <span>
             <span className="text-accent">(00)</span> Abstract
           </span>
-          <span className="hidden sm:inline">{bio.name} — Portfolio, {new Date().getFullYear()}</span>
+          <span className="hidden sm:inline">{bio.name} · Portfolio, {new Date().getFullYear()}</span>
           <span>p. 01</span>
         </div>
 
@@ -70,12 +70,12 @@ export function Intro() {
           </div>
           <ScrubText
             className="wide text-[clamp(1.9rem,4.4vw,5.25rem)] leading-[1.02] font-semibold tracking-tight md:col-span-9"
-            text="I turn research-grade models into software people rely on — from YOLO pipelines that issue tickets to code graphs that feed coding agents."
+            text="I turn research-grade models into software people rely on: YOLO pipelines that issue tickets, and code graphs that feed coding agents."
           />
         </div>
 
         <div className="intro-kws mt-[8vh] flex flex-wrap items-baseline gap-x-6 gap-y-3 border-y border-line py-4 md:ml-[25%]">
-          <span className="label text-ink-3">Keywords —</span>
+          <span className="label text-ink-3">Keywords:</span>
           {KEYWORDS.map((k, i) => (
             <span key={k} className="intro-kw text-[clamp(1rem,1.3vw,1.3rem)]">
               {k}
@@ -109,7 +109,7 @@ export function Intro() {
                     return (
                       <span
                         key={j.organization}
-                        title={`${j.organization}: ${j.start} – ${j.end}`}
+                        title={`${j.organization}: ${j.start} to ${j.end}`}
                         className={`intro-bar-x absolute h-3 origin-left ${i === jobs.length - 1 ? "bg-accent" : "bg-ink"}`}
                         style={{ left: `${left}%`, width: `${width}%`, top: i % 2 ? "0.25rem" : "1.5rem" }}
                       />

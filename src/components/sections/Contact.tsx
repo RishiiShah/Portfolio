@@ -98,7 +98,7 @@ export function Contact() {
               </button>
             </Magnetic>
             <p aria-live="polite" className="text-sm text-ink-2">
-              {status === "sent" && "Thanks — message received."}
+              {status === "sent" && "Thanks, message received."}
               {status === "error" && "That didn't go through. Try LinkedIn instead."}
             </p>
           </div>
