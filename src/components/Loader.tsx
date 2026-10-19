@@ -6,7 +6,7 @@ import { useGSAP } from "@gsap/react";
 
 export const INTRO_DONE = "intro:done";
 
-/** Short intro: a counter runs to 100, then the panel wipes upward. */
+/** Short intro, once per browser session: a counter runs to 100, then the panel wipes upward. */
 export function Loader() {
   const root = useRef<HTMLDivElement>(null);
   const count = useRef<HTMLSpanElement>(null);
@@ -17,7 +17,11 @@ export function Loader() {
         document.documentElement.dataset.intro = "done";
         window.dispatchEvent(new Event(INTRO_DONE));
       };
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      // Reduced motion, or already played this session (the head script marks it): no intro.
+      if (
+        document.documentElement.classList.contains("intro-seen") ||
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ) {
         gsap.set(root.current, { display: "none" });
         done();
         return;
