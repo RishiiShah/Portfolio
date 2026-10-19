@@ -154,10 +154,9 @@ html.lenis body {
 }
 
 @media (pointer: fine) {
-  html.js body,
-  html.js a,
-  html.js button,
-  html.js summary {
+  /* The custom cursor (Cursor.tsx) replaces the native one everywhere, including clickable drawings */
+  html.js,
+  html.js * {
     cursor: none;
   }
   html.js :is(input, textarea, select, [contenteditable]) { cursor: text; }

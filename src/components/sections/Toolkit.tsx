@@ -209,38 +209,43 @@ export function Skills() {
             })}
           </div>
 
-          {skills.map((g, i) => (
-            <div
-              key={g.category}
-              role="tabpanel"
-              id={`tool-panel-${i}`}
-              aria-labelledby={`tool-tab-${i}`}
-              hidden={i !== active}
-              className="mt-8 border-t border-line pt-6"
-            >
-              <div className="flex items-baseline justify-between gap-4">
-                <h3 className="wide text-[clamp(1.6rem,2.6vw,2.8rem)] leading-none font-bold tracking-tight">{g.category}</h3>
-                <span className="label shrink-0 whitespace-nowrap text-ink-3">
-                  Layer {String(i + 1).padStart(2, "0")} / {String(skills.length).padStart(2, "0")}
-                </span>
+          {/* All panels share one grid cell, so the block is always as tall as the
+              longest layer and nothing shifts when switching. */}
+          <div className="mt-8 grid">
+            {skills.map((g, i) => (
+              <div
+                key={g.category}
+                role="tabpanel"
+                id={`tool-panel-${i}`}
+                aria-labelledby={`tool-tab-${i}`}
+                aria-hidden={i !== active}
+                inert={i !== active}
+                className={`[grid-area:1/1] border-t border-line pt-6 ${i === active ? "" : "invisible"}`}
+              >
+                <div className="flex items-baseline justify-between gap-4">
+                  <h3 className="wide text-[clamp(1.6rem,2.6vw,2.8rem)] leading-none font-bold tracking-tight">{g.category}</h3>
+                  <span className="label shrink-0 whitespace-nowrap text-ink-3">
+                    Layer {String(i + 1).padStart(2, "0")} / {String(skills.length).padStart(2, "0")}
+                  </span>
+                </div>
+                <ul key={i === active ? "on" : "off"} className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                  {g.items.map((item, k) => (
+                    <li
+                      key={item}
+                      onPointerEnter={() => setPeak(k)}
+                      onPointerLeave={() => setPeak(-1)}
+                      style={{ animationDelay: `${k * 35}ms` }}
+                      className="tool-module group flex items-center gap-3 border border-line px-3 py-3 transition-colors hover:border-accent"
+                    >
+                      <span className="tool-led size-1.5 shrink-0" />
+                      <span className="min-w-0 truncate text-[15px] leading-tight text-ink">{item}</span>
+                      <span className="label ml-auto text-ink-3 group-hover:text-accent">{String(k + 1).padStart(2, "0")}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
-              <ul className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3">
-                {g.items.map((item, k) => (
-                  <li
-                    key={item}
-                    onPointerEnter={() => setPeak(k)}
-                    onPointerLeave={() => setPeak(-1)}
-                    style={{ animationDelay: `${k * 35}ms` }}
-                    className="tool-module group flex items-center gap-3 border border-line px-3 py-3 transition-colors hover:border-accent"
-                  >
-                    <span className="tool-led size-1.5 shrink-0" />
-                    <span className="min-w-0 truncate text-[15px] leading-tight text-ink">{item}</span>
-                    <span className="label ml-auto text-ink-3 group-hover:text-accent">{String(k + 1).padStart(2, "0")}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </Section>
