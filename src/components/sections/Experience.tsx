@@ -92,6 +92,7 @@ const STOPS: Stop[] = [
 const N = STOPS.length;
 
 const SCROLL_PER_STOP = 1.2; // viewport heights of scrolling per stop
+const GLIDE_SECONDS = 2.8; // one stop to the next
 
 // ─── The system ──────────────────────────────────────────────────────────────
 // One planet per stop, left to right. The ship parks below each planet and
@@ -552,6 +553,7 @@ export function Experience() {
   const date = useRef<HTMLSpanElement>(null);
   const counter = useRef<HTMLSpanElement>(null);
   const trigger = useRef<ScrollTrigger | null>(null);
+  const glideTo = useRef<((st: ScrollTrigger, stop: number) => void) | null>(null);
 
   useGSAP(
     () => {
@@ -649,9 +651,12 @@ export function Experience() {
             g.toggleAttribute("data-passed", p > i + 0.02);
           });
           cards.forEach((card, i) => {
-            const v = Math.max(0, Math.min(1, (0.45 - Math.abs(p - i)) / 0.2));
+            // Full while docked, easing out by mid-flight; soft blur in between.
+            const d = Math.max(0, Math.min(1, (Math.abs(p - i) - 0.08) / 0.4));
+            const v = 1 - d * d * (3 - 2 * d);
             card.style.opacity = String(v);
-            card.style.setProperty("--card-y", `${(p - i) * -80}px`);
+            card.style.setProperty("--card-y", `${(p - i) * -50}px`);
+            card.style.filter = v > 0.99 || v < 0.01 ? "" : `blur(${((1 - v) * 6).toFixed(1)}px)`;
             card.style.visibility = v < 0.01 ? "hidden" : "visible";
             card.style.pointerEvents = v > 0.6 ? "auto" : "none";
           });
@@ -660,13 +665,41 @@ export function Experience() {
           if (counter.current) counter.current.textContent = String(now + 1).padStart(2, "0");
         };
 
+        // Paged voyage: each scroll gesture flies to the next (or previous) stop with input
+        // locked until the ship docks. Scrolling past either end leaves the section.
+        let home = 0;
+        let gliding = false;
+        const glide = (st: ScrollTrigger, stop: number) => {
+          gliding = true;
+          home = stop;
+          scrollToY(st.start + (stop / (N - 1)) * (st.end - st.start), GLIDE_SECONDS, {
+            easing: (t) => t,
+            lock: true,
+            onComplete: () => (gliding = false),
+          });
+        };
+        glideTo.current = glide;
+        const steer = (st: ScrollTrigger) => {
+          if (gliding) return;
+          const s = st.progress * (N - 1);
+          if (Math.abs(s - home) < 0.03) return;
+          const target = st.direction > 0 ? Math.floor(s) + 1 : Math.ceil(s) - 1;
+          if (target < 0 || target > N - 1) return;
+          glide(st, target);
+        };
+
         trigger.current = ScrollTrigger.create({
           trigger: stage.current,
           pin: true,
           start: "top top",
           end: () => `+=${window.innerHeight * (N - 1) * SCROLL_PER_STOP}`,
           scrub: true,
-          onUpdate: (self) => render(self.progress),
+          onUpdate: (self) => {
+            render(self.progress);
+            steer(self);
+          },
+          onEnter: () => (home = 0),
+          onEnterBack: () => (home = N - 1),
           onRefresh: (self) => render(self.progress),
         });
         render(0);
@@ -690,7 +723,7 @@ export function Experience() {
 
   const jumpTo = (i: number) => {
     const st = trigger.current;
-    if (st) scrollToY(st.start + (i / (N - 1)) * (st.end - st.start));
+    if (st) glideTo.current?.(st, i);
   };
 
   return (
