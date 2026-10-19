@@ -7,14 +7,16 @@ interface SectionProps {
   title: string;
   meta?: string;
   shape?: number;
+  /** "off" hides the background field while this section is on screen (it brings its own visual). */
+  field?: "off";
   className?: string;
   children: ReactNode;
 }
 
 /** Full-bleed section with an oversized, left-anchored title. */
-export function Section({ id, index, title, meta, shape, className, children }: SectionProps) {
+export function Section({ id, index, title, meta, shape, field, className, children }: SectionProps) {
   return (
-    <section id={id} data-shape={shape} className={`relative px-[max(1rem,4vw)] py-[16vh] ${className ?? ""}`}>
+    <section id={id} data-shape={shape} data-field={field} className={`relative px-[max(1rem,4vw)] py-[16vh] ${className ?? ""}`}>
       <div className="label flex items-center justify-between border-t border-line pt-4 text-ink-3">
         <span>
           <span className="text-accent">({index})</span> {title}

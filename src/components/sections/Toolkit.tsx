@@ -75,7 +75,7 @@ export function Skills() {
   ];
 
   return (
-    <Section id="skills" index="04" title="Toolkit" meta={`${total} tools · ${skills.length} layers`} shape={4}>
+    <Section id="skills" index="04" title="Toolkit" meta={`${total} tools · ${skills.length} layers`} shape={4} field="off">
       <div className="grid gap-[6vh] md:grid-cols-12 md:gap-[4vw]">
         <figure className="md:col-span-5 md:self-start md:sticky md:top-[14vh]">
           <svg
