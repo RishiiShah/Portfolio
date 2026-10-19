@@ -267,12 +267,12 @@ export function Scene() {
       return { shape, off };
     };
 
-    const clock = new THREE.Clock();
+    const timer = new THREE.Timer();
     let raf = 0;
     let blank = false;
     const tick = () => {
       raf = requestAnimationFrame(tick);
-      const dt = Math.min(clock.getDelta(), 0.05);
+      const dt = Math.min(timer.update().getDelta(), 0.05);
       if (!reduced) uniforms.uTime.value += dt;
       const { shape: next, off } = survey();
       // While hidden, hold the current shape instead of morphing toward the hidden section's.

@@ -136,7 +136,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: 'document.documentElement.classList.add("js")' }} />
+        {/* Before first paint: mark JS, and skip the intro after the first load of a browser session. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              'var d=document.documentElement;d.classList.add("js");try{if(sessionStorage.getItem("intro"))d.classList.add("intro-seen");else sessionStorage.setItem("intro","1")}catch(e){}',
+          }}
+        />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: buildStructuredData() }}

@@ -200,7 +200,7 @@ export function Flight({ slugs, className }: { slugs: string[]; className?: stri
     io.observe(el);
 
     const legs = slugs.length;
-    const clock = new THREE.Clock();
+    const timer = new THREE.Timer();
     const pos = new THREE.Vector3();
     const ahead = new THREE.Vector3();
     const look = new THREE.Vector3();
@@ -210,7 +210,7 @@ export function Flight({ slugs, className }: { slugs: string[]; className?: stri
 
     const tick = () => {
       raf = requestAnimationFrame(tick);
-      const dt = Math.min(clock.getDelta(), 0.05);
+      const dt = Math.min(timer.update().getDelta(), 0.05);
       if (!visible) return;
       time += dt;
       // Lenis already smooths the scroll; easing again here would leave the camera behind the panels.

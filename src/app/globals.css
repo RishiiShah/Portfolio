@@ -118,7 +118,8 @@ body {
   }
 }
 
-html:not(.js) .loader {
+html:not(.js) .loader,
+html.intro-seen .loader {
   display: none;
 }
 
