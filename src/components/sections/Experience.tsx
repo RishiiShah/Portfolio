@@ -8,7 +8,7 @@ import { useGSAP } from "@gsap/react";
 import { education, experience, publications, teaching } from "@/data";
 import { toIsoDate } from "@/lib/dates";
 import { D, isoFrame } from "@/lib/iso";
-import { isStacked, scrollToY } from "@/lib/motion";
+import { isStacked, motion, scrollToY } from "@/lib/motion";
 import { headingFromScreen, shipMarkup } from "./ship";
 import { RevealText } from "../anim";
 
@@ -705,7 +705,7 @@ export function Experience() {
         };
         glideTo.current = glide;
         const steer = (st: ScrollTrigger) => {
-          if (gliding) return;
+          if (gliding || motion.travelling) return;
           const s = st.progress * (N - 1);
           if (Math.abs(s - home) < 0.03) return;
           const target = st.direction > 0 ? Math.floor(s) + 1 : Math.ceil(s) - 1;

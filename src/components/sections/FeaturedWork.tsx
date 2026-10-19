@@ -78,7 +78,7 @@ export function FeaturedWork({ items }: { items: Project[] }) {
         };
         glideTo.current = glide;
         const steer = (st: ScrollTrigger) => {
-          if (gliding) return;
+          if (gliding || motion.travelling) return;
           const f = st.progress * legs;
           if (Math.abs(f - home) < 0.03) return;
           const target = st.direction > 0 ? Math.floor(f) + 1 : Math.ceil(f) - 1;

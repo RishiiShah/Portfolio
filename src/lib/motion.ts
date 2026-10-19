@@ -5,6 +5,8 @@ export const motion = {
   /** Flythrough progress, 0 … number of legs (see lib/flight.ts). */
   flight: 0,
   lenis: null as Lenis | null,
+  /** True while an in-page link is scrolling the page; pinned sections stop paging until it lands. */
+  travelling: false,
 };
 
 /** Phones and upright tablets: the scroll scenes stack the drawing above the card. Mirrors the `stack` CSS variant. */

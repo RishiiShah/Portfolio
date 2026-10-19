@@ -12,13 +12,39 @@ gsap.registerPlugin(ScrollTrigger);
 export function SmoothScroll() {
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const lenis = new Lenis({ lerp: 0.1, anchors: { offset: -56 } });
+    const lenis = new Lenis({ lerp: 0.1 });
     motion.lenis = lenis;
     lenis.on("scroll", ScrollTrigger.update);
     const raf = (time: number) => lenis.raf(time * 1000);
     gsap.ticker.add(raf);
     gsap.ticker.lagSmoothing(0);
+
+    // In-page links travel straight to their section in one locked glide, flagged so the
+    // paged sections they pass through (Selected work, Experience) don't stop the trip.
+    const onClick = (e: MouseEvent) => {
+      if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      const link = (e.target as Element).closest<HTMLAnchorElement>('a[href^="#"]');
+      const hash = link?.getAttribute("href");
+      if (!hash) return;
+      const target = hash === "#" || hash === "#top" ? 0 : document.querySelector<HTMLElement>(hash);
+      if (target === null) return;
+      e.preventDefault();
+      motion.travelling = true;
+      lenis.scrollTo(target, {
+        offset: target === 0 ? 0 : -56,
+        duration: 1.6,
+        easing: (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2),
+        lock: true,
+        onComplete: () => {
+          motion.travelling = false;
+          if (target !== 0) target.focus({ preventScroll: true });
+        },
+      });
+    };
+    document.addEventListener("click", onClick);
+
     return () => {
+      document.removeEventListener("click", onClick);
       gsap.ticker.remove(raf);
       motion.lenis = null;
       lenis.destroy();
