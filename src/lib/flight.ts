@@ -6,12 +6,13 @@
  */
 export function legAt(f: number, legs: number) {
   const leg = Math.max(0, Math.min(legs - 1, Math.floor(f)));
-  const t = Math.max(0, Math.min(1, (f - leg - 0.2) / 0.6));
+  const t = Math.max(0, Math.min(1, (f - leg - 0.08) / 0.84));
   return { leg, eased: t * t * (3 - 2 * t) };
 }
 
-/** How visible station i's panel is at progress f: fully shown while the camera is parked there (|d| ≤ 0.2), gone soon after it leaves. */
+/** How visible station i's panel is at progress f: fully shown while parked there (|d| ≤ 0.12), easing out by mid-flight. */
 export function stationVisibility(f: number, i: number) {
   const d = Math.abs(f - (i + 1));
-  return Math.max(0, Math.min(1, (0.34 - d) / 0.14));
+  const t = Math.max(0, Math.min(1, (d - 0.12) / 0.38));
+  return 1 - t * t * (3 - 2 * t);
 }

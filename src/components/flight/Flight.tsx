@@ -5,7 +5,6 @@ import * as THREE from "three";
 import { legAt } from "@/lib/flight";
 import { isStacked, motion } from "@/lib/motion";
 import { buildVisual, palette, type Materials } from "./visuals";
-import { hueOf } from "@/lib/hues";
 
 const SPACING = 30; // distance between stations along -z
 const VIEW_DISTANCE = 8.5; // how far in front of each visual the camera parks
@@ -38,6 +37,9 @@ function buildLayout(stations: THREE.Vector3[], narrow: boolean): Layout {
   );
   return { curve, stationT, look };
 }
+
+/** Radius around each project object where the route is not drawn. */
+const TRAIL_GAP = 4.6;
 
 function dotTexture() {
   const c = document.createElement("canvas");
@@ -81,19 +83,6 @@ export function Flight({ slugs, className }: { slugs: string[]; className?: stri
       // Light spill draws over geometry (no depth test), so it never gets cut by a face.
       glow: new THREE.SpriteMaterial({ map: dot, transparent: true, depthTest: false, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0.35 }),
     };
-    // Each project draws in its own hue: its own copy of every material.
-    const tinted: Materials[] = slugs.map(() => ({
-      line: mats.line.clone(),
-      lineDim: mats.lineDim.clone(),
-      lineAccent: mats.lineAccent.clone(),
-      point: mats.point.clone(),
-      pointAccent: mats.pointAccent.clone(),
-      face: mats.face.clone(),
-      faceLit: mats.faceLit.clone(),
-      glow: mats.glow.clone(),
-    }));
-    // Canvas screens read the shared palette, so each object's colours are swapped in before it repaints.
-    const screenInk = slugs.map(() => ({ accent: "", dim: "" }));
     const trailMat = new THREE.LineDashedMaterial({ dashSize: 0.5, gapSize: 0.35, transparent: true, opacity: 0.9 });
     const dustMat = new THREE.PointsMaterial({ size: 0.05, map: dot, transparent: true, depthWrite: false, opacity: 0.55 });
 
@@ -102,16 +91,18 @@ export function Flight({ slugs, className }: { slugs: string[]; className?: stri
       const ink = new THREE.Color(s.getPropertyValue("--ink").trim());
       const accent = new THREE.Color(s.getPropertyValue("--accent").trim());
       (scene.fog as THREE.Fog).color.set(s.getPropertyValue("--bg").trim());
-      mats.line.color.copy(ink);
-      mats.lineDim.color.copy(ink);
-      mats.point.color.copy(ink);
-      mats.lineAccent.color.copy(accent);
+      const dark = document.documentElement.dataset.theme === "dark";
+      const accentHi = accent.clone().lerp(new THREE.Color("#ffffff"), 0.45); // as --iso-accent-hi
+      // Hairlines are ink drawn toward the site accent; live parts are the accent; signal is its highlight.
+      mats.line.color.copy(ink).lerp(accent, dark ? 0.38 : 0.28);
+      mats.lineDim.color.copy(accent);
+      mats.point.color.copy(ink).lerp(accent, 0.4);
+      mats.lineAccent.color.copy(dark ? accentHi : accent);
       mats.pointAccent.color.copy(accent);
       mats.face.color.set(s.getPropertyValue("--bg-2").trim());
       mats.faceLit.color.copy(accent);
       mats.glow.color.copy(accent);
       // Iso-glow: light spills only in the dark theme; in light, lit parts are flat accent.
-      const dark = document.documentElement.dataset.theme === "dark";
       mats.glow.opacity = dark ? 0.35 : 0;
       palette.ink = s.getPropertyValue("--ink").trim();
       palette.dim = s.getPropertyValue("--line").trim();
@@ -120,20 +111,6 @@ export function Flight({ slugs, className }: { slugs: string[]; className?: stri
       palette.mono = getComputedStyle(document.body).getPropertyValue("--font-jetbrains").trim() || "monospace";
       trailMat.color.copy(accent);
       dustMat.color.copy(ink);
-      const bg2 = new THREE.Color(s.getPropertyValue("--bg-2").trim());
-      slugs.forEach((slug, i) => {
-        const hue = new THREE.Color(hueOf(slug)[dark ? "dark" : "light"]);
-        const t = tinted[i];
-        // Hairlines take the hue instead of plain ink; faces carry a faint wash of it.
-        t.line.color.copy(ink).lerp(hue, dark ? 0.7 : 0.75);
-        t.lineDim.color.copy(hue);
-        t.point.color.copy(hue);
-        [t.lineAccent, t.pointAccent, t.faceLit, t.glow].forEach((m) => m.color.copy(hue));
-        t.face.color.copy(bg2).lerp(hue, dark ? 0.025 : 0.05);
-        t.glow.opacity = mats.glow.opacity;
-        const hex = hue.getHexString(); // sRGB, as the canvas expects
-        screenInk[i] = { accent: `#${hex}`, dim: `#${hex}61` };
-      });
     };
     applyColors();
     const themeObserver = new MutationObserver(applyColors);
@@ -143,7 +120,7 @@ export function Flight({ slugs, className }: { slugs: string[]; className?: stri
       (_, i) => new THREE.Vector3((i % 2 ? -1 : 1) * 6, Math.sin(i * 1.7) * 2, -i * SPACING)
     );
     const visuals = slugs.map((slug, i) => {
-      const v = buildVisual(slug, tinted[i]);
+      const v = buildVisual(slug, mats);
       v.group.position.add(stations[i]);
       scene.add(v.group);
       return v;
@@ -158,10 +135,20 @@ export function Flight({ slugs, className }: { slugs: string[]; className?: stri
       pathGroup.children.forEach((c) => (c as THREE.Line | THREE.Points).geometry.dispose());
       pathGroup.clear();
       // The flight path itself, drawn as a dashed line just below the camera's route.
+      // It breaks off around each object, so the route never shows through one.
       const trail = layout.curve.getSpacedPoints(1600).map((p) => new THREE.Vector3(p.x, p.y - 1.1, p.z));
-      const trailLine = new THREE.Line(new THREE.BufferGeometry().setFromPoints(trail), trailMat);
-      trailLine.computeLineDistances();
-      pathGroup.add(trailLine);
+      const clear = (p: THREE.Vector3) => stations.every((st) => p.distanceTo(st) > TRAIL_GAP);
+      let run: THREE.Vector3[] = [];
+      const flush = () => {
+        if (run.length > 1) {
+          const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints(run), trailMat);
+          line.computeLineDistances();
+          pathGroup.add(line);
+        }
+        run = [];
+      };
+      trail.forEach((p) => (clear(p) ? run.push(p) : flush()));
+      flush();
       // Dust around the route gives a sense of speed.
       const dust: number[] = [];
       for (let i = 0; i < 4500; i++) {
@@ -245,10 +232,7 @@ export function Flight({ slugs, className }: { slugs: string[]; className?: stri
 
       visuals.forEach((v, i) => {
         // Only animate visuals near the camera.
-        if (Math.abs(stations[i].z - pos.z) < 50) {
-          Object.assign(palette, screenInk[i]);
-          v.update(time);
-        }
+        if (Math.abs(stations[i].z - pos.z) < 50) v.update(time);
       });
       renderer.render(scene, camera);
     };
@@ -268,7 +252,7 @@ export function Flight({ slugs, className }: { slugs: string[]; className?: stri
           o.material.dispose();
         }
       });
-      [...Object.values(mats), ...tinted.flatMap((t) => Object.values(t)), trailMat, dustMat].forEach((m) => m.dispose());
+      [...Object.values(mats), trailMat, dustMat].forEach((m) => m.dispose());
       dot.dispose();
       renderer.dispose();
       renderer.domElement.remove();
