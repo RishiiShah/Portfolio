@@ -1,6 +1,6 @@
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
-import { Scene } from "@/components/Scene";
+import { Scene } from "@/components/SceneLazy";
 import { Loader } from "@/components/Loader";
 import { Cursor } from "@/components/Cursor";
 import { SmoothScroll } from "@/components/SmoothScroll";
