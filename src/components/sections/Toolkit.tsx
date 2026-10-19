@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { skills } from "@/data";
 import { D, isoFrame } from "@/lib/iso";
 import { Section } from "../Section";
-import { Stagger } from "../anim";
 
 /*
  * Toolkit as an exploded isometric stack (iso-glow style): one slab per skill
@@ -39,6 +38,7 @@ const short = (c: string) => c.replace(" & ", " + ").replace("Frameworks + Tools
 export function Skills() {
   const [active, setActive] = useState(0);
   const [pulse, setPulse] = useState(0);
+  const [peak, setPeak] = useState(-1); // the tool hovered in the panel, lit on the slab
   const touched = useRef(false);
   const total = skills.reduce((n, g) => n + g.items.length, 0);
 
@@ -55,6 +55,7 @@ export function Skills() {
   const select = (i: number) => {
     touched.current = true;
     setActive(i);
+    setPeak(-1);
     setPulse((n) => n + 1);
   };
 
@@ -131,7 +132,15 @@ export function Skills() {
                       {String(i + 1).padStart(2, "0")}
                     </text>
                     {g.items.map((item, k) => (
-                      <rect key={item} className="iso-led" x={32 + k * step} y={H / 2 - 2.5} width={6} height={5} rx={1} />
+                      <rect
+                        key={item}
+                        className={`iso-led ${on && k === peak ? "is-peak" : ""}`}
+                        x={32 + k * step}
+                        y={H / 2 - 2.5}
+                        width={6}
+                        height={5}
+                        rx={1}
+                      />
                     ))}
                   </g>
                   {/* Side: the category name */}
@@ -173,50 +182,65 @@ export function Skills() {
           </figcaption>
         </figure>
 
-        <div className="md:col-span-7">
-          {skills.map((g, i) => {
-            const on = i === active;
-            return (
-              <div
-                key={g.category}
-                onPointerEnter={(e) => e.pointerType === "mouse" && select(i)}
-                className="grid gap-5 border-t border-line py-[3.5vh] lg:grid-cols-[15vw_1fr]"
-              >
+        {/* Spec sheet: a tab per layer, and the active layer's tools as modules. Every
+            layer stays in the markup (inactive ones hidden) so all tools are indexed. */}
+        <div className="md:col-span-7 md:self-center">
+          <div role="tablist" aria-label="Toolkit layers" className="flex flex-wrap gap-2">
+            {skills.map((g, i) => {
+              const on = i === active;
+              return (
                 <button
+                  key={g.category}
                   type="button"
+                  role="tab"
+                  id={`tool-tab-${i}`}
+                  aria-selected={on}
+                  aria-controls={`tool-panel-${i}`}
                   onClick={() => select(i)}
-                  aria-pressed={on}
-                  className="grid grid-cols-[2rem_1fr] content-start items-baseline self-start text-left"
+                  className={`label flex items-center gap-2 border px-3 py-2 transition-colors ${
+                    on ? "border-accent bg-accent text-accent-ink" : "border-line text-ink-2 hover:border-ink hover:text-ink"
+                  }`}
                 >
-                  <span className={`label transition-colors ${on ? "text-accent" : "text-ink-3"}`}>
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <span
-                    className={`wide text-[clamp(1.25rem,1.8vw,1.9rem)] leading-[1.05] font-bold tracking-tight transition-colors ${on ? "text-accent" : ""}`}
-                  >
-                    {g.category}
-                  </span>
-                  <span className="label col-start-2 mt-2 text-ink-3">{g.items.length} tools</span>
+                  <span className={on ? "" : "text-accent"}>{String(i + 1).padStart(2, "0")}</span>
+                  {short(g.category)}
+                  <span className="opacity-60">{g.items.length}</span>
                 </button>
-                {/* Set as running text, like the Intro's keywords, so each list fills its row */}
-                <Stagger as="ul" className="flex flex-wrap items-baseline gap-x-4 gap-y-2">
-                  {g.items.map((item, k) => (
-                    <li
-                      key={item}
-                      className={`text-[clamp(1.15rem,1.6vw,1.75rem)] leading-snug tracking-tight transition-colors ${
-                        on ? "text-ink" : "text-ink-3"
-                      }`}
-                    >
-                      {item}
-                      {k < g.items.length - 1 && (
-                        <span className={`ml-4 transition-colors ${on ? "text-accent" : "text-line"}`}>/</span>
-                      )}
-                    </li>
-                  ))}
-                </Stagger>
+              );
+            })}
+          </div>
+
+          {skills.map((g, i) => (
+            <div
+              key={g.category}
+              role="tabpanel"
+              id={`tool-panel-${i}`}
+              aria-labelledby={`tool-tab-${i}`}
+              hidden={i !== active}
+              className="mt-8 border-t border-line pt-6"
+            >
+              <div className="flex items-baseline justify-between gap-4">
+                <h3 className="wide text-[clamp(1.6rem,2.6vw,2.8rem)] leading-none font-bold tracking-tight">{g.category}</h3>
+                <span className="label shrink-0 whitespace-nowrap text-ink-3">
+                  Layer {String(i + 1).padStart(2, "0")} / {String(skills.length).padStart(2, "0")}
+                </span>
               </div>
-            );
-          })}
+              <ul className="mt-6 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                {g.items.map((item, k) => (
+                  <li
+                    key={item}
+                    onPointerEnter={() => setPeak(k)}
+                    onPointerLeave={() => setPeak(-1)}
+                    style={{ animationDelay: `${k * 35}ms` }}
+                    className="tool-module group flex items-center gap-3 border border-line px-3 py-3 transition-colors hover:border-accent"
+                  >
+                    <span className="tool-led size-1.5 shrink-0" />
+                    <span className="min-w-0 truncate text-[15px] leading-tight text-ink">{item}</span>
+                    <span className="label ml-auto text-ink-3 group-hover:text-accent">{String(k + 1).padStart(2, "0")}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
       </div>
     </Section>

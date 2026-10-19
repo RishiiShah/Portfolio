@@ -413,6 +413,16 @@ html.lenis body {
   letter-spacing: 0.06em;
 }
 .iso-led { fill: var(--iso-detail); transition: fill 0.3s; }
+.iso-slab.is-on .iso-led.is-peak { fill: var(--iso-accent-hi); }
+/* Toolkit modules: each LED switches on in turn when its layer is selected */
+.tool-led { background: var(--line); }
+.tool-module { animation: tool-on 0.5s var(--ease) both; }
+.tool-module .tool-led { animation: tool-led 0.5s var(--ease) both; animation-delay: inherit; }
+.tool-module:hover .tool-led { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+@keyframes tool-on { from { opacity: 0; transform: translateY(6px); } }
+@keyframes tool-led { from { background: var(--line); } 60% { background: var(--accent); } to { background: var(--accent); } }
+[data-theme="light"] .tool-module:hover .tool-led { box-shadow: none; }
+@media (prefers-reduced-motion: reduce) { .tool-module, .tool-module .tool-led { animation: none; } .tool-led { background: var(--accent); } }
 .iso-slab {
   cursor: pointer;
   transition: transform 0.6s var(--ease);
