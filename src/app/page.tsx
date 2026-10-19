@@ -24,7 +24,7 @@ export default function Page() {
       <Scene />
       <Cursor />
       <Nav />
-      <main className="relative z-10">
+      <main id="main" tabIndex={-1} className="relative z-10 outline-none">
         <Hero />
         <Intro />
         <FeaturedWork items={featured} />

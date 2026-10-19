@@ -40,8 +40,13 @@ export function SmoothScroll() {
       const offset = target === 0 ? 0 : -56;
       const arrive = () => {
         motion.travelling = false;
-        if (target !== 0) target.focus({ preventScroll: true });
+        if (target === 0) return;
+        // Move focus with the view, so the next Tab continues from the section.
+        if (!target.hasAttribute("tabindex")) target.setAttribute("tabindex", "-1");
+        target.focus({ preventScroll: true });
       };
+      // Keep the address shareable.
+      history.replaceState(null, "", target === 0 ? location.pathname + location.search : hash);
 
       const from = window.scrollY;
       const to = target === 0 ? 0 : target.getBoundingClientRect().top + from + offset;
@@ -71,8 +76,22 @@ export function SmoothScroll() {
     };
     document.addEventListener("click", onClick);
 
+    // A link into the page (/#experience): the browser jumps before the pinned scenes add
+    // their scroll length, so once everything is laid out, land on the section again.
+    const land = () => {
+      const target = location.hash.length > 1 && document.querySelector<HTMLElement>(location.hash);
+      if (!target) return;
+      ScrollTrigger.refresh();
+      motion.travelling = true;
+      lenis.scrollTo(target, { offset: -56, immediate: true, force: true });
+      requestAnimationFrame(() => (motion.travelling = false));
+    };
+    if (document.readyState === "complete") requestAnimationFrame(land);
+    else window.addEventListener("load", land, { once: true });
+
     return () => {
       document.removeEventListener("click", onClick);
+      window.removeEventListener("load", land);
       veil.remove();
       gsap.ticker.remove(raf);
       motion.lenis = null;

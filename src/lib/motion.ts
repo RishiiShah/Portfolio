@@ -30,7 +30,9 @@ export function pagedScene(o: {
 }) {
   let home = 0;
   let gliding = false;
-  const glide = (station: number) => {
+  // Takes the trigger as an argument: ScrollTrigger can fire onUpdate while it is still being
+  // created (a page that loads already scrolled past the scene), before `st` is assigned.
+  const glide = (st: ScrollTrigger, station: number) => {
     gliding = true;
     home = station;
     const y = st.start + (station / o.last) * (st.end - st.start);
@@ -41,12 +43,12 @@ export function pagedScene(o: {
       window.setTimeout(land, o.seconds * 1000);
     }
   };
-  const steer = () => {
+  const steer = (st: ScrollTrigger) => {
     if (gliding || motion.travelling) return;
     const at = st.progress * o.last;
     if (Math.abs(at - home) < 0.03) return;
     const target = st.direction > 0 ? Math.floor(at) + 1 : Math.ceil(at) - 1;
-    if (target >= o.first && target <= o.last) glide(target);
+    if (target >= o.first && target <= o.last) glide(st, target);
   };
   const st = ScrollTrigger.create({
     trigger: o.trigger,
@@ -56,12 +58,12 @@ export function pagedScene(o: {
     scrub: true,
     onUpdate: (self) => {
       o.render(self.progress);
-      steer();
+      steer(self);
     },
     onEnter: () => (home = 0),
     onEnterBack: () => (home = o.last),
     onRefresh: (self) => o.render(self.progress),
   });
   o.render(0);
-  return { trigger: st, glide };
+  return { trigger: st, glide: (station: number) => glide(st, station) };
 }
