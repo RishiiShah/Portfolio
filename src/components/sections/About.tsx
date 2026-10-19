@@ -215,7 +215,7 @@ export function About() {
             </g>
           </svg>
           <figcaption className="label mt-4 text-ink-3">
-            <span className="text-accent">Fig. 05</span> — Desk, lamp {lampOn ? "on" : "off"} · click the lamp, type on
+            <span className="text-accent">Fig. 05</span> · Desk, lamp {lampOn ? "on" : "off"} · click the lamp, type on
             the laptop
           </figcaption>
         </figure>

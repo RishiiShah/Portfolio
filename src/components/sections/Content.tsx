@@ -41,7 +41,7 @@ export function Research() {
               <DrawLine className="absolute top-[-1px] left-0 h-px w-full" />
               <Stagger className="grid gap-4 md:grid-cols-[8vw_1fr]">
                 <span className="label text-ink-3">
-                  {String(i + 1).padStart(2, "0")} — {pub.year}
+                  {String(i + 1).padStart(2, "0")} · {pub.year}
                 </span>
                 <div>
                   <p className="label text-accent">

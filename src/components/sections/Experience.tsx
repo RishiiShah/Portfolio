@@ -803,7 +803,7 @@ function Card({ stop: s, index }: { stop: Stop; index: number }) {
     <article className="space-card border border-line bg-bg/90 p-[clamp(1.25rem,2vw,2rem)]">
       <p className="label text-ink-3">
         <span className="text-accent">Stop {String(index + 1).padStart(2, "0")}</span> ·{" "}
-        {s.next ? `from ${short(s.start)}` : `${short(s.start)} — ${s.current ? "Present" : short(s.end)}`}
+        {s.next ? `from ${short(s.start)}` : `${short(s.start)} → ${s.current ? "Present" : short(s.end)}`}
         {s.place && ` · ${s.place}`}
       </p>
       <h3 className="wide mt-4 text-[clamp(1.5rem,2.4vw,2.6rem)] leading-[1] font-bold tracking-tight">{s.title}</h3>

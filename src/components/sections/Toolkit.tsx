@@ -167,7 +167,7 @@ export function Skills() {
 
           <figcaption className="label mt-4 text-ink-3">
             <span>
-              <span className="text-accent">Fig. 04</span> — {String(active + 1).padStart(2, "0")} {group.category} ·{" "}
+              <span className="text-accent">Fig. 04</span> · {String(active + 1).padStart(2, "0")} {group.category} ·{" "}
               {group.items.length} tools
             </span>
           </figcaption>

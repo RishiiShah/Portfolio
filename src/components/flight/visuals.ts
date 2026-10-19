@@ -270,7 +270,7 @@ function commandCenter(m: Materials): Visual {
     c.fillText("OFFER", W * 0.1, H * 0.3);
     c.font = font(W * 0.09);
     c.fillStyle = palette.dim;
-    c.fillText("13:30–15:00", W * 0.1, H * 0.44);
+    c.fillText("13:30-15:00", W * 0.1, H * 0.44);
     c.fillStyle = palette.accent;
     c.fillRect(W * 0.1, H * 0.62, W * 0.8, H * 0.16);
     c.fillStyle = palette.glass;
