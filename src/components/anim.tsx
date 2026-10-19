@@ -39,7 +39,8 @@ export function RevealText({
     { scope: ref }
   );
   return (
-    <Tag ref={ref} className={className} aria-label={text}>
+    <Tag ref={ref} className={className}>
+      <span className="sr-only">{text}</span>
       {text.split(" ").map((w, i) => (
         <span key={i} aria-hidden="true" className="inline-block overflow-hidden pb-[0.06em] align-bottom">
           <span className="rw inline-block origin-bottom-left">{w}&nbsp;</span>
@@ -69,7 +70,8 @@ export function ScrubText({ text, className }: { text: string; className?: strin
     { scope: ref }
   );
   return (
-    <p ref={ref} className={className} aria-label={text}>
+    <p ref={ref} className={className}>
+      <span className="sr-only">{text}</span>
       {text.split(" ").map((w, i) => (
         <span key={i} aria-hidden="true" className="sw">
           {w}{" "}

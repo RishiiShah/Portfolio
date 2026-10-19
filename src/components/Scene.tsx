@@ -269,11 +269,9 @@ export function Scene() {
 
     const clock = new THREE.Clock();
     let raf = 0;
-    let running = true;
     let blank = false;
     const tick = () => {
       raf = requestAnimationFrame(tick);
-      if (!running) return;
       const dt = Math.min(clock.getDelta(), 0.05);
       if (!reduced) uniforms.uTime.value += dt;
       const { shape: next, off } = survey();
@@ -312,17 +310,10 @@ export function Scene() {
     };
     tick();
 
-    const onVisibility = () => {
-      running = !document.hidden;
-      clock.getDelta();
-    };
-    document.addEventListener("visibilitychange", onVisibility);
-
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointermove", onMove);
-      document.removeEventListener("visibilitychange", onVisibility);
       themeObserver.disconnect();
       geometry.dispose();
       material.dispose();

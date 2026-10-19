@@ -24,7 +24,7 @@
   --bg-2: #e8e4da;
   --ink: #15141a;
   --ink-2: #48453f;
-  --ink-3: #6e6a62;
+  --ink-3: #66625b;
   --line: rgba(21, 20, 26, 0.15);
   --field-ink: #9a948a;
   --grid: rgba(20, 20, 20, 0.05);
@@ -41,7 +41,7 @@
   --bg-2: #17181b;
   --ink: #ecebe6;
   --ink-2: #a8a69f;
-  --ink-3: #6c6b66;
+  --ink-3: #8b8a84;
   --line: rgba(236, 235, 230, 0.13);
   --grid: rgba(236, 235, 230, 0.045);
   --grid-major: rgba(236, 235, 230, 0.09);
@@ -108,33 +108,14 @@ body {
   min-height: 0;
 }
 
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.25; }
-}
-.pulse-dot {
-  animation: pulse-dot 1.8s ease-in-out infinite;
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
-  .expander,
-  .pulse-dot {
+  .expander {
     transition: none;
     animation: none;
   }
-}
-
-/* Inverted (ink-colored) blocks borrow the opposite theme's accent for contrast */
-.invert-accent {
-  --accent: #7d87ff;
-  --accent-ink: #0e0f11;
-}
-[data-theme="dark"] .invert-accent {
-  --accent: #2f37d6;
-  --accent-ink: #ffffff;
 }
 
 html:not(.js) .loader {

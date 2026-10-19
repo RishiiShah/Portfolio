@@ -203,7 +203,7 @@ export function Skills() {
                 >
                   <span className={on ? "" : "text-accent"}>{String(i + 1).padStart(2, "0")}</span>
                   {short(g.category)}
-                  <span className="opacity-60">{g.items.length}</span>
+                  <span className="opacity-80">{g.items.length}</span>
                 </button>
               );
             })}
