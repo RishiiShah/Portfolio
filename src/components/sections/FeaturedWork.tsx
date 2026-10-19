@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useRef } from "react";
+import dynamic from "next/dynamic";
 import { ArrowUpRight } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -9,9 +10,11 @@ import type { Project } from "@/data";
 import { stationVisibility } from "@/lib/flight";
 import { motion, scrollToY } from "@/lib/motion";
 import { RevealText } from "../anim";
-import { Flight } from "../flight/Flight";
 
 gsap.registerPlugin(ScrollTrigger);
+
+// three.js loads after hydration, off the critical path.
+const Flight = dynamic(() => import("../flight/Flight").then((m) => m.Flight), { ssr: false });
 
 const LINK_LABEL = { demo: "Live", source: "Source", paper: "Paper", blog: "Writeup" } as const;
 const SCROLL_PER_STATION = 1.5; // viewport heights of scrolling per project

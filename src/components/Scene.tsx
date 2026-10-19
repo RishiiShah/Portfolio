@@ -248,36 +248,37 @@ export function Scene() {
     window.addEventListener("pointermove", onMove, { passive: true });
 
     const sections = Array.from(document.querySelectorAll<HTMLElement>("[data-shape]"));
-    const targetShape = () => {
-      const mid = window.innerHeight / 2;
+    // One pass over the sections per frame: the shape of the one under the middle of the
+    // screen, and whether a data-field="off" section (it draws its own visual) fills much of
+    // the screen, in which case the field is gone before it reaches the middle, either way.
+    const survey = () => {
+      const h = window.innerHeight;
+      let shape = uniforms.uShape.value;
+      let off = false;
+      let found = false;
       for (const s of sections) {
         const r = s.getBoundingClientRect();
-        if (r.top <= mid && r.bottom >= mid) return Number(s.dataset.shape);
+        if (!found && r.top <= h / 2 && r.bottom >= h / 2) {
+          shape = Number(s.dataset.shape);
+          found = true;
+        }
+        if (s.dataset.field === "off" && r.top < h * 0.8 && r.bottom > h * 0.2) off = true;
       }
-      return uniforms.uShape.value;
-    };
-    // Sections marked data-field="off" draw their own visual, so the field hides while they
-    // fill much of the screen: it is gone before they reach the middle, scrolling either way.
-    const fieldOff = () => {
-      const h = window.innerHeight;
-      return sections.some((s) => {
-        if (s.dataset.field !== "off") return false;
-        const r = s.getBoundingClientRect();
-        return r.top < h * 0.8 && r.bottom > h * 0.2;
-      });
+      return { shape, off };
     };
 
     const clock = new THREE.Clock();
     let raf = 0;
     let running = true;
+    let blank = false;
     const tick = () => {
       raf = requestAnimationFrame(tick);
       if (!running) return;
       const dt = Math.min(clock.getDelta(), 0.05);
       if (!reduced) uniforms.uTime.value += dt;
-      const off = fieldOff();
+      const { shape: next, off } = survey();
       // While hidden, hold the current shape instead of morphing toward the hidden section's.
-      const target = off ? uniforms.uShape.value : targetShape();
+      const target = off ? uniforms.uShape.value : next;
       uniforms.uShape.value += (target - uniforms.uShape.value) * (reduced ? 1 : Math.min(1, dt * 2.2));
       // Narrow screens put text on top of the shapes, so keep them faint there.
       // Fade out entirely where a section brings its own visual: the flythrough (1) and the Toolkit figure (4).
@@ -302,7 +303,12 @@ export function Scene() {
       camera.position.x = mouse.px;
       camera.position.y = mouse.py;
       camera.lookAt(0, 0, 0);
-      renderer.render(scene, camera);
+      // Faded out (behind the flythrough or the Toolkit): draw one blank frame, then stop drawing.
+      const hidden = uniforms.uOpacity.value < 0.004;
+      if (hidden && blank) return;
+      blank = hidden;
+      if (hidden) renderer.clear();
+      else renderer.render(scene, camera);
     };
     tick();
 
