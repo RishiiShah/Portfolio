@@ -118,6 +118,12 @@ export const teaching = {
   organization: "Rutgers University",
   location: "New Brunswick, NJ",
   start: "September 2026",
+  course: "CS205: Introduction to Discrete Structures I",
+  bullets: [
+    "Lead weekly recitations for 50+ undergraduates on set notation, propositional logic, truth tables, and Boolean circuits.",
+    "Teach first-order logic, predicates, quantifiers, and induction proofs for program correctness, trees, and grammars.",
+    "Cover relations and closures, orders, equivalence relations, functions, and finite-state machines with CS applications.",
+  ],
 } as const;
 
 export const experience: ExperienceItem[] = [
