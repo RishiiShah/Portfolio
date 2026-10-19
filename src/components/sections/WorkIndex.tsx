@@ -30,7 +30,7 @@ export function WorkIndex() {
             )}
           >
             {f}
-            <span className="ml-1.5 opacity-50">
+            <span className="ml-1.5 opacity-70">
               {f === "All" ? projects.length : projects.filter((p) => p.tags.includes(f)).length}
             </span>
           </button>

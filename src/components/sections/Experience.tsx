@@ -8,7 +8,7 @@ import { useGSAP } from "@gsap/react";
 import { education, experience, publications, teaching } from "@/data";
 import { toIsoDate } from "@/lib/dates";
 import { D, isoFrame } from "@/lib/iso";
-import { isStacked, motion, scrollToY } from "@/lib/motion";
+import { isStacked, pagedScene } from "@/lib/motion";
 import { headingFromScreen, shipMarkup } from "./ship";
 import { RevealText } from "../anim";
 
@@ -564,7 +564,7 @@ export function Experience() {
   const date = useRef<HTMLSpanElement>(null);
   const counter = useRef<HTMLSpanElement>(null);
   const trigger = useRef<ScrollTrigger | null>(null);
-  const glideTo = useRef<((st: ScrollTrigger, stop: number) => void) | null>(null);
+  const glideTo = useRef<((stop: number) => void) | null>(null);
 
   useGSAP(
     () => {
@@ -690,44 +690,17 @@ export function Experience() {
           if (counter.current) counter.current.textContent = String(now + 1).padStart(2, "0");
         };
 
-        // Paged voyage: each scroll gesture flies to the next (or previous) stop with input
-        // locked until the ship docks. Scrolling past either end leaves the section.
-        let home = 0;
-        let gliding = false;
-        const glide = (st: ScrollTrigger, stop: number) => {
-          gliding = true;
-          home = stop;
-          scrollToY(st.start + (stop / (N - 1)) * (st.end - st.start), GLIDE_SECONDS, {
-            easing: (t) => t,
-            lock: true,
-            onComplete: () => (gliding = false),
-          });
-        };
-        glideTo.current = glide;
-        const steer = (st: ScrollTrigger) => {
-          if (gliding || motion.travelling) return;
-          const s = st.progress * (N - 1);
-          if (Math.abs(s - home) < 0.03) return;
-          const target = st.direction > 0 ? Math.floor(s) + 1 : Math.ceil(s) - 1;
-          if (target < 0 || target > N - 1) return;
-          glide(st, target);
-        };
-
-        trigger.current = ScrollTrigger.create({
-          trigger: stage.current,
-          pin: true,
-          start: "top top",
-          end: () => `+=${window.innerHeight * (N - 1) * SCROLL_PER_STOP}`,
-          scrub: true,
-          onUpdate: (self) => {
-            render(self.progress);
-            steer(self);
-          },
-          onEnter: () => (home = 0),
-          onEnterBack: () => (home = N - 1),
-          onRefresh: (self) => render(self.progress),
+        // Paged voyage: each gesture flies to the next (or previous) stop.
+        const paged = pagedScene({
+          trigger: stage.current!,
+          last: N - 1,
+          first: 0,
+          vhPerStation: SCROLL_PER_STOP,
+          seconds: GLIDE_SECONDS,
+          render,
         });
-        render(0);
+        trigger.current = paged.trigger;
+        glideTo.current = paged.glide;
         const onResize = () => render(last);
         window.addEventListener("resize", onResize);
         return () => {
@@ -740,6 +713,7 @@ export function Experience() {
             el.style.removeProperty("transform");
           });
           trigger.current = null;
+          glideTo.current = null;
         };
       });
     },
@@ -747,8 +721,7 @@ export function Experience() {
   );
 
   const jumpTo = (i: number) => {
-    const st = trigger.current;
-    if (st) glideTo.current?.(st, i);
+    glideTo.current?.(i);
   };
 
   return (

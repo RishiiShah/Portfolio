@@ -8,7 +8,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import type { Project } from "@/data";
 import { stationVisibility } from "@/lib/flight";
-import { motion, scrollToY } from "@/lib/motion";
+import { motion, pagedScene } from "@/lib/motion";
 import { RevealText } from "../anim";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -34,10 +34,9 @@ export function FeaturedWork({ items }: { items: Project[] }) {
   const counter = useRef<HTMLSpanElement>(null);
   const distance = useRef<HTMLSpanElement>(null);
   const bar = useRef<HTMLSpanElement>(null);
-  const trigger = useRef<ScrollTrigger | null>(null);
   const slugs = useMemo(() => items.map((p) => p.slug), [items]);
   const legs = items.length;
-  const glideTo = useRef<((st: ScrollTrigger, station: number) => void) | null>(null);
+  const glideTo = useRef<((station: number) => void) | null>(null);
 
   useGSAP(
     () => {
@@ -65,47 +64,18 @@ export function FeaturedWork({ items }: { items: Project[] }) {
           if (bar.current) bar.current.style.transform = `scaleY(${progress})`;
         };
 
-        // Paged flight: one scroll gesture glides to the next (or previous) project and
-        // input is locked until it lands, so the camera never rests between two projects.
-        // Scrolling up from the first project or down past the last leaves the section.
-        let home = 0;
-        let gliding = false;
-        const glide = (st: ScrollTrigger, station: number) => {
-          gliding = true;
-          home = station;
-          scrollToY(st.start + (station / legs) * (st.end - st.start), GLIDE_SECONDS, {
-            easing: (t) => t,
-            lock: true,
-            onComplete: () => (gliding = false),
-          });
-        };
-        glideTo.current = glide;
-        const steer = (st: ScrollTrigger) => {
-          if (gliding || motion.travelling) return;
-          const f = st.progress * legs;
-          if (Math.abs(f - home) < 0.03) return;
-          const target = st.direction > 0 ? Math.floor(f) + 1 : Math.ceil(f) - 1;
-          if (target < 1 || target > legs) return;
-          glide(st, target);
-        };
-
-        trigger.current = ScrollTrigger.create({
-          trigger: stage.current,
-          pin: true,
-          start: "top top",
-          end: () => `+=${window.innerHeight * legs * SCROLL_PER_STATION}`,
-          scrub: true,
-          onUpdate: (self) => {
-            render(self.progress);
-            steer(self);
-          },
-          onEnter: () => (home = 0),
-          onEnterBack: () => (home = legs),
-          onRefresh: (self) => render(self.progress),
+        // Paged flight: the camera never rests between two projects.
+        const paged = pagedScene({
+          trigger: stage.current!,
+          last: legs,
+          first: 1,
+          vhPerStation: SCROLL_PER_STATION,
+          seconds: GLIDE_SECONDS,
+          render,
         });
-        render(0);
+        glideTo.current = paged.glide;
         return () => {
-          trigger.current = null;
+          glideTo.current = null;
         };
       });
     },
@@ -114,8 +84,7 @@ export function FeaturedWork({ items }: { items: Project[] }) {
 
   // Park on station i (f = i + 1), through the same locked glide as scrolling.
   const jumpTo = (i: number) => {
-    const st = trigger.current;
-    if (st) glideTo.current?.(st, i + 1);
+    glideTo.current?.(i + 1);
   };
 
   return (
