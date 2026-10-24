@@ -185,22 +185,30 @@ html.lenis body {
      Only the travel offset is a transform, whole pixels, and zero when parked. */
   .js .fly-card {
     position: absolute;
-    inset-block: 0;
+    top: 0;
     height: fit-content;
     margin-block: auto;
-    width: min(32rem, 36vw);
+    width: clamp(26rem, 30vw, 38rem);
     opacity: 0;
     transform: translateY(var(--fly-y, 0px));
   }
+  /* Each card centres in the height its side leaves free: the counter sits bottom-left, the project list bottom-right. */
   .js .fly-card[data-side="left"] {
     left: max(1rem, 4vw);
+    bottom: calc(5vh + 4.5rem);
   }
   .js .fly-card[data-side="right"] {
     right: max(1rem, 4vw);
+    bottom: calc(5vh + 4.5rem);
+  }
+  @media (min-height: 860px) {
+    .js .fly-card[data-side="right"] {
+      bottom: calc(5vh + 12.5rem);
+    }
   }
 }
 @media (prefers-reduced-motion: no-preference) and (max-width: 767px), (prefers-reduced-motion: no-preference) and (max-width: 1100px) and (orientation: portrait) {
-  .js .fly-card {
+  .js .fly-card[data-side] {
     top: auto;
     bottom: 4vh;
     margin-block: 0;

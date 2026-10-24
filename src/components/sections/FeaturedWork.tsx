@@ -119,7 +119,7 @@ export function FeaturedWork({ items }: { items: Project[] }) {
               <span ref={distance} className="mt-1 block">0.00 km flown</span>
             </div>
           </div>
-          <ol className="pointer-events-auto hidden flex-col items-end gap-1.5 split:flex">
+          <ol className="pointer-events-auto hidden flex-col items-end gap-1.5 roomy:flex">
             {items.map((p, i) => (
               <li key={p.slug}>
                 <button
@@ -155,27 +155,42 @@ function Panel({ project: p, index, side }: { project: Project; index: number; s
 
       <h3 className="wide mt-5 text-[clamp(1.6rem,2.6vw,3rem)] leading-[0.95] font-bold tracking-tight">{shortTitle(p.title)}</h3>
       {p.award && <p className="label mt-2 text-accent">{p.award}</p>}
-      <p className="mt-3 text-[clamp(0.9rem,1vw,1.05rem)] leading-snug text-ink-2">{p.tagline}</p>
+
+      {/* The case in three lines: what was wrong, what got built, what came of it */}
+      {p.caseStudy ? (
+        <dl className="mt-5 grid grid-cols-[4.75rem_1fr] gap-x-4 gap-y-3 border-t border-line pt-4 text-[clamp(0.9rem,0.95vw,1.02rem)] leading-snug">
+          {(
+            [
+              ["Problem", p.caseStudy.problem, "text-ink-2 hidden split:block"],
+              ["Built", p.caseStudy.built, "text-ink-2"],
+              ["Result", p.caseStudy.result, "text-ink"],
+            ] as const
+          ).map(([label, text, tone]) => (
+            <div key={label} className="contents">
+              <dt className={`label pt-[0.2em] ${label === "Result" ? "text-accent" : "text-ink-3"} ${label === "Problem" ? "hidden split:block" : ""}`}>
+                {label}
+              </dt>
+              <dd className={tone}>{text}</dd>
+            </div>
+          ))}
+        </dl>
+      ) : (
+        <p className="mt-3 text-[clamp(0.9rem,1vw,1.05rem)] leading-snug text-ink-2">{p.tagline}</p>
+      )}
 
       {p.metrics && (
-        <dl className="mt-6 grid grid-cols-2 gap-x-5 gap-y-3 [@media(max-height:700px)]:hidden">
-          {p.metrics.slice(0, 4).map((m, i) => (
-            <div key={m.label} className={`flex flex-col-reverse border-t border-line pt-2 ${i > 1 ? "hidden split:flex" : ""}`}>
+        <dl className="mt-5 flex flex-wrap gap-x-6 gap-y-2 border-t border-line pt-4 [@media(max-height:820px)]:hidden">
+          {p.metrics.slice(0, 3).map((m, i) => (
+            <div key={m.label} className={`flex flex-col-reverse ${i > 1 ? "hidden split:flex" : ""}`}>
               <dt className="label mt-1 text-ink-3">{m.label}</dt>
-              <dd className="wide text-[clamp(1rem,1.3vw,1.4rem)] font-bold tracking-tight">{m.value}</dd>
+              <dd className="wide text-[clamp(1rem,1.25vw,1.35rem)] font-bold tracking-tight whitespace-nowrap">{m.value}</dd>
             </div>
           ))}
         </dl>
       )}
 
       <div className="mt-6 flex flex-wrap items-end justify-between gap-3">
-        <ul className="hidden max-w-[62%] flex-wrap gap-1.5 split:flex">
-          {p.tech.slice(0, 4).map((t) => (
-            <li key={t} className="label border border-line px-2 py-1 text-ink-2">
-              {t}
-            </li>
-          ))}
-        </ul>
+        <p className="label hidden max-w-[60%] text-ink-3 split:block">{p.tech.slice(0, 5).map((t) => t.replace("-", "\u2011")).join(" · ")}</p>
         {p.links && (
           <div className="flex gap-2">
             {p.links.map((l) => (
