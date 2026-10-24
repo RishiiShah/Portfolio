@@ -663,103 +663,203 @@ function codeGraph(m: Materials): Visual {
   };
 }
 
-// ─── SnapInterview: a laptop mid-interview ───────────────────────────────────
-/** The interviewer asks (waveform), the mic lights while you answer, the recording uploads, and the score lands. */
+// ─── SnapInterview: resume in, interview, recording stored, score out ───────
+/**
+ * The resume is scanned and parsed into the session; the AI interviewer's
+ * question streams in; you answer while it records; the recording uploads to
+ * S3; and the scorecard fills skill by skill to a score out of 100.
+ */
 function interviewLaptop(m: Materials): Visual {
   const group = new THREE.Group();
-  group.add(plate(m, 5.8, 3.8));
-  group.add(box(m, 3.0, 0.14, 2.0, -0.4, 0.14, 0.4));
+  group.add(plate(m, 7.0, 4.6));
+  const cycle = 10;
+  // 0–1.8 scan · 1.8–2.4 parsed · 2.4–4.4 asking · 4.4–6.4 answering · 6.4–7.4 upload · 7.4–10 scoring
+  const at = (t: number) => t % cycle;
+
+  // Laptop in the middle.
+  const LX = -0.2;
+  group.add(box(m, 2.8, 0.14, 1.9, LX, 0.14, 0.45));
   const keys: number[] = [];
-  for (let r = 0; r < 4; r++) for (let c = 0; c < 12; c++) keys.push(...rect(-1.65 + c * 0.22, -0.05 + r * 0.2, -1.49 + c * 0.22, 0.09 + r * 0.2, 0.29));
-  keys.push(...rect(-0.95, 0.85, 0.15, 1.3, 0.29)); // trackpad
+  for (let r = 0; r < 4; r++) for (let c = 0; c < 11; c++) keys.push(...rect(LX - 1.2 + c * 0.22, 0.0 + r * 0.19, LX - 1.04 + c * 0.22, 0.13 + r * 0.19, 0.29));
+  keys.push(...rect(LX - 0.5, 0.85, LX + 0.5, 1.28, 0.29)); // trackpad
   group.add(lines(keys, m.lineDim));
   const lid = new THREE.Group();
-  lid.add(box(m, 3.0, 1.9, 0.08));
-  lid.position.set(-0.4, 0.28, -0.6);
+  lid.add(box(m, 2.8, 1.85, 0.08));
+  lid.position.set(LX, 0.28, -0.5);
   lid.rotation.x = -0.18;
   group.add(lid);
-  const ui = screen(2.8, 1.72, (c, W, H, t) => {
-    const s = t % 6;
-    const asking = s < 2.4;
-    const answering = s >= 2.4 && s < 4.6;
+  const question = "Tell me about a system you scaled under load.";
+  const ui = screen(2.62, 1.66, (c, W, H, t) => {
+    const s = at(t);
+    const asking = s >= 2.4 && s < 4.4;
+    const answering = s >= 4.4 && s < 6.4;
+    // Parsed from the resume, along the top.
+    c.font = font(H * 0.06, 700);
+    if (s >= 2.1) {
+      let x = W * 0.05;
+      for (const chip of ["BACKEND", "3 PROJECTS", "PYTHON"]) {
+        const w = c.measureText(chip).width + W * 0.03;
+        c.strokeStyle = palette.dim;
+        c.lineWidth = 2;
+        c.strokeRect(x, H * 0.05, w, H * 0.09);
+        c.fillStyle = palette.ink;
+        c.fillText(chip, x + W * 0.015, H * 0.115);
+        x += w + W * 0.015;
+      }
+    }
+    // The interviewer: an orb that speaks.
     c.strokeStyle = asking ? palette.accent : palette.dim;
     c.lineWidth = 3;
     c.beginPath();
-    c.arc(W * 0.2, H * 0.36, H * 0.17, 0, Math.PI * 2);
+    c.arc(W * 0.16, H * 0.45, H * 0.13, 0, Math.PI * 2);
     c.stroke();
-    for (let i = 0; i < 24; i++) {
-      const a = (i / 24) * Math.PI * 2;
-      const amp = asking ? 0.04 + 0.08 * Math.abs(Math.sin(t * 7 + i * 1.3)) : 0.015;
+    for (let i = 0; i < 20; i++) {
+      const a = (i / 20) * Math.PI * 2;
+      const amp = asking ? 0.03 + 0.07 * Math.abs(Math.sin(t * 7 + i * 1.3)) : 0.012;
       c.beginPath();
-      c.moveTo(W * 0.2 + Math.cos(a) * H * 0.2, H * 0.36 + Math.sin(a) * H * 0.2);
-      c.lineTo(W * 0.2 + Math.cos(a) * H * (0.2 + amp), H * 0.36 + Math.sin(a) * H * (0.2 + amp));
+      c.moveTo(W * 0.16 + Math.cos(a) * H * 0.16, H * 0.45 + Math.sin(a) * H * 0.16);
+      c.lineTo(W * 0.16 + Math.cos(a) * H * (0.16 + amp), H * 0.45 + Math.sin(a) * H * (0.16 + amp));
       c.stroke();
     }
-    c.font = font(H * 0.07);
+    c.font = font(H * 0.06);
     c.fillStyle = palette.dim;
-    c.fillText(asking ? "INTERVIEWER" : "YOU · ANSWERING", W * 0.08, H * 0.7);
+    c.fillText(answering ? "YOU · ANSWERING" : "INTERVIEWER", W * 0.05, H * 0.74);
+    // The question streams in, token by token.
+    const shown = s < 2.4 ? 0 : Math.min(question.length, Math.floor((s - 2.4) * 30));
+    c.font = font(H * 0.072, 700);
+    c.fillStyle = palette.ink;
+    const words = question.slice(0, shown).split(" ");
+    let line = "";
+    let y = H * 0.3;
+    for (const w of words) {
+      if ((line + w).length > 22) {
+        c.fillText(line, W * 0.36, y);
+        line = "";
+        y += H * 0.1;
+      }
+      line += w + " ";
+    }
+    c.fillText(line + (asking && shown < question.length ? "▌" : ""), W * 0.36, y);
+    // Your answer, transcribed as you speak.
+    const written = answering ? Math.floor((s - 4.4) * 2.2) : s >= 6.4 ? 4 : 0;
+    c.fillStyle = palette.dim;
+    for (let i = 0; i < Math.min(4, written); i++) c.fillRect(W * 0.36, H * (0.56 + i * 0.075), W * (0.56 - (i % 2) * 0.14), H * 0.03);
     if (answering && Math.floor(t * 2) % 2 === 0) {
       c.fillStyle = palette.accent;
       c.beginPath();
-      c.arc(W * 0.9, H * 0.1, H * 0.03, 0, Math.PI * 2);
+      c.arc(W * 0.93, H * 0.1, H * 0.03, 0, Math.PI * 2);
       c.fill();
-      c.fillText("REC", W * 0.8, H * 0.12);
-    }
-    c.fillStyle = palette.ink;
-    ["Tell me about a system", "you scaled under load."].forEach((l, i) => c.fillText(l, W * 0.42, H * (0.24 + i * 0.1)));
-    // Transcript lines fill in as you answer.
-    c.fillStyle = palette.dim;
-    const written = answering ? Math.floor((s - 2.4) * 2) : s >= 4.6 ? 4 : 0;
-    for (let i = 0; i < Math.min(4, written); i++) c.fillRect(W * 0.42, H * (0.42 + i * 0.08), W * (0.48 - (i % 2) * 0.12), H * 0.03);
-    if (s >= 4.6) {
-      c.fillStyle = palette.accent;
-      c.font = font(H * 0.16, 700);
-      c.fillText(`${Math.min(86, Math.floor((s - 4.6) * 140))}`, W * 0.42, H * 0.9);
-      c.font = font(H * 0.07);
-      c.fillStyle = palette.dim;
-      c.fillText("/ 100  SCORE", W * 0.58, H * 0.88);
+      c.font = font(H * 0.06, 700);
+      c.fillText("REC", W * 0.83, H * 0.12);
     }
   });
-  ui.mesh.position.set(0, 0.95, 0.045);
+  ui.mesh.position.set(0, 0.93, 0.045);
   lid.add(ui.mesh);
-  const cam = solid(new THREE.SphereGeometry(0.04, 10, 8), m, true);
-  cam.position.set(0, 1.84, 0.05);
+  const cam = solid(new THREE.SphereGeometry(0.04, 10, 8), m);
+  cam.position.set(0, 1.79, 0.05);
   lid.add(cam);
-  // Desk mic, and the recording's upload to storage (S3) on the right.
-  group.add(cyl(m, 0.3, 0.06, 1.75, 0.14, 0.9), cyl(m, 0.04, 0.9, 1.75, 0.2, 0.9, false, 10));
-  const capsule = cyl(m, 0.16, 0.42, 1.75, 1.1, 0.9, false, 20);
-  for (let k = 0; k < 4; k++) capsule.add(ring(0.165, -0.15 + k * 0.1, m.lineDim, 24));
-  const micGlow = glow(m, 1.2);
-  micGlow.position.set(1.75, 1.3, 0.9);
-  const store = box(m, 0.8, 0.5, 0.8, 2.3, 0.14, -1.2);
-  group.add(capsule, micGlow, store, slits(m, 0.8, 0.5, 0.8, 2.3, 0.14, -1.2, 0.1));
-  const storeTag = screen(0.7, 0.7, (c, W, H) => {
-    c.font = font(H * 0.3, 700);
+
+  // The resume, on a pad to the left, with a scan bar sweeping it.
+  const pad = box(m, 1.25, 0.06, 1.6, -2.55, 0.14, 0.55);
+  const resume = screen(1.05, 1.4, (c, W, H) => {
+    c.font = font(W * 0.1, 700);
     c.fillStyle = palette.ink;
-    c.fillText("S3", W * 0.1, H * 0.42);
-    c.font = font(H * 0.13);
+    c.fillText("RESUME", W * 0.1, H * 0.12);
     c.fillStyle = palette.dim;
-    c.fillText("recordings", W * 0.1, H * 0.7);
+    [0.2, 0.26, 0.38, 0.44, 0.5, 0.62, 0.68, 0.74, 0.86, 0.92].forEach((y, i) => c.fillRect(W * 0.1, H * y, W * (i % 3 === 2 ? 0.5 : 0.8), H * 0.025));
   });
-  storeTag.mesh.rotation.x = -Math.PI / 2;
-  storeTag.mesh.position.set(2.3, 0.643, -1.2);
-  group.add(storeTag.mesh);
-  const upload = wire(m, trace([1.1, -0.9], [2.3, -1.2], 0.16));
+  resume.mesh.rotation.x = -Math.PI / 2;
+  resume.mesh.position.set(-2.55, 0.205, 0.55);
+  const scan = box(m, 1.2, 0.04, 0.05, -2.55, 0.21, 0, true);
+  const scanGlow = glow(m, 0.9);
+  group.add(pad, resume.mesh, scan, scanGlow);
+  const parsed = wire(m, trace([-1.92, 0.55], [-1.6, 0.0], 0.16));
+  group.add(parsed.group);
+
+  // S3 at the back left: a bucket, labelled.
+  const bucket = solid(new THREE.CylinderGeometry(0.5, 0.38, 0.75, 28), m);
+  bucket.position.set(-2.45, 0.14 + 0.375, -1.2);
+  group.add(bucket);
+  const bucketTag = screen(0.62, 0.5, (c, W, H) => {
+    c.font = font(H * 0.36, 700);
+    c.fillStyle = palette.ink;
+    c.textAlign = "center";
+    c.fillText("S3", W / 2, H * 0.48);
+    c.font = font(H * 0.14);
+    c.fillStyle = palette.dim;
+    c.fillText("recordings", W / 2, H * 0.78);
+    c.textAlign = "start";
+  });
+  bucketTag.mesh.rotation.x = -Math.PI / 2;
+  bucketTag.mesh.position.set(-2.45, 0.14 + 0.751, -1.2);
+  group.add(bucketTag.mesh);
+  const upload = wire(m, trace([-1.6, -0.45], [-2.45, -0.72], 0.16));
   group.add(upload.group);
-  const sway = pose(group, 0.45, 0.85);
+
+  // The scorecard, standing at the front right.
+  const card = new THREE.Group();
+  card.add(box(m, 1.5, 1.7, 0.1, 0, 0, 0));
+  const score = screen(1.36, 1.56, (c, W, H, t) => {
+    const s = at(t);
+    const k = s < 7.4 ? 0 : Math.min(1, (s - 7.4) / 1.6);
+    c.font = font(H * 0.075, 700);
+    c.fillStyle = palette.dim;
+    c.fillText("SCORECARD", W * 0.08, H * 0.1);
+    (
+      [
+        ["Communication", 82],
+        ["Structure", 78],
+        ["Technical", 91],
+      ] as const
+    ).forEach(([label, v], i) => {
+      const y = H * (0.2 + i * 0.17);
+      c.font = font(H * 0.06);
+      c.fillStyle = palette.ink;
+      c.fillText(label, W * 0.08, y);
+      c.fillText(String(Math.round(v * k)), W * 0.8, y);
+      c.fillStyle = palette.dim;
+      c.fillRect(W * 0.08, y + H * 0.03, W * 0.84, H * 0.035);
+      c.fillStyle = palette.accent;
+      c.fillRect(W * 0.08, y + H * 0.03, W * 0.84 * (v / 100) * k, H * 0.035);
+    });
+    c.font = font(H * 0.22, 700);
+    c.fillStyle = k > 0 ? palette.accent : palette.dim;
+    c.fillText(String(Math.round(84 * k)), W * 0.08, H * 0.9);
+    c.font = font(H * 0.07);
+    c.fillStyle = palette.dim;
+    c.fillText("/ 100", W * 0.42, H * 0.88);
+  });
+  score.mesh.position.set(0, 0.85, 0.052);
+  card.add(score.mesh);
+  card.position.set(2.35, 0.14, 0.95);
+  card.rotation.y = -0.35;
+  group.add(card);
+  const toCard = wire(m, trace([1.2, 0.6], [1.9, 0.95], 0.16));
+  group.add(toCard.group);
+
+  const sway = pose(group, 0.35, 0.8);
   return {
     group,
     update(t) {
       sway(t);
       ui.paint(t);
-      storeTag.paint(t);
-      const s = t % 6;
-      const answering = s >= 2.4 && s < 4.6;
-      setLit(capsule, answering, m);
-      micGlow.visible = answering;
-      upload.hot(s >= 4.2 && s < 5.2);
-      upload.run(s >= 4.2 && s < 5.2 ? s - 4.2 : -1);
-      setLit(store, s >= 5.0 && s < 5.6, m);
+      resume.paint(t);
+      bucketTag.paint(t);
+      score.paint(t);
+      const s = at(t);
+      const scanning = s < 1.8;
+      scan.visible = scanGlow.visible = scanning;
+      scan.position.z = 0.55 - 0.7 + (s / 1.8) * 1.4;
+      scanGlow.position.copy(scan.position).setY(0.3);
+      setLit(pad, scanning, m);
+      parsed.hot(s >= 1.8 && s < 2.4);
+      parsed.run(s >= 1.8 && s < 2.4 ? (s - 1.8) / 0.6 : -1);
+      setLit(cam as Solid, s >= 4.4 && s < 6.4, m);
+      upload.hot(s >= 6.4 && s < 7.4);
+      upload.run(s >= 6.4 && s < 7.4 ? s - 6.4 : -1);
+      setLit(bucket as Solid, s >= 7.1 && s < 7.8, m);
+      toCard.hot(s >= 7.2 && s < 9.4);
+      toCard.run(s >= 7.2 && s < 7.8 ? (s - 7.2) / 0.6 : -1);
     },
   };
 }
