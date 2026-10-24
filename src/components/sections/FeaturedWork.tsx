@@ -51,7 +51,7 @@ export function FeaturedWork({ items }: { items: Project[] }) {
           panels.forEach((panel, i) => {
             const v = stationVisibility(f, i);
             panel.style.opacity = String(v);
-            panel.style.setProperty("--fly-y", `${(f - (i + 1)) * -60}px`);
+            panel.style.setProperty("--fly-y", `${Math.round((f - (i + 1)) * -60)}px`);
             // Cards soften as they leave and sharpen as they arrive.
             panel.style.filter = v > 0.99 || v < 0.01 ? "" : `blur(${((1 - v) * 6).toFixed(1)}px)`;
             panel.style.visibility = v < 0.01 ? "hidden" : "visible";

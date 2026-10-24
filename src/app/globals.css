@@ -181,13 +181,16 @@ html.lenis body {
   .js .fly-canvas {
     display: block;
   }
+  /* Centred by layout, not translate(-50%): a half-pixel offset blurs text on 1x screens.
+     Only the travel offset is a transform, whole pixels, and zero when parked. */
   .js .fly-card {
     position: absolute;
-    top: 50%;
+    inset-block: 0;
+    height: fit-content;
+    margin-block: auto;
     width: min(32rem, 36vw);
     opacity: 0;
-    transform: translateY(calc(-50% + var(--fly-y, 0px)));
-    will-change: transform, opacity;
+    transform: translateY(var(--fly-y, 0px));
   }
   .js .fly-card[data-side="left"] {
     left: max(1rem, 4vw);
