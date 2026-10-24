@@ -882,80 +882,160 @@ function intersection(m: Materials): Visual {
   };
 }
 
-// ─── WGAN-GP: generator, panes of series, critic ────────────────────────────
-/** Noise falls into the generator, which prints series on panes; they ride into the critic, whose verdict hovers near 0.5. */
+// ─── WGAN-GP: generator against critic ──────────────────────────────────────
+/**
+ * G → D ← data. The generator turns noise into synthetic series (lit panes);
+ * the market feed sends real ones (ink panes) from the other side. The critic
+ * scores each, its estimate settling near 0.5 as the Wasserstein distance
+ * falls, and every synthetic pane it judges sends a gradient back to G.
+ */
 function seriesPress(m: Materials): Visual {
   const group = new THREE.Group();
-  group.add(plate(m, 6.6, 3.2));
-  for (const x of [-2.55, 2.55]) group.add(box(m, 1.1, 1.5, 1.4, x, 0.14, 0), slits(m, 1.1, 1.5, 1.4, x, 0.14, 0, 0.16, 0.18));
-  // Hopper on the generator and a rail between the machines.
-  group.add(solid(new THREE.CylinderGeometry(0.42, 0.18, 0.4, 20), m).translateX(-2.55).translateY(1.84));
-  group.add(lines([-2, 0.2, -0.25, 2, 0.2, -0.25, -2, 0.2, 0.25, 2, 0.2, 0.25], m.lineDim));
-  const noise = Array.from({ length: 10 }, (_, k) => {
-    const p = solid(new THREE.BoxGeometry(0.06, 0.06, 0.06), m);
-    group.add(p);
-    return { p, k };
-  });
-  const verdict = screen(1.0, 0.62, (c, W, H, t) => {
-    const p = 0.5 + Math.sin(t * 1.7) * 0.03;
-    c.font = font(H * 0.13);
-    c.fillStyle = palette.dim;
-    c.fillText("CRITIC · REAL?", W * 0.07, H * 0.22);
-    c.font = font(H * 0.3, 700);
-    c.fillStyle = palette.accent;
-    c.fillText(p.toFixed(2), W * 0.07, H * 0.6);
-    c.fillStyle = palette.dim;
-    c.fillRect(W * 0.07, H * 0.75, W * 0.86, H * 0.08);
-    c.fillStyle = palette.accent;
-    c.fillRect(W * 0.07, H * 0.75, W * 0.86 * p, H * 0.08);
-  });
-  verdict.mesh.position.set(2.55, 1.0, 0.71);
-  group.add(verdict.mesh);
-  const label = screen(0.5, 0.36, (c, W, H) => {
-    c.font = font(H * 0.6, 700);
+  group.add(plate(m, 7.6, 3.2));
+  const XG = -2.85;
+  const XD = 0;
+  const XR = 2.85;
+
+  // Generator (left) and market feed (right), each with a screen on its front.
+  for (const x of [XG, XR]) group.add(box(m, 1.15, 1.25, 1.1, x, 0.14, 0), slits(m, 1.15, 1.25, 1.1, x, 0.14, 0, 0.16, 0.2));
+  const gen = screen(0.98, 0.72, (c, W, H, t) => {
+    c.font = font(H * 0.17, 700);
     c.fillStyle = palette.ink;
-    c.fillText("G", W * 0.3, H * 0.75);
+    c.fillText("G", W * 0.06, H * 0.2);
+    c.font = font(H * 0.11);
+    c.fillStyle = palette.dim;
+    c.fillText("noise z", W * 0.24, H * 0.19);
+    // Noise in: a field of flickering cells.
+    const n = Math.floor(t * 12);
+    for (let i = 0; i < 14; i++)
+      for (let j = 0; j < 5; j++) {
+        const v = Math.abs(Math.sin((i * 12.9898 + j * 78.233 + n * 3.1) * 43758.5)) % 1;
+        c.fillStyle = v > 0.72 ? palette.accent : v > 0.4 ? palette.ink : palette.dim;
+        c.fillRect(W * (0.06 + i * 0.063), H * (0.32 + j * 0.13), W * 0.045, H * 0.09);
+      }
   });
-  label.mesh.position.set(-2.55, 1.2, 0.71);
-  group.add(label.mesh);
-  // Each pane carries a walk on both faces; every other one is synthetic.
-  const panes = Array.from({ length: 6 }, (_, k) => {
-    const g = new THREE.Group();
-    g.add(box(m, 0.06, 1.1, 0.9));
-    const segs: number[] = [];
-    let v = 0;
-    let prev = 0.55;
-    for (let i = 1; i <= 30; i++) {
-      v += Math.sin(i * 1.7 + k * 3.1) * 0.09 + Math.cos(i * 0.6 + k) * 0.06;
-      const y = 0.55 + Math.max(-0.4, Math.min(0.4, v));
-      for (const x of [-0.035, 0.035]) segs.push(x, prev, -0.4 + ((i - 1) / 30) * 0.8, x, y, -0.4 + (i / 30) * 0.8);
-      prev = y;
+  gen.mesh.position.set(XG, 0.14 + 0.66, 0.552);
+  const feed = screen(0.98, 0.72, (c, W, H, t) => {
+    c.font = font(H * 0.17, 700);
+    c.fillStyle = palette.ink;
+    c.fillText("DATA", W * 0.06, H * 0.2);
+    c.font = font(H * 0.11);
+    c.fillStyle = palette.dim;
+    c.fillText("market", W * 0.44, H * 0.19);
+    c.strokeStyle = palette.ink;
+    c.lineWidth = 2;
+    c.beginPath();
+    for (let i = 0; i <= 40; i++) {
+      const x = W * (0.06 + (i / 40) * 0.88);
+      const y = H * (0.64 + Math.sin(i * 0.9 + t * 3) * 0.08 + Math.sin(i * 0.31 + t) * 0.12);
+      if (i) c.lineTo(x, y);
+      else c.moveTo(x, y);
     }
-    g.add(lines(segs, k % 2 ? m.lineAccent : m.line));
-    g.rotation.y = Math.PI / 2 - 0.5;
-    group.add(g);
-    return { g, k };
+    c.stroke();
   });
-  const genLed = box(m, 0.16, 0.06, 0.16, -2.2, 1.64, 0.4, true);
+  feed.mesh.position.set(XR, 0.14 + 0.66, 0.552);
+  group.add(gen.mesh, feed.mesh);
+
+  // The critic in the middle.
+  group.add(box(m, 1.3, 1.75, 1.3, XD, 0.14, 0), slits(m, 1.3, 1.75, 1.3, XD, 0.14, 0, 0.2, 0.2));
+  let judged = 0;
+  const critic = screen(1.14, 1.4, (c, W, H, t) => {
+    c.font = font(H * 0.09, 700);
+    c.fillStyle = palette.ink;
+    c.fillText("D · CRITIC", W * 0.07, H * 0.11);
+    c.font = font(H * 0.065);
+    c.fillStyle = palette.dim;
+    c.fillText("P(real)", W * 0.07, H * 0.23);
+    const p = 0.5 + Math.sin(t * 1.7) * 0.03;
+    c.font = font(H * 0.19, 700);
+    c.fillStyle = palette.accent;
+    c.fillText(p.toFixed(2), W * 0.07, H * 0.42);
+    c.font = font(H * 0.065);
+    c.fillStyle = palette.dim;
+    c.fillText("W-DISTANCE", W * 0.07, H * 0.57);
+    // Wasserstein distance over training, falling toward zero.
+    c.strokeStyle = palette.ink;
+    c.lineWidth = 2;
+    c.beginPath();
+    const steps = 30;
+    const shown = Math.min(steps, 6 + (judged % 25));
+    for (let i = 0; i <= shown; i++) {
+      const x = W * (0.07 + (i / steps) * 0.86);
+      const y = H * (0.64 + 0.27 * (1 - Math.exp(-i / 7)) + Math.sin(i * 2.3) * 0.012);
+      if (i) c.lineTo(x, y);
+      else c.moveTo(x, y);
+    }
+    c.stroke();
+  });
+  critic.mesh.position.set(XD, 0.14 + 0.875, 0.652);
+  group.add(critic.mesh);
+
+  // Rails on each side, and panes riding them toward the critic.
+  group.add(lines([XG + 0.6, 0.17, -0.2, XD - 0.65, 0.17, -0.2, XG + 0.6, 0.17, 0.2, XD - 0.65, 0.17, 0.2, XD + 0.65, 0.17, -0.2, XR - 0.6, 0.17, -0.2, XD + 0.65, 0.17, 0.2, XR - 0.6, 0.17, 0.2], m.lineDim));
+  const pane = (fake: boolean, k: number) => {
+    const g = new THREE.Group();
+    g.add(box(m, 0.42, 0.72, 0.05, 0, 0, 0));
+    const face = screen(0.37, 0.66, (c, W, H) => {
+      if (fake) {
+        c.fillStyle = palette.accent;
+        c.fillRect(0, 0, W, H);
+      }
+      c.font = font(W * 0.2, 700);
+      c.fillStyle = fake ? palette.glass : palette.dim;
+      c.fillText(fake ? "SYN" : "REAL", W * 0.1, H * 0.14);
+      c.strokeStyle = fake ? palette.glass : palette.ink;
+      c.lineWidth = 3;
+      c.beginPath();
+      let v = 0;
+      for (let i = 0; i <= 24; i++) {
+        v += Math.sin(i * 1.7 + k * 3.1) * 0.06 + Math.cos(i * 0.6 + k) * 0.04;
+        const x = W * (0.1 + (i / 24) * 0.8);
+        const y = H * (0.58 + Math.max(-0.3, Math.min(0.3, v)));
+        if (i) c.lineTo(x, y);
+        else c.moveTo(x, y);
+      }
+      c.stroke();
+    });
+    face.mesh.position.set(0, 0.36, 0.027);
+    g.add(face.mesh);
+    group.add(g);
+    return { g, face, k, fake };
+  };
+  const panes = [...[0, 1, 2].map((k) => pane(true, k)), ...[0, 1, 2].map((k) => pane(false, k + 5))];
+
+  // The gradient: from the critic back to the generator, over the top.
+  const grad = wire(m, [
+    new THREE.Vector3(XD - 0.3, 1.9, 0),
+    new THREE.Vector3(XD - 0.3, 2.2, 0),
+    new THREE.Vector3(XG + 0.2, 2.2, 0),
+    new THREE.Vector3(XG + 0.2, 1.39, 0),
+  ]);
+  group.add(grad.group);
+  const genLed = cyl(m, 0.07, 0.04, XG - 0.3, 1.39, 0.25, false, 14);
   group.add(genLed);
-  const sway = pose(group, -0.4, 0.8);
+
+  const sway = pose(group, -0.3, 0.74);
+  const SPEED = 0.2;
+  const span = XD - 0.65 - (XG + 0.6);
   return {
     group,
     update(t) {
       sway(t);
-      verdict.paint(t);
-      label.paint(t);
-      noise.forEach(({ p, k }) => {
-        const f = (t * 0.6 + k / noise.length) % 1;
-        p.position.set(-2.55 + Math.sin(k * 2.3) * 0.25, 3.0 - f * 1.1, Math.cos(k * 1.7) * 0.25);
-        p.rotation.set(t + k, t * 0.7, 0);
+      gen.paint(t);
+      feed.paint(t);
+      critic.paint(t);
+      panes.forEach((p) => {
+        p.face.paint(t);
+        const f = (t * SPEED + p.k / 3 + (p.fake ? 0 : 0.5)) % 1;
+        p.g.position.set(p.fake ? XG + 0.6 + f * span : XR - 0.6 - f * span, 0.17, 0);
+        p.g.visible = f > 0.03 && f < 0.97;
       });
-      panes.forEach(({ g, k }) => {
-        const u = ((t * 0.18 + k / panes.length) % 1) * 4 - 2; // -2 → 2 along the rail
-        g.position.set(u, 0.2, 0);
-        g.visible = u > -1.95 && u < 1.95;
-      });
-      setLit(genLed, Math.floor(t * 4) % 2 === 0, m);
+      // A synthetic pane reaches the critic every third of a cycle; its gradient runs home.
+      const beat = (t * SPEED * 3) % 1;
+      judged = Math.floor(t * SPEED * 3);
+      grad.hot(true);
+      grad.run(beat < 0.4 ? beat / 0.4 : -1);
+      setLit(genLed, beat > 0.38 && beat < 0.6, m);
     },
   };
 }
