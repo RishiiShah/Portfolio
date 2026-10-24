@@ -416,7 +416,8 @@ html.lenis body {
 }
 .iso-slab:hover .iso-top { stroke: var(--ink); }
 .iso-slab.is-on .iso-face { stroke: var(--accent); }
-.iso-slab.is-on .iso-top { fill: var(--iso-lit-top); }
+/* Opaque, unlike --iso-lit-top: a lit slab is still solid, nothing shows through it. */
+.iso-slab.is-on .iso-top { fill: color-mix(in srgb, var(--accent) 14%, var(--iso-deck)); }
 .iso-slab.is-on .iso-led,
 .iso .is-on-dot { fill: var(--accent); }
 .iso-slab.is-on .iso-name { fill: var(--accent); }
