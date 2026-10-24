@@ -686,6 +686,17 @@ function interviewLaptop(m: Materials): Visual {
   micGlow.position.set(1.75, 1.3, 0.9);
   const store = box(m, 0.8, 0.5, 0.8, 2.3, 0.14, -1.2);
   group.add(capsule, micGlow, store, slits(m, 0.8, 0.5, 0.8, 2.3, 0.14, -1.2, 0.1));
+  const storeTag = screen(0.7, 0.7, (c, W, H) => {
+    c.font = font(H * 0.3, 700);
+    c.fillStyle = palette.ink;
+    c.fillText("S3", W * 0.1, H * 0.42);
+    c.font = font(H * 0.13);
+    c.fillStyle = palette.dim;
+    c.fillText("recordings", W * 0.1, H * 0.7);
+  });
+  storeTag.mesh.rotation.x = -Math.PI / 2;
+  storeTag.mesh.position.set(2.3, 0.643, -1.2);
+  group.add(storeTag.mesh);
   const upload = wire(m, trace([1.1, -0.9], [2.3, -1.2], 0.16));
   group.add(upload.group);
   const sway = pose(group, 0.45, 0.85);
@@ -694,6 +705,7 @@ function interviewLaptop(m: Materials): Visual {
     update(t) {
       sway(t);
       ui.paint(t);
+      storeTag.paint(t);
       const s = t % 6;
       const answering = s >= 2.4 && s < 4.6;
       setLit(capsule, answering, m);
