@@ -195,6 +195,8 @@ export interface Project {
   award?: string;
   metrics?: ProjectMetric[];
   problem?: string;
+  /** One line each for the Selected work card: the problem, what was built, what came of it. */
+  caseStudy?: { problem: string; built: string; result: string };
   role?: string;
   architectureNotes?: string[];
   challenges?: string[];
@@ -205,6 +207,11 @@ export interface Project {
 export const projects: Project[] = [
   {
     slug: "cerevia",
+    caseStudy: {
+      problem: "Late stroke consults and uncovered shifts get noticed only once they are already late.",
+      built: "An event-replay engine that spots coverage gaps 90 minutes ahead and proposes the cheapest safe fix.",
+      result: "Won the Sevaro × Rutgers Health Hack. Every action is approved and audit-logged.",
+    },
     year: "2026",
     title: "Cerevia",
     tagline:
@@ -240,6 +247,11 @@ export const projects: Project[] = [
   },
   {
     slug: "planyt",
+    caseStudy: {
+      problem: "Days out in New York fall apart on logistics: zig-zag routes, peak crowds, closed doors.",
+      built: "One sentence in, an ordered itinerary timed to travel, opening hours and subway crowds.",
+      result: "Best Use of Backboard (MLH) at DivHacks 2026.",
+    },
     year: "2026",
     title: "PlaNYt",
     tagline:
@@ -266,6 +278,11 @@ export const projects: Project[] = [
   },
   {
     slug: "csegraph",
+    caseStudy: {
+      problem: "Coding agents burn tokens and tool calls hunting through a repository for context.",
+      built: "A Tree-sitter symbol graph in SQLite, queried with BM25 and graph walks under a token budget.",
+      result: "82% less context per task (1,540 → 273 tokens), served over a CLI and 6 MCP tools.",
+    },
     year: "2026",
     title: "CseGraph",
     tagline:
@@ -303,6 +320,11 @@ export const projects: Project[] = [
   },
   {
     slug: "snap-interview",
+    caseStudy: {
+      problem: "Interview practice tools grade answers but miss communication and per-skill signal.",
+      built: "A layered Next.js and Prisma platform: resume parsing, streamed Groq interviews, S3 recordings.",
+      result: "Scores from 0 to 100 per skill across 28 role prompts, with shareable results.",
+    },
     year: "2026",
     title: "SnapInterview",
     tagline:
@@ -341,6 +363,11 @@ export const projects: Project[] = [
   },
   {
     slug: "traffic-violation-detection",
+    caseStudy: {
+      problem: "Ticketing traffic violations by hand does not scale and leaves weak evidence.",
+      built: "A YOLOv12x and ByteTrack pipeline for red-light, helmet and speeding, with OCR on plates.",
+      result: "93.76% end to end, with PDF challans sent by SMS. Published at IEEE ICICIS 2025.",
+    },
     year: "2025",
     title: "Traffic Violation Detection & Automated Ticketing",
     tagline:
@@ -394,6 +421,11 @@ export const projects: Project[] = [
   },
   {
     slug: "wgan-gp-financial-timeseries",
+    caseStudy: {
+      problem: "Financial series are scarce and noisy, so forecasters overfit and miss rare events.",
+      built: "A WGAN-GP with attention, temporal convolutions and LSTMs that generates realistic market series.",
+      result: "Synthetic data lifted downstream accuracy from 97.93% to 98.83%.",
+    },
     year: "2025",
     title: "Synthetic Financial Time Series via WGAN-GP",
     tagline:
@@ -430,6 +462,11 @@ export const projects: Project[] = [
   },
   {
     slug: "jarvis-voice-assistant",
+    caseStudy: {
+      problem: "Smart speakers fumble complex requests and are opaque about voice data.",
+      built: "A wake-word pipeline, guarded Llama 3.1 8B on Groq, and Pi GPIO control over Azure IoT Hub.",
+      result: "A four-module assistant that runs a home end to end, privacy-first. Published at ISTE 2025.",
+    },
     year: "2025",
     title: "JARVIS: Voice Assistant & Smart Home Automation",
     tagline:
@@ -494,6 +531,11 @@ export const projects: Project[] = [
   },
   {
     slug: "music-genre-detection",
+    caseStudy: {
+      problem: "Accurate genre models are usually too heavy to serve cheaply in real time.",
+      built: "Librosa MFCC features into a 2-layer Bi-LSTM, then post-training quantization.",
+      result: "98.73% accuracy, with a model 15% smaller and 22% faster at inference.",
+    },
     year: "2024",
     title: "Music Genre Detection System",
     tagline:
