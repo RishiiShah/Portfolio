@@ -706,7 +706,11 @@ function interviewLaptop(m: Materials): Visual {
 }
 
 // ─── Traffic: an intersection under a camera ─────────────────────────────────
-/** The light turns red; a car runs it, the camera boxes it and reads the plate, and a challan is issued. */
+/**
+ * A gantry spans the approach lane with the signal and the camera on it. The
+ * light turns red; a car crosses the stop line anyway, the camera brackets it
+ * and reads its plate, and the roadside cabinet prints the e-challan and texts it.
+ */
 function intersection(m: Materials): Visual {
   const group = new THREE.Group();
   group.add(plate(m, 6.4, 5.2));
@@ -728,53 +732,113 @@ function intersection(m: Materials): Visual {
     zebra.push(...rect(0.95, k - 0.05, 1.3, k + 0.05, 0.16), ...rect(-1.3, k - 0.05, -0.95, k + 0.05, 0.16));
   }
   group.add(lines(zebra, m.lineDim));
-  const stopLine = lines([0, 0.17, 1.4, 0.7, 0.17, 1.4], m.line);
+  const STOP = 1.4;
+  const stopLine = lines([0, 0.17, STOP, 0.7, 0.17, STOP], m.line);
   group.add(stopLine);
   // Corner buildings.
   for (const [x, z, h] of [
-    [-2.2, -1.8, 1.0],
+    [-2.2, -1.8, 0.45],
+    [2.2, -1.9, 0.9],
     [2.2, 1.9, 0.5],
-    [-2.2, 1.9, 0.6],
   ])
     group.add(box(m, 1.3, h, 1.0, x, 0.14, z), slits(m, 1.3, h, 1.0, x, 0.14, z, 0.16));
-  // Signal pole with three lamps facing the oncoming lane.
-  group.add(cyl(m, 0.06, 2.1, 1.05, 0.14, 1.55, false, 10), box(m, 0.36, 0.95, 0.3, 1.05, 2.24, 1.55));
+
+  // The gantry over the approach, just past the stop line: signal and camera share it.
+  const GZ = 0.85;
+  const TOP = 2.15;
+  group.add(cyl(m, 0.05, TOP, -0.95, 0.14, GZ, false, 10), cyl(m, 0.05, TOP, 1.0, 0.14, GZ, false, 10));
+  group.add(box(m, 2.1, 0.1, 0.1, 0.02, 0.14 + TOP, GZ));
+  group.add(box(m, 0.3, 0.8, 0.24, 0.35, 0.14 + TOP - 0.8, GZ));
   const lamps = [0, 1, 2].map((k) => {
-    const l = solid(new THREE.SphereGeometry(0.1, 14, 10), m);
-    l.position.set(1.05, 3.0 - k * 0.28, 1.72);
+    const l = cyl(m, 0.08, 0.04, 0.35, 0, 0, false, 16);
+    l.rotation.x = Math.PI / 2;
+    l.position.set(0.35, 0.14 + TOP - 0.16 - k * 0.24, GZ + 0.13);
     group.add(l);
     return l;
   });
-  const lampGlow = glow(m, 1.0);
+  const lampGlow = glow(m, 0.9);
   group.add(lampGlow);
-  // Camera on an arm over the lane.
-  group.add(cyl(m, 0.05, 2.6, -1.1, 0.14, 1.8, false, 10), box(m, 1.0, 0.06, 0.06, -0.6, 2.7, 1.8));
-  const cam = box(m, 0.42, 0.24, 0.28, -0.25, 2.5, 1.8);
-  group.add(cam);
-  const cars = [0, 1, 2].map((k) => {
+  const cam = box(m, 0.26, 0.2, 0.42, -0.35, 0.14 + TOP - 0.24, GZ);
+  const lens = cyl(m, 0.07, 0.08, 0, 0, 0, false, 16);
+  lens.rotation.x = Math.PI / 2;
+  lens.position.set(-0.35, 0.14 + TOP - 0.14, GZ + 0.25);
+  group.add(cam, lens);
+
+  // Cars in the approach lane, heading into the junction (-z).
+  const car = () => {
     const g = new THREE.Group();
-    g.add(box(m, 0.5, 0.22, 0.9), box(m, 0.42, 0.18, 0.5, 0, 0.22, -0.05));
+    g.add(box(m, 0.5, 0.18, 0.95, 0, 0.07, 0), box(m, 0.42, 0.15, 0.48, 0, 0.25, 0.06));
+    for (const [x, z] of [[-0.26, -0.3], [0.26, -0.3], [-0.26, 0.3], [0.26, 0.3]]) {
+      const w = cyl(m, 0.08, 0.06, 0, 0, 0, false, 14);
+      w.rotation.z = Math.PI / 2;
+      w.position.set(x, 0.08, z);
+      g.add(w);
+    }
+    const plateMark = box(m, 0.22, 0.06, 0.01, 0, 0.12, -0.48);
+    g.add(plateMark);
     group.add(g);
-    return { g, offset: k * 1.9 };
-  });
-  const tag = new THREE.LineSegments(new THREE.EdgesGeometry(new THREE.BoxGeometry(0.75, 0.6, 1.15)), m.lineAccent);
-  // The camera's sightlines to the car it caught.
-  const coneGeo = new THREE.BufferGeometry();
-  coneGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(24), 3));
-  const cone = new THREE.LineSegments(coneGeo, m.lineAccent);
-  group.add(tag, cone);
-  const slip = screen(1.3, 0.7, (c, W, H) => {
-    c.font = font(H * 0.15, 700);
+    return { g, plateMark };
+  };
+  const cars = [0, 1, 2].map((k) => ({ ...car(), offset: k * 1.75 }));
+
+  // Detection: corner brackets around the caught car, its tag, and the camera's sightlines.
+  const bracket = (() => {
+    const [w, h, d, k] = [0.68, 0.5, 1.1, 0.16];
+    const pts: number[] = [];
+    for (const sx of [-1, 1])
+      for (const sy of [0, 1])
+        for (const sz of [-1, 1]) {
+          const x = (sx * w) / 2, y = sy * h, z = (sz * d) / 2;
+          pts.push(x, y, z, x - sx * k, y, z, x, y, z, x, y + (sy ? -k : k), z, x, y, z, x, y, z - sz * k);
+        }
+    return lines(pts, m.lineAccent);
+  })();
+  const tag = screen(0.86, 0.22, (c, W, H) => {
     c.fillStyle = palette.accent;
-    c.fillText("RED-LIGHT", W * 0.07, H * 0.3);
-    c.font = font(H * 0.13);
-    c.fillStyle = palette.ink;
-    c.fillText("MH 02 AB 1234", W * 0.07, H * 0.56);
-    c.fillStyle = palette.dim;
-    c.fillText("CHALLAN · SMS SENT", W * 0.07, H * 0.82);
+    c.fillRect(0, 0, W, H);
+    c.font = font(H * 0.58, 700);
+    c.fillStyle = palette.glass;
+    c.fillText("CAR · 0.97", W * 0.07, H * 0.74);
   });
-  group.add(slip.mesh);
+  const coneGeo = new THREE.BufferGeometry();
+  coneGeo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(12), 3));
+  const cone = new THREE.LineSegments(coneGeo, m.lineAccent);
+  group.add(bracket, tag.mesh, cone);
+
+  // The roadside cabinet that issues the challan, wired to the gantry.
+  group.add(box(m, 1.5, 1.3, 0.34, -2.15, 0.14, 1.75));
+  let step = 0;
+  const challan = screen(1.36, 1.12, (c, W, H) => {
+    c.font = font(H * 0.085, 700);
+    c.fillStyle = palette.dim;
+    c.fillText("E-CHALLAN · LANE 2", W * 0.07, H * 0.12);
+    if (step === 0) {
+      c.fillStyle = palette.ink;
+      c.fillText("MONITORING", W * 0.07, H * 0.32);
+      c.fillStyle = palette.dim;
+      c.fillText("YOLOv12x · 30 fps", W * 0.07, H * 0.47);
+      return;
+    }
+    const rows: [string, string][] = [
+      ["RED-LIGHT", palette.accent],
+      ["MH 02 AB 1234", palette.ink],
+      ["FINE  ₹ 1,000", palette.ink],
+      ["SMS SENT ✓", palette.accent],
+    ];
+    rows.slice(0, step).forEach(([text, col], i) => {
+      c.fillStyle = col;
+      c.font = font(H * (i === 1 ? 0.11 : 0.09), 700);
+      c.fillText(text, W * 0.07, H * (0.32 + i * 0.17));
+    });
+  });
+  challan.mesh.position.set(-2.15, 0.79, 1.925);
+  group.add(challan.mesh);
+  const feed = wire(m, trace([-0.95, GZ], [-2.15, 1.55], 0.16));
+  group.add(feed.group);
+
   const sway = pose(group, -0.6, 0.78);
+  const lensAt = new THREE.Vector3(-0.35, 0.14 + TOP - 0.14, GZ + 0.29);
+  let caughtAt = -1;
   return {
     group,
     update(t) {
@@ -783,28 +847,37 @@ function intersection(m: Materials): Visual {
       lamps.forEach((l, k) => setLit(l, (k === 0 && red) || (k === 2 && !red), m));
       lampGlow.position.copy(lamps[red ? 0 : 2].position);
       stopLine.material = red ? m.lineAccent : m.line;
-      let caught: THREE.Group | null = null;
+      let caught: (typeof cars)[number] | null = null;
       for (const c of cars) {
         const z = 2.4 - (((t + c.offset) * 1.1) % 5.2);
         c.g.position.set(0.35, 0.14, z);
-        if (red && z < 1.4 && z > -1.2) caught = c.g;
+        setLit(c.plateMark, false, m);
+        if (red && z < STOP && z > -1.6) caught = c;
       }
-      tag.visible = slip.mesh.visible = cone.visible = caught !== null;
-      setLit(cam, caught !== null, m);
+      const on = caught !== null;
+      bracket.visible = tag.mesh.visible = cone.visible = on;
+      setLit(cam, on, m);
       if (caught) {
-        const p = caught.position;
-        tag.position.copy(p).setY(0.48);
+        if (caughtAt < 0) caughtAt = t;
+        const p = caught.g.position;
+        setLit(caught.plateMark, true, m);
+        bracket.position.copy(p);
+        tag.mesh.position.set(p.x, p.y + 0.66, p.z);
+        tag.paint(t);
         const arr = coneGeo.attributes.position.array as Float32Array;
-        [
-          [-0.37, 0.78, -0.57],
-          [0.37, 0.78, -0.57],
-          [-0.37, 0.78, 0.57],
-          [0.37, 0.78, 0.57],
-        ].forEach(([dx, y, dz], k) => arr.set([-0.25, 2.5, 1.8, p.x + dx, y, p.z + dz], k * 6));
+        arr.set([...lensAt.toArray(), p.x - 0.34, p.y + 0.5, p.z - 0.55, ...lensAt.toArray(), p.x + 0.34, p.y + 0.5, p.z - 0.55]);
         coneGeo.attributes.position.needsUpdate = true;
-        slip.mesh.position.set(p.x - 1.5, 1.6, p.z);
-        slip.paint(t);
       }
+      // The challan prints line by line after a catch, then holds until the next one.
+      if (on && caughtAt >= 0) step = Math.min(4, 1 + Math.floor((t - caughtAt) / 0.45));
+      if (!red && step > 0 && t % 6 > 5.6) {
+        step = 0;
+        caughtAt = -1;
+      }
+      const sent = step > 0 && step < 4;
+      feed.hot(step > 0);
+      feed.run(sent ? ((t - caughtAt) % 0.9) / 0.9 : -1);
+      challan.paint(t);
     },
   };
 }
