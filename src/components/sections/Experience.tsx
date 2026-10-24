@@ -179,7 +179,7 @@ export function Experience() {
 
 function Card({ stop: s, index }: { stop: Stop; index: number }) {
   return (
-    <article className="deck-card relative origin-top overflow-hidden border border-line bg-bg">
+    <article className="deck-card relative min-h-[min(64svh,40rem)] origin-top overflow-hidden border border-line bg-bg">
       <div className="grid gap-y-6 p-[clamp(1.25rem,2.4vw,2.75rem)] md:grid-cols-12 md:gap-x-[3vw]">
         {/* Where and when */}
         <div className="flex flex-col justify-between gap-6 md:col-span-4 md:border-r md:border-line md:pr-[3vw]">
