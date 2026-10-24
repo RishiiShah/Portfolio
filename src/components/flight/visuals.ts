@@ -155,10 +155,6 @@ function slits(m: Materials, w: number, h: number, d: number, x: number, y: numb
   for (let u = z - d / 2 + inset; u <= z + d / 2 - inset + 1e-6; u += step) pts.push(x + w / 2 + 0.002, y + inset, u, x + w / 2 + 0.002, y + h - inset, u);
   return lines(pts, m.lineDim);
 }
-/** A short stack of bars standing on the plate (a little chart), returned so a bar can be lit. */
-function bars(m: Materials, heights: number[], x: number, y: number, z: number, w = 0.09) {
-  return heights.map((h, k) => box(m, w, h, w, x + k * (w + 0.03), y, z));
-}
 
 // ─── Cerevia: a command-center console wired to the network ──────────────────
 /**
@@ -309,74 +305,158 @@ function commandCenter(m: Materials): Visual {
 
 // ─── PlaNYt: a city diorama with the day's route ────────────────────────────
 /**
- * The route lights up behind a walker; each stop has a small crowd chart
- * (subway ridership by hour) with the quiet hour PlaNYt picked lit.
+ * One sentence in, a day out: the itinerary stands beside the city, and a
+ * walker follows the planned route street by street. The ribbon lights behind
+ * them, each numbered pin lights on arrival, and the plan highlights the stop.
  */
 function cityRoute(m: Materials): Visual {
   const group = new THREE.Group();
-  group.add(plate(m, 7.2, 5.4));
+  group.add(plate(m, 8.8, 5.4));
+  const city = new THREE.Group();
+  city.position.x = -0.85;
+  group.add(city);
   const cols = 6;
   const rows = 5;
   const step = 0.95;
   const heights = [0.5, 1.4, 0.7, 2.2, 0.6, 0.9, 1.1, 0.4, 1.7, 0.8, 0.5, 2.6, 0.7, 1.0, 0.45, 1.3, 0.6, 0.9, 1.9, 0.5, 0.8, 1.2, 0.55, 0.7, 1.5, 0.4, 0.9, 0.6, 1.1, 0.5];
   for (let c = 0; c < cols; c++)
     for (let r = 0; r < rows; r++) {
-      if (c === 2 && (r === 2 || r === 3)) continue; // a park
+      if (c === 2 && (r === 2 || r === 3)) continue; // the park
       const x = (c - (cols - 1) / 2) * step;
       const z = (r - (rows - 1) / 2) * step;
-      const h = heights[(c * rows + r) % heights.length] * 0.55;
-      group.add(box(m, 0.62, h, 0.62, x, 0.14, z));
-      if (h > 0.45) group.add(slits(m, 0.62, h, 0.62, x, 0.14, z, 0.12, 0.1));
+      // A skyline at the back, low blocks in front so the streets and route stay in view.
+      const h = heights[(c * rows + r) % heights.length] * (r === 0 ? 0.7 : 0.24) + 0.12;
+      city.add(box(m, 0.62, h, 0.62, x, 0.14, z));
+      if (h > 0.45) city.add(slits(m, 0.62, h, 0.62, x, 0.14, z, 0.12, 0.1));
     }
   // The park: a lawn with a few trees.
-  group.add(lines(rect(-0.79, -0.31, -0.11, 1.26, 0.16), m.lineDim));
+  city.add(lines(rect(-0.79, -0.31, -0.11, 1.26, 0.16), m.lineDim));
   for (const [x, z] of [
     [-0.6, -0.05],
     [-0.3, 0.4],
     [-0.55, 0.9],
   ])
-    group.add(solid(new THREE.ConeGeometry(0.13, 0.32, 10), m).translateX(x).translateY(0.32).translateZ(z));
-  // The route follows the streets between blocks.
-  const at = (c: number, r: number) => new THREE.Vector3((c - cols / 2) * step, 0.17, (r - rows / 2) * step);
-  const stops = [at(0, 1), at(0, 4), at(3, 4), at(3, 1), at(6, 1), at(6, 4)];
-  const legLen = stops.slice(1).map((s, i) => s.distanceTo(stops[i]));
+    city.add(solid(new THREE.ConeGeometry(0.13, 0.32, 10), m).translateX(x).translateY(0.32).translateZ(z));
+
+  // The route follows the streets between blocks, as a raised ribbon.
+  const at = (c: number, r: number) => new THREE.Vector3((c - cols / 2) * step, 0.15, (r - rows / 2) * step);
+  const corners = [at(0, 1), at(0, 4), at(3, 4), at(3, 1), at(6, 1), at(6, 4)];
+  const legLen = corners.slice(1).map((p, i) => p.distanceTo(corners[i]));
   const total = legLen.reduce((a, b) => a + b, 0);
-  const routeGeo = new THREE.BufferGeometry().setFromPoints(stops);
-  const routePos = routeGeo.attributes.position as THREE.BufferAttribute;
-  group.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(stops), m.lineDim), new THREE.Line(routeGeo, m.lineAccent));
-  // Stops: a disc on the street and a crowd chart beside it.
-  const crowd = [0.5, 0.75, 0.3, 0.6, 0.9];
-  const marks = [0, 2, 3, 5].map((k, n) => {
-    const disc = cyl(m, 0.18, 0.03, stops[k].x, 0.14, stops[k].z, false, 24);
-    // Charts sit on the inner side of their stop so they stay on the plate.
-    const cx = stops[k].x > 0 ? stops[k].x - 0.8 : stops[k].x + 0.2;
-    const chart = bars(m, crowd.map((h, j) => 0.12 + h * 0.5 * (1 + ((j + n) % 3) * 0.2)), cx, 0.14, stops[k].z + 0.22);
-    group.add(disc, ...chart);
-    return { k, disc, quiet: chart[2] };
+  const ribbon = corners.slice(1).map((p, i) => {
+    const a = corners[i];
+    const along = new THREE.Vector3().subVectors(p, a);
+    const yaw = Math.atan2(-along.z, along.x);
+    const dim = box(m, legLen[i] + 0.12, 0.02, 0.12, 0, 0, 0);
+    dim.position.copy(a).add(p).multiplyScalar(0.5);
+    dim.rotation.y = yaw;
+    const lit = box(m, 1, 0.03, 0.12, 0, 0, 0, true);
+    lit.rotation.y = yaw;
+    city.add(dim, lit);
+    return { a, along, lit };
   });
-  const walker = solid(new THREE.SphereGeometry(0.11, 16, 12), m, true);
-  const halo = glow(m, 0.9);
-  group.add(walker, halo);
-  const sway = pose(group, 0.55, 0.72, 0.6);
+
+  // Stops: numbered pins standing above the roofs, on the route's corners.
+  const plan = [
+    { k: 0, time: "09:30", name: "The Met", crowd: [0.3, 0.5, 0.8, 0.9, 0.6], pick: 0 },
+    { k: 2, time: "12:00", name: "Central Park", crowd: [0.4, 0.7, 0.5, 0.9, 0.8], pick: 2 },
+    { k: 3, time: "14:30", name: "MoMA", crowd: [0.9, 0.8, 0.4, 0.6, 0.7], pick: 2 },
+    { k: 5, time: "18:00", name: "Chelsea Market", crowd: [0.5, 0.6, 0.9, 0.3, 0.6], pick: 3 },
+  ];
+  const pins = plan.map(({ k }, n) => {
+    const base = corners[k];
+    const pole = cyl(m, 0.025, 0.7, base.x, 0.15, base.z, false, 8);
+    const head = cyl(m, 0.17, 0.08, base.x, 0.85, base.z, false, 24);
+    const tag = screen(0.26, 0.26, (c, W, H) => {
+      c.font = font(H * 0.72, 700);
+      c.fillStyle = palette.ink;
+      c.textAlign = "center";
+      c.fillText(String(n + 1), W / 2, H * 0.78);
+      c.textAlign = "start";
+    });
+    tag.mesh.rotation.x = -Math.PI / 2;
+    tag.mesh.position.set(base.x, 0.935, base.z);
+    city.add(pole, head, tag.mesh);
+    return { k, head, tag };
+  });
+
+  // The itinerary, standing beside the city like a phone.
+  let current = -1;
+  const phone = new THREE.Group();
+  phone.add(box(m, 2.0, 2.85, 0.12, 0, 0, 0));
+  const ui = screen(1.84, 2.65, (c, W, H) => {
+    c.font = font(W * 0.07);
+    c.fillStyle = palette.dim;
+    c.fillText("YOU", W * 0.08, H * 0.07);
+    c.fillStyle = palette.ink;
+    c.fillText("museums, long lunch,", W * 0.08, H * 0.12);
+    c.fillText("no crowds.", W * 0.08, H * 0.165);
+    c.fillStyle = palette.dim;
+    c.fillRect(W * 0.08, H * 0.2, W * 0.84, 2);
+    c.fillText("PLANYT · YOUR DAY", W * 0.08, H * 0.26);
+    plan.forEach((p, n) => {
+      const y = H * (0.33 + n * 0.155);
+      const on = n === current;
+      if (on) {
+        c.fillStyle = palette.accent;
+        c.fillRect(W * 0.05, y - H * 0.035, W * 0.9, H * 0.13);
+      }
+      c.fillStyle = on ? palette.glass : palette.ink;
+      c.font = font(W * 0.08, 700);
+      c.fillText(`${n + 1}  ${p.time}`, W * 0.09, y + H * 0.012);
+      c.font = font(W * 0.072);
+      c.fillText(p.name, W * 0.09, y + H * 0.06);
+      // Crowd by hour (subway ridership); the hour PlaNYt picked is marked.
+      p.crowd.forEach((v, j) => {
+        const bw = W * 0.035;
+        const x = W * 0.66 + j * (bw + W * 0.012);
+        c.fillStyle = on ? palette.glass : j === p.pick ? palette.accent : palette.dim;
+        c.fillRect(x, y + H * 0.06 - v * H * 0.06, bw, v * H * 0.06);
+      });
+    });
+    c.fillStyle = palette.dim;
+    c.fillText("4 stops · 6 sources", W * 0.08, H * 0.97);
+  });
+  ui.mesh.position.set(0, 1.425, 0.062);
+  phone.add(ui.mesh);
+  phone.position.set(3.35, 0.14, 0.75);
+  phone.rotation.set(-0.12, -0.35, 0);
+  group.add(phone);
+
+  const walker = solid(new THREE.SphereGeometry(0.12, 16, 12), m, true);
+  const halo = glow(m, 1.0);
+  city.add(walker, halo);
+  const sway = pose(group, 0.5, 0.66, 0.6);
   const pos = new THREE.Vector3();
   return {
     group,
     update(t) {
       sway(t);
-      let d = ((t % 10) / 10) * total;
+      // Walk for 9 s, then hold the finished route for 2.
+      const f = Math.min(1, (t % 11) / 9);
+      let d = f * total;
       let i = 0;
       while (i < legLen.length - 1 && d > legLen[i]) d -= legLen[i++];
-      pos.lerpVectors(stops[i], stops[i + 1], Math.min(1, d / legLen[i]));
-      walker.position.copy(pos).setY(0.28);
+      const legF = Math.min(1, d / legLen[i]);
+      pos.copy(corners[i]).addScaledVector(ribbon[i].along, legF);
+      walker.position.copy(pos).setY(0.3);
       halo.position.copy(walker.position);
-      routeGeo.setDrawRange(0, i + 2);
-      for (let k = 0; k < stops.length; k++) routePos.setXYZ(k, stops[k].x, stops[k].y, stops[k].z);
-      routePos.setXYZ(i + 1, pos.x, pos.y, pos.z);
-      routePos.needsUpdate = true;
-      marks.forEach((s) => {
-        setLit(s.disc, s.k <= i, m);
-        setLit(s.quiet, s.k <= i, m);
+      ribbon.forEach((r, n) => {
+        const k = n < i ? 1 : n === i ? legF : 0;
+        r.lit.visible = k > 0.01;
+        r.lit.scale.x = legLen[n] * k + 0.12;
+        r.lit.position.copy(r.a).addScaledVector(r.along, k / 2).setY(0.16);
       });
+      // The stop reached last: arrival lights its pin and its line in the plan.
+      let reached = -1;
+      pins.forEach((p, n) => {
+        const there = p.k < i || (p.k === i && legF >= 0) || (p.k === i + 1 && legF >= 1);
+        if (there) reached = n;
+        setLit(p.head, there, m);
+        p.tag.paint(t);
+      });
+      current = reached;
+      ui.paint(t);
     },
   };
 }
