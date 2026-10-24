@@ -381,67 +381,157 @@ function cityRoute(m: Materials): Visual {
   };
 }
 
-// ─── CseGraph: source files wired into a graph ───────────────────────────────
-/** A query is typed on the terminal; signal runs the graph's traces and the files it returns light up. */
+// ─── CseGraph: a repository indexed into a symbol graph ──────────────────────
+/**
+ * Files flow from the repository into the index (index.db). A query is typed;
+ * BM25 picks a seed symbol, the walk hops along the graph and each symbol it
+ * keeps rises and lights; the answer runs back to the terminal, where the
+ * context shrinks from 1,540 to 273 tokens.
+ */
 function codeGraph(m: Materials): Visual {
   const group = new THREE.Group();
-  group.add(plate(m, 6, 4.4));
-  const spots: [number, number][] = [
-    [-2.1, -1.4], [-0.7, -1.5], [0.8, -1.3], [2.1, -1.5],
-    [-1.6, -0.2], [0.1, -0.1], [1.7, 0], [-2.2, 1.1], [-0.5, 1.2], [1.0, 1.3],
-  ];
-  const files = spots.map(([x, z], i) => {
-    const h = 0.12 + (i % 3) * 0.06;
-    const s = box(m, 0.9, h, 0.62, x, 0.14, z);
-    // Lines of code on the file's top face.
-    const code: number[] = [];
-    [0.55, 0.35, 0.6, 0.25].forEach((len, k) => code.push(x - 0.35, 0.15 + h, z - 0.2 + k * 0.12, x - 0.35 + len, 0.15 + h, z - 0.2 + k * 0.12));
-    group.add(s, lines(code, m.lineDim));
+  group.add(plate(m, 6.6, 4.8));
+  const cycle = 9;
+
+  // A label lying on a top face, readable from the camera.
+  const topLabel = (w: number, d: number, x: number, y: number, z: number, draw: Parameters<typeof screen>[2]) => {
+    const s = screen(w, d, draw);
+    s.mesh.rotation.x = -Math.PI / 2;
+    s.mesh.position.set(x, y + 0.003, z);
+    group.add(s.mesh);
     return s;
+  };
+
+  // The repository: a fanned stack of source files.
+  for (let k = 0; k < 5; k++) group.add(box(m, 1.15, 0.05, 0.8, -2.45 + k * 0.03, 0.14 + k * 0.09, -1.45 - k * 0.03));
+  const repo = topLabel(1.0, 0.62, -2.33, 0.14 + 4 * 0.09 + 0.05, -1.57, (c, W, H) => {
+    c.font = font(H * 0.22, 700);
+    c.fillStyle = palette.ink;
+    c.fillText("repo/", W * 0.08, H * 0.36);
+    c.font = font(H * 0.17);
+    c.fillText("12,245 files", W * 0.08, H * 0.72);
   });
-  const edges: [number, number][] = [[0, 1], [1, 2], [2, 3], [0, 4], [1, 5], [2, 5], [3, 6], [4, 5], [5, 6], [4, 7], [5, 8], [8, 9], [6, 9], [7, 8]];
+
+  // The index store: a stacked drum, SQLite.
+  for (let k = 0; k < 3; k++) group.add(cyl(m, 0.5, 0.2, 2.45, 0.14 + k * 0.25, -1.4));
+  const db = topLabel(0.62, 0.36, 2.45, 0.14 + 2 * 0.25 + 0.2, -1.4, (c, W, H) => {
+    c.font = font(H * 0.3, 700);
+    c.fillStyle = palette.ink;
+    c.fillText("index.db", W * 0.04, H * 0.62);
+  });
+  const dbLed = cyl(m, 0.05, 0.02, 2.45, 0.14 + 0.66, -1.04, false, 12);
+  group.add(dbLed);
+
+  // The symbol graph: chips with names on their tops, wired by traces.
+  const names = ["login()", "Session", "verify_jwt", "User", "routes", "hash_pw", "cache", "config"];
+  const spots: [number, number][] = [
+    [-0.85, -0.3], [0.35, -0.95], [1.5, -0.25], [0.45, 0.45], [-0.95, -1.35], [1.75, 0.7], [0.95, 1.45], [1.55, -1.45],
+  ];
+  const edges: [number, number][] = [[0, 1], [1, 2], [2, 3], [0, 3], [0, 4], [1, 7], [2, 5], [3, 6], [4, 1], [5, 3], [6, 0]];
   group.add(lines(edges.flatMap(([a, b]) => trace(spots[a], spots[b], 0.16).flatMap((p, k, all) => (k ? [...all[k - 1].toArray(), ...p.toArray()] : []))), m.lineDim));
-  const path = [8, 5, 2, 3];
-  const hops = path.slice(1).map((p, i) => {
-    const w = wire(m, trace(spots[path[i]], spots[p], 0.17));
+  const lit = names.map(() => false);
+  const chips = spots.map(([x, z], i) => {
+    const g = new THREE.Group();
+    const body = box(m, 0.98, 0.12, 0.42, 0, 0, 0);
+    // Lit chips turn solid accent with the name knocked out.
+    const tag = screen(0.9, 0.34, (c, W, H) => {
+      if (lit[i]) {
+        c.fillStyle = palette.accent;
+        c.fillRect(0, 0, W, H);
+      }
+      c.font = font(H * 0.4, 700);
+      c.fillStyle = lit[i] ? palette.glass : palette.ink;
+      c.fillText(names[i], W * 0.06, H * 0.66);
+    });
+    tag.mesh.rotation.x = -Math.PI / 2;
+    tag.mesh.position.y = 0.123;
+    g.add(body, tag.mesh);
+    g.position.set(x, 0.14, z);
+    group.add(g);
+    return { g, body, tag };
+  });
+  // The walk BM25 seeds at login() and the hops it keeps.
+  const walk = [0, 1, 2, 3];
+  const hops = walk.slice(1).map((p, i) => {
+    const w = wire(m, trace(spots[walk[i]], spots[p], 0.17));
     group.add(w.group);
     return w;
   });
-  // Terminal in front.
-  group.add(box(m, 2.0, 1.3, 0.3, -1.6, 0.14, 1.95));
-  const cmd = '$ csegraph context "auth"';
-  const tty = screen(1.8, 1.1, (c, W, H, t) => {
-    const s = t % 7;
-    c.font = font(H * 0.09);
+
+  // Indexing: repo to graph; the graph persists into index.db.
+  const ingest = wire(m, trace([-1.85, -1.45], [-0.85, -0.5], 0.16));
+  const persist = wire(m, trace([2.05, -1.45], [1.95, -1.1], 0.16));
+  // The answer: from the last symbol back to the terminal.
+  const answer = wire(m, trace([0.45, 0.66], [-1.1, 1.3], 0.16));
+  group.add(ingest.group, persist.group, answer.group);
+
+  // Terminal in front, laid back like a console so it faces the camera and hides little.
+  const term = new THREE.Group();
+  term.add(box(m, 2.3, 1.45, 0.24, 0, 0, 0));
+  const cmd = "$ csegraph context login";
+  const tty = screen(2.1, 1.25, (c, W, H, t) => {
+    const s = t % cycle;
+    c.font = font(H * 0.088);
     c.fillStyle = palette.ink;
-    c.fillText(cmd.slice(0, Math.min(cmd.length, Math.floor(s * 12))), W * 0.05, H * 0.16);
-    if (s < 3.8) return;
-    c.fillStyle = palette.accent;
-    ["auth/session.py  0.94", "api/routes.py    0.81", "db/users.py      0.77"].forEach((l, i) => {
-      if (s > 3.8 + i * 0.3) c.fillText(l, W * 0.05, H * (0.36 + i * 0.16));
+    c.fillText(cmd.slice(0, Math.min(cmd.length, Math.floor(s * 14))), W * 0.05, H * 0.14);
+    if (s < 5) {
+      c.fillStyle = palette.dim;
+      if (s > 2) c.fillText(s < 3.2 ? "bm25 → login()" : "graph walk · " + Math.min(3, Math.floor((s - 3.2) / 0.55) + 1) + " hops", W * 0.05, H * 0.3);
+      return;
+    }
+    ["auth/login.py", "auth/session.py", "auth/jwt.py", "models/user.py"].forEach((l, i) => {
+      if (s < 5 + i * 0.18) return;
+      c.fillStyle = palette.accent;
+      c.fillText("✓ " + l, W * 0.05, H * (0.3 + i * 0.115));
     });
+    // Context budget: the full read shrinks to what the graph kept.
+    const k = Math.min(1, Math.max(0, (s - 5.6) / 1.2));
+    const tokens = Math.round(1540 - (1540 - 273) * k);
     c.fillStyle = palette.dim;
-    c.fillText("1,184 / 2,000 tokens", W * 0.05, H * 0.9);
+    c.fillRect(W * 0.05, H * 0.82, W * 0.9, H * 0.06);
+    c.fillStyle = k > 0 ? palette.accent : palette.ink;
+    c.fillRect(W * 0.05, H * 0.82, W * 0.9 * (tokens / 1540), H * 0.06);
+    c.fillStyle = palette.ink;
+    c.fillText(`${tokens.toLocaleString("en-US")} tokens` + (k >= 1 ? "  −82%" : ""), W * 0.05, H * 0.76);
   });
-  tty.mesh.position.set(-1.6, 0.79, 2.11);
-  group.add(tty.mesh);
-  const sway = pose(group, -0.5, 0.82);
+  tty.mesh.position.set(0, 0.725, 0.122);
+  term.add(tty.mesh);
+  term.position.set(-1.75, 0.14, 1.95);
+  term.rotation.x = -0.8;
+  group.add(term);
+
+  const sway = pose(group, -0.5, 0.8);
   return {
     group,
     update(t) {
       sway(t);
       tty.paint(t);
-      const s = t % 7;
-      const k = (s - 2.2) / 1.6; // 0 → 1 across the whole path
+      repo.paint(t);
+      db.paint(t);
+      const s = t % cycle;
+      // 0–2 indexing hum · 2–3.2 seed · 3.2–4.85 walk · 5–7.4 answer · fade.
+      ingest.hot(s < 2);
+      ingest.run(s < 2 ? (s % 1) : -1);
+      persist.hot(s < 2.2);
+      persist.run(s > 0.5 && s < 2.2 ? (s - 0.5) / 1.7 : -1);
+      setLit(dbLed as Solid, s < 2.2 ? Math.floor(s * 6) % 2 === 0 : s > 2 && s < 5, m);
+      const walked = s < 3.2 ? 0 : Math.min(hops.length, (s - 3.2) / 0.55);
+      const live = s >= 2 && s < 8.2;
       hops.forEach((h, i) => {
-        const local = k * hops.length - i;
-        h.hot(local >= 0 && s < 6.6);
-        h.run(local >= 0 && local <= 1 ? local : -1);
+        const local = walked - i;
+        h.hot(live && local > 0);
+        h.run(local > 0 && local < 1 ? local : -1);
       });
-      files.forEach((f, i) => {
-        const at = path.indexOf(i);
-        setLit(f, at >= 0 && k * hops.length >= at && s < 6.6, m);
+      chips.forEach((c, i) => {
+        const at = walk.indexOf(i);
+        const on = live && at >= 0 && (at === 0 || walked >= at);
+        lit[i] = on;
+        setLit(c.body, on, m);
+        c.g.position.y += ((on ? 0.3 : 0.14) - c.g.position.y) * 0.12;
+        c.tag.paint(t);
       });
+      answer.hot(s >= 4.85 && s < 8.2);
+      answer.run(s >= 4.85 && s < 5.6 ? (s - 4.85) / 0.75 : -1);
     },
   };
 }
