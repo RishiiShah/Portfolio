@@ -70,7 +70,7 @@ const STOPS: Stop[] = [
     end: "",
     place: teaching.location,
     title: teaching.role,
-    role: `${teaching.organization} · ${teaching.course}`,
+    role: `${teaching.organization} · ${teaching.courseShort}`,
     bullets: [...teaching.bullets],
     summary: `${teaching.course.split(":")[0]} recitations for 50+ undergraduates.`,
     highlights: [{ value: "50+", label: "Students each week" }],
@@ -103,7 +103,7 @@ const GAP = 760;
 const PLANETS = [
   { r: 82, ring: false, moons: 1, station: false, lats: [-0.66, -0.33, 0.33, 0.66], meridians: 4, sites: 14 }, // Mumbai: home world
   { r: 52, ring: true, moons: 0, station: false, lats: [-0.8, -0.6, -0.38, -0.16, 0.12, 0.36, 0.58, 0.8], meridians: 0, sites: 8 }, // Creative Line: banded giant
-  { r: 104, ring: false, moons: 0, station: true, lats: [-0.5, 0.5], meridians: 6, sites: 22 }, // Aaditya Technologies
+  { r: 104, ring: false, belt: true, moons: 0, station: true, lats: [-0.5, 0.5], meridians: 6, sites: 22 }, // Aaditya Technologies: an engineered world
   { r: 78, ring: true, moons: 2, station: false, lats: [-0.66, -0.33, 0.33, 0.66], meridians: 3, sites: 14 }, // Rutgers
   { r: 100, ring: false, moons: 0, station: false, outpost: true, lats: [], meridians: 0, sites: 0 }, // Teaching Assistant: orbital outpost
   { r: 64, ring: false, moons: 0, station: false, lats: [-0.5, 0.5], meridians: 3, sites: 0 }, // Next stop: uncharted
@@ -327,10 +327,26 @@ function Outpost() {
   );
 }
 
+/** A tight equatorial belt of modules hugging the globe (one half: behind or in front of it). */
+function Belt({ s, front }: { s: number; front: boolean }) {
+  const [inner, outer] = [s * 1.06, s * 1.3];
+  const seams = Array.from({ length: 24 }, (_, k) => (k / 24) * TAU).filter((a) => Math.cos(a) + Math.sin(a) > 0 === front);
+  return (
+    <>
+      <path className="space-annulus" d={band(inner, outer, front)} />
+      <path className="space-grid" d={trace(half(flat((inner + outer) / 2), front))} />
+      {seams.map((a) => (
+        <path key={a} className="space-grid" d={trace([flat(inner)(a), flat(outer)(a)])} />
+      ))}
+    </>
+  );
+}
+
 /** An iso-glow planet: wireframe globe, optional flat ring, moons or a station on dashed orbits. */
 function Planet({ i }: { i: number }) {
   const [cx, cy] = centers[i];
   const { r, ring, outpost } = PLANETS[i];
+  const belt = "belt" in PLANETS[i];
   const s = r / ISO;
   const uncharted = i === N - 1;
   const orbits = orbitsOf(i);
@@ -356,6 +372,7 @@ function Planet({ i }: { i: number }) {
           <path className="space-grid" d={trace(half(flat(s * 1.78), false))} />
         </>
       )}
+      {belt && <Belt s={s} front={false} />}
       {orbits.map((o) => (
         <path key={o.rho} className="space-orbit" d={trace(half(flat(o.rho), false))} />
       ))}
@@ -399,6 +416,7 @@ function Planet({ i }: { i: number }) {
           <path className="space-grid" d={trace(half(flat(s * 1.78), true))} />
         </>
       )}
+      {belt && <Belt s={s} front />}
       {orbits.map((o) => (
         <path key={o.rho} className="space-orbit" d={trace(half(flat(o.rho), true))} />
       ))}

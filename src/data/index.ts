@@ -121,6 +121,7 @@ export const teaching = {
   location: "New Brunswick, NJ",
   start: "September 2026",
   course: "CS205: Introduction to Discrete Structures I",
+  courseShort: "CS205 Discrete Structures I",
   bullets: [
     "Lead weekly recitations for 50+ undergraduates on set notation, propositional logic, truth tables, and Boolean circuits.",
     "Teach first-order logic, predicates, quantifiers, and induction proofs for program correctness, trees, and grammars.",
