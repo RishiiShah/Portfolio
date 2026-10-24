@@ -156,149 +156,196 @@ function slits(m: Materials, w: number, h: number, d: number, x: number, y: numb
   return lines(pts, m.lineDim);
 }
 
-// ─── Cerevia: a command-center console wired to the network ──────────────────
+// ─── Cerevia: coverage gaps caught early and staffed through approval ──────
 /**
- * A gap opens at a hospital (it blinks on the outlook and on the plate), the
- * console offers a split shift to an off-duty physician (signal runs to their
- * phone), they accept, and the hospital is covered again.
+ * A gap opens at one of the network's hospitals 90 minutes ahead (it blinks on
+ * the engine's lookahead and on the hospital). The engine proposes a split
+ * shift; the signal runs the approval loop: clinical lead approves on the
+ * tablet, the physician accepts on the phone, and the hospital is covered.
+ * Every step prints a line on the append-only audit ledger.
  */
 function commandCenter(m: Materials): Visual {
   const group = new THREE.Group();
-  group.add(plate(m, 6.8, 4.6));
-  group.add(box(m, 4.4, 0.55, 1.2, 0, 0.14, -0.6));
-  group.add(slits(m, 4.4, 0.55, 1.2, 0, 0.14, -0.6, 0.3, 0.12));
-  const cycle = 8;
-  const phaseAt = (t: number) => (t % cycle) / cycle; // 0–.3 gap open · .3–.55 offer out · .55–1 covered
-  const centre = screen(2.1, 1.25, (c, W, H, t) => {
-    const ph = phaseAt(t);
-    c.font = font(H * 0.07);
-    c.fillStyle = palette.dim;
-    c.fillText("COVERAGE · NEXT 90 MIN", W * 0.05, H * 0.12);
-    for (let r = 0; r < 6; r++) {
-      const y = H * (0.2 + r * 0.12);
-      c.fillStyle = palette.dim;
-      c.fillRect(W * 0.05, y, W * 0.9, H * 0.07);
-      c.fillStyle = palette.ink;
-      c.fillRect(W * 0.05, y, W * (0.5 + ((r * 37) % 30) / 100), H * 0.07);
-      if (r === 3) {
-        const blinkOff = ph < 0.3 && Math.floor(t * 3) % 2 === 1;
-        c.fillStyle = ph < 0.55 ? (blinkOff ? palette.dim : palette.accent) : palette.ink;
-        c.fillRect(W * 0.55, y, W * 0.22, H * 0.07);
-      }
-    }
-    c.fillStyle = palette.accent;
-    c.fillRect(W * (0.05 + 0.9 * ph), H * 0.18, 2, H * 0.74);
-    c.fillStyle = ph < 0.55 ? palette.accent : palette.ink;
-    c.fillText(ph < 0.3 ? "GAP · ST. MARY'S 14:20" : ph < 0.55 ? "OFFER SENT · DR. PATEL" : "COVERED · ACCEPTED", W * 0.05, H * 0.97);
-  });
-  const queue = screen(1.35, 1.0, (c, W, H, t) => {
-    const ph = phaseAt(t);
-    c.font = font(H * 0.09);
-    c.fillStyle = palette.dim;
-    c.fillText("ATTENTION", W * 0.07, H * 0.14);
-    ["STROKE · 14m", "EEG · 32m", "CONSULT · 41m", "CONSULT · 58m"].forEach((label, i) => {
-      const hot = i === 0 && ph < 0.55;
-      c.fillStyle = hot ? palette.accent : palette.dim;
-      c.fillRect(W * 0.07, H * (0.24 + i * 0.18), W * 0.86, H * 0.13);
-      c.fillStyle = hot ? palette.glass : palette.ink;
-      c.fillText(label, W * 0.11, H * (0.34 + i * 0.18));
-    });
-  });
-  const approve = screen(1.35, 1.0, (c, W, H, t) => {
-    const done = phaseAt(t) >= 0.3;
-    c.font = font(H * 0.09);
-    c.fillStyle = palette.dim;
-    c.fillText("SPLIT SHIFT", W * 0.07, H * 0.14);
-    c.fillStyle = palette.ink;
-    c.fillText("13:30 → 15:00", W * 0.07, H * 0.34);
-    c.fillText("DR. PATEL · NEURO", W * 0.07, H * 0.5);
-    c.strokeStyle = palette.accent;
-    c.lineWidth = 3;
-    c.strokeRect(W * 0.07, H * 0.64, W * 0.86, H * 0.22);
-    if (done) {
-      c.fillStyle = palette.accent;
-      c.fillRect(W * 0.07, H * 0.64, W * 0.86, H * 0.22);
-    }
-    c.fillStyle = done ? palette.glass : palette.accent;
-    c.fillText(done ? "APPROVED ✓" : "APPROVE", W * 0.12, H * 0.79);
-  });
-  const mount = (s: { mesh: THREE.Mesh }, w: number, h: number, x: number, z: number, yaw: number) => {
-    const g = new THREE.Group();
-    g.add(box(m, 0.12, 0.5, 0.12), box(m, w + 0.12, h + 0.12, 0.1, 0, 0.5, 0));
-    s.mesh.position.set(0, 0.56 + h / 2, 0.052);
-    g.add(s.mesh);
-    g.position.set(x, 0.69, z);
-    g.rotation.y = yaw;
-    group.add(g);
-  };
-  mount(centre, 2.1, 1.25, 0, -0.85, 0);
-  mount(queue, 1.35, 1.0, -2.0, -0.65, 0.45);
-  mount(approve, 1.35, 1.0, 2.0, -0.65, -0.45);
+  group.add(plate(m, 7.2, 4.8));
+  const cycle = 9;
+  // 0–2 gap open · 2–3.4 proposed · 3.4–4.8 approved · 4.8–6.2 accepted · 6.2–9 covered
+  const phaseAt = (t: number) => t % cycle;
+  const step = (s: number) => (s < 2 ? 0 : s < 3.4 ? 1 : s < 4.8 ? 2 : s < 6.2 ? 3 : 4);
 
-  // The network on the plate: three hospitals (a cross on the roof) and the on-call physician's phone.
-  const hospitalAt: [number, number][] = [
-    [-2.6, 1.5],
-    [-1.4, 1.75],
-    [-0.2, 1.5],
-  ];
+  // The engine: a console whose wide screen is the 90-minute coverage lookahead.
+  group.add(box(m, 3.1, 0.5, 1.0, 0.2, 0.14, -1.55), slits(m, 3.1, 0.5, 1.0, 0.2, 0.14, -1.55, 0.25, 0.12));
+  const lookahead = screen(2.9, 1.45, (c, W, H, t) => {
+    const s = phaseAt(t);
+    const k = step(s);
+    c.font = font(H * 0.075, 700);
+    c.fillStyle = palette.ink;
+    c.fillText("COVERAGE", W * 0.04, H * 0.11);
+    c.fillStyle = k === 4 ? palette.ink : palette.accent;
+    c.textAlign = "right";
+    c.fillText(["GAP · 82 MIN AHEAD", "SPLIT SHIFT PROPOSED", "APPROVED", "ACCEPTED", "COVERED ✓"][k], W * 0.96, H * 0.11);
+    c.textAlign = "start";
+    // One lane per hospital: shifts covered in ink on a dim track, the gap ahead in accent.
+    const x0 = W * 0.27;
+    const x1 = W * 0.96;
+    ["ST. MARY'S", "RIVERSIDE", "MERCY"].forEach((name, r) => {
+      const y = H * (0.3 + r * 0.19);
+      c.font = font(H * 0.06);
+      c.fillStyle = palette.dim;
+      c.fillText(name, W * 0.04, y + H * 0.035);
+      c.fillRect(x0, y, x1 - x0, H * 0.035);
+      c.fillStyle = palette.ink;
+      [[0, 0.3], [0.33, 0.62], [0.65, 1]].forEach(([u0, u1]) => c.fillRect(x0 + (x1 - x0) * u0, y, (x1 - x0) * (u1 - u0), H * 0.035));
+      if (r === 1) {
+        const blink = k === 0 && Math.floor(t * 3) % 2 === 1;
+        c.fillStyle = k < 3 ? (blink ? palette.dim : palette.accent) : palette.ink;
+        c.fillRect(x0 + (x1 - x0) * 0.5, y - H * 0.03, (x1 - x0) * 0.2, H * 0.095);
+      }
+    });
+    // The time axis: now, and 90 minutes out.
+    c.fillStyle = palette.accent;
+    c.fillRect(x0, H * 0.24, 2, H * 0.52);
+    c.font = font(H * 0.06);
+    c.fillStyle = palette.dim;
+    c.fillText("NOW", x0 - W * 0.01, H * 0.86);
+    c.textAlign = "right";
+    c.fillText("+90 MIN", x1, H * 0.86);
+    c.textAlign = "start";
+  });
+  const stand = new THREE.Group();
+  stand.add(box(m, 0.14, 0.5, 0.14, 0, 0, 0), box(m, 3.05, 1.6, 0.1, 0, 0.5, 0));
+  lookahead.mesh.position.set(0, 1.3, 0.052);
+  stand.add(lookahead.mesh);
+  stand.position.set(0.2, 0.64, -1.6);
+  group.add(stand);
+
+  // The network: three hospitals on the left, wired to the engine.
+  const hospitalAt: [number, number][] = [[-2.75, -0.95], [-2.6, 0.45], [-1.45, 1.55]];
   const hospitals = hospitalAt.map(([x, z], i) => {
-    const h = 0.55 + i * 0.12;
-    const b = box(m, 0.62, h, 0.5, x, 0.14, z);
-    group.add(b, slits(m, 0.62, h, 0.5, x, 0.14, z, 0.14));
-    group.add(lines([x - 0.12, 0.15 + h, z, x + 0.12, 0.15 + h, z, x, 0.15 + h, z - 0.12, x, 0.15 + h, z + 0.12], m.line));
+    const h = 0.75 + (i === 1 ? 0.25 : 0);
+    const b = box(m, 0.75, h, 0.6, x, 0.14, z);
+    group.add(b, slits(m, 0.75, h, 0.6, x, 0.14, z, 0.15));
+    // A cross on the roof.
+    group.add(lines([x - 0.14, 0.15 + h, z, x + 0.14, 0.15 + h, z, x, 0.15 + h, z - 0.14, x, 0.15 + h, z + 0.14], m.line));
     return b;
   });
-  const gap = 1;
-  const links = hospitalAt.map(([x, z]) => {
-    const w = wire(m, trace([x, z - 0.25], [x * 0.3, -0.05], 0.16));
+  const GAP = 1;
+  const beacon = cyl(m, 0.07, 0.14, hospitalAt[GAP][0], 0.14 + 1.0, hospitalAt[GAP][1], false, 12);
+  const beaconGlow = glow(m, 1.1);
+  beaconGlow.position.set(hospitalAt[GAP][0], 1.4, hospitalAt[GAP][1]);
+  group.add(beacon, beaconGlow);
+  const feeds = hospitalAt.map(([x, z]) => {
+    const w = wire(m, trace([x + 0.38, z], [-1.1, -1.25], 0.16));
     group.add(w.group);
     return w;
   });
-  const phone = box(m, 0.55, 0.06, 0.95, 2.2, 0.14, 1.4);
-  group.add(phone);
-  const phoneUi = screen(0.45, 0.82, (c, W, H, t) => {
-    const ph = phaseAt(t);
-    if (ph < 0.3) return; // dark until the offer arrives
-    const accepted = ph >= 0.42;
-    c.font = font(W * 0.11, 700);
-    c.fillStyle = palette.ink;
-    c.fillText("SHIFT", W * 0.1, H * 0.18);
-    c.fillText("OFFER", W * 0.1, H * 0.3);
-    c.font = font(W * 0.09);
+
+  // The approval loop: engine → clinical lead's tablet → physician's phone → hospital.
+  const tabletBody = box(m, 1.25, 0.06, 0.9, 0.55, 0.14, 1.25);
+  const tablet = screen(1.12, 0.78, (c, W, H, t) => {
+    const k = step(phaseAt(t));
+    c.font = font(H * 0.1, 700);
     c.fillStyle = palette.dim;
-    c.fillText("13:30-15:00", W * 0.1, H * 0.44);
+    c.fillText("CLINICAL LEAD", W * 0.07, H * 0.16);
+    c.fillStyle = palette.ink;
+    c.font = font(H * 0.1);
+    c.fillText("Split shift 13:30–15:00", W * 0.07, H * 0.36);
+    c.fillText("Dr. Patel → Riverside", W * 0.07, H * 0.52);
+    const done = k >= 2;
+    c.strokeStyle = palette.accent;
+    c.lineWidth = 3;
+    c.strokeRect(W * 0.07, H * 0.66, W * 0.86, H * 0.22);
+    if (done) {
+      c.fillStyle = palette.accent;
+      c.fillRect(W * 0.07, H * 0.66, W * 0.86, H * 0.22);
+    }
+    c.font = font(H * 0.11, 700);
+    c.fillStyle = done ? palette.glass : palette.accent;
+    c.fillText(done ? "APPROVED ✓" : k === 1 ? "APPROVE ?" : "APPROVE", W * 0.13, H * 0.81);
+  });
+  tablet.mesh.rotation.x = -Math.PI / 2;
+  tablet.mesh.position.set(0.55, 0.205, 1.25);
+  const phoneBody = box(m, 0.5, 0.06, 0.92, 2.3, 0.14, 1.35);
+  const phone = screen(0.42, 0.8, (c, W, H, t) => {
+    const k = step(phaseAt(t));
+    if (k < 2) return; // dark until the approved offer arrives
+    c.font = font(W * 0.12, 700);
+    c.fillStyle = palette.ink;
+    c.fillText("SHIFT", W * 0.1, H * 0.17);
+    c.fillText("OFFER", W * 0.1, H * 0.29);
+    c.font = font(W * 0.1);
+    c.fillStyle = palette.dim;
+    c.fillText("Riverside", W * 0.1, H * 0.43);
     c.fillStyle = palette.accent;
-    c.fillRect(W * 0.1, H * 0.62, W * 0.8, H * 0.16);
+    c.fillRect(W * 0.1, H * 0.6, W * 0.8, H * 0.16);
     c.fillStyle = palette.glass;
     c.font = font(W * 0.1, 700);
-    c.fillText(accepted ? "ACCEPTED" : "ACCEPT", W * 0.16, H * 0.73);
+    c.fillText(k >= 3 ? "ACCEPTED" : "ACCEPT", W * 0.15, H * 0.71);
   });
-  phoneUi.mesh.rotation.x = -Math.PI / 2;
-  phoneUi.mesh.position.set(2.2, 0.205, 1.4);
-  group.add(phoneUi.mesh);
-  const toPhone = wire(m, trace([1.0, -0.05], [2.2, 0.9], 0.16));
-  group.add(toPhone.group);
+  phone.mesh.rotation.x = -Math.PI / 2;
+  phone.mesh.position.set(2.3, 0.205, 1.35);
+  group.add(tabletBody, tablet.mesh, phoneBody, phone.mesh);
+  const toLead = wire(m, trace([0.55, -1.05], [0.55, 0.8], 0.16));
+  const toPhone = wire(m, trace([1.18, 1.25], [2.05, 1.25], 0.16));
+  const toHospital = wire(m, [
+    new THREE.Vector3(2.3, 0.16, 1.81),
+    new THREE.Vector3(2.3, 0.16, 2.15),
+    new THREE.Vector3(-2.6, 0.16, 2.15),
+    new THREE.Vector3(-2.6, 0.16, 0.75),
+  ]);
+  group.add(toLead.group, toPhone.group, toHospital.group);
 
-  const sway = pose(group, -0.35, 0.78);
+  // The audit ledger: an append-only stack that grows a sheet per step.
+  const sheets = Array.from({ length: 5 }, (_, k) => {
+    const sh = box(m, 0.9, 0.035, 0.62, 2.55, 0.14 + k * 0.05, -0.15);
+    group.add(sh);
+    return sh;
+  });
+  const ledger = screen(0.82, 0.55, (c, W, H, t) => {
+    const k = step(phaseAt(t));
+    c.font = font(H * 0.13, 700);
+    c.fillStyle = palette.dim;
+    c.fillText("AUDIT LOG", W * 0.06, H * 0.17);
+    c.font = font(H * 0.11);
+    ["gap", "propose", "approve", "accept", "covered"].slice(0, k + 1).forEach((e, i) => {
+      c.fillStyle = i === k ? palette.accent : palette.ink;
+      c.fillText(`${String(i + 1).padStart(2, "0")} ${e}`, W * 0.06, H * (0.33 + i * 0.15));
+    });
+  });
+  ledger.mesh.rotation.x = -Math.PI / 2;
+  group.add(ledger.mesh);
+
+  const sway = pose(group, -0.3, 0.74);
   return {
     group,
     update(t) {
       sway(t);
-      centre.paint(t);
-      queue.paint(t);
-      approve.paint(t);
-      phoneUi.paint(t);
-      const ph = phaseAt(t);
-      const open = ph < 0.3;
-      setLit(hospitals[gap], open && Math.floor(t * 3) % 2 === 0, m);
-      links.forEach((l, i) => {
-        l.hot(i === gap && ph < 0.55);
-        // Once covered, a pulse runs back to the hospital: the physician is on.
-        l.run(i === gap && ph >= 0.55 && ph < 0.75 ? (ph - 0.55) / 0.2 : -1);
+      lookahead.paint(t);
+      tablet.paint(t);
+      phone.paint(t);
+      ledger.paint(t);
+      const s = phaseAt(t);
+      const k = step(s);
+      const open = k < 3;
+      const blink = Math.floor(t * 3) % 2 === 0;
+      setLit(hospitals[GAP], k === 0 && blink, m);
+      setLit(beacon, open, m);
+      beaconGlow.visible = k === 0 && blink;
+      // The gap reaches the engine; the proposal goes to the lead; the approved offer to the phone; the cover back to the hospital.
+      feeds.forEach((f, i) => {
+        f.hot(i === GAP && k === 0);
+        f.run(i === GAP && s < 1.2 ? s / 1.2 : -1);
       });
-      toPhone.hot(ph >= 0.3 && ph < 0.55);
-      toPhone.run(ph >= 0.3 && ph < 0.42 ? (ph - 0.3) / 0.12 : -1);
-      setLit(phone, ph >= 0.3 && ph < 0.55, m);
+      toLead.hot(k === 1);
+      toLead.run(k === 1 && s < 2.9 ? (s - 2) / 0.9 : -1);
+      toPhone.hot(k === 2);
+      toPhone.run(k === 2 && s < 4.3 ? (s - 3.4) / 0.9 : -1);
+      toHospital.hot(k === 3);
+      toHospital.run(k === 3 && s < 6.0 ? (s - 4.8) / 1.2 : -1);
+      setLit(tabletBody, k === 1, m);
+      setLit(phoneBody, k === 2, m);
+      // The ledger grows one sheet per step, its top one carrying the log.
+      sheets.forEach((sh, i) => (sh.visible = i <= k));
+      ledger.mesh.position.set(2.55, 0.14 + k * 0.05 + 0.04, -0.15);
     },
   };
 }
