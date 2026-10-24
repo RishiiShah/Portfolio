@@ -203,146 +203,10 @@ html.lenis body {
   .js .fly-card {
     top: auto;
     bottom: 4vh;
+    margin-block: 0;
     left: max(1rem, 4vw);
     right: max(1rem, 4vw);
     width: auto;
-    transform: translateY(var(--fly-y, 0px));
-  }
-}
-
-/* Experience voyage: the whole system above a plain list by default, a pinned flight with JS + motion */
-.space-stage {
-  --space-line: rgba(21, 20, 26, 0.55);
-  --space-detail: rgba(21, 20, 26, 0.18);
-  --space-body: #faf8f3;
-  --space-star: rgba(21, 20, 26, 0.16);
-  --space-dim: rgba(47, 55, 214, 0.45);
-  display: grid;
-  gap: 4vh;
-  padding: 6vh max(1rem, 4vw);
-}
-[data-theme="dark"] .space-stage {
-  --space-line: rgba(236, 235, 230, 0.4);
-  --space-detail: rgba(236, 235, 230, 0.12);
-  --space-body: #15161a;
-  --space-star: rgba(236, 235, 230, 0.55);
-  --space-dim: rgba(125, 135, 255, 0.5);
-}
-.space-view { position: relative; }
-.space-world { display: block; width: 100%; height: auto; }
-.space-sky { position: absolute; inset: 0; width: 100%; height: 100%; }
-.space-dots { fill: none; stroke: var(--space-star); stroke-linecap: round; }
-.space-hud { display: none; }
-.space-ship-layer, .space-trails { display: none; }
-.space-star { fill: var(--accent); animation: space-twinkle 4s ease-in-out infinite; }
-@keyframes space-twinkle { 50% { opacity: 0.2; } }
-.space-trail { fill: none; stroke: var(--space-line); stroke-width: 1.5; stroke-dasharray: 2 10; stroke-linecap: round; vector-effect: non-scaling-stroke; }
-.space-trail-lit { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; }
-.space-trail-glow { fill: none; stroke: var(--accent); stroke-width: 12; stroke-linecap: round; stroke-opacity: 0; }
-.space-body { fill: var(--space-body); stroke: var(--space-line); stroke-width: 1.5; vector-effect: non-scaling-stroke; transition: stroke 0.6s; }
-.space-grid { fill: none; stroke: var(--space-detail); stroke-width: 1; vector-effect: non-scaling-stroke; transition: stroke 0.6s; }
-.space-equator { fill: none; stroke: var(--space-line); stroke-width: 1; vector-effect: non-scaling-stroke; transition: stroke 0.6s; }
-.space-annulus { fill: var(--space-body); stroke: var(--space-line); stroke-width: 1.25; vector-effect: non-scaling-stroke; stroke-linejoin: round; transition: stroke 0.6s, fill 0.6s; }
-.space-uncharted { fill: var(--space-body); stroke: var(--space-line); stroke-width: 1.5; stroke-dasharray: 5 7; vector-effect: non-scaling-stroke; transition: stroke 0.6s; }
-.space-uncharted ~ .space-grid, .space-uncharted ~ .space-equator { stroke-dasharray: 3 6; }
-.space-mark { fill: var(--space-line); font-family: var(--font-archivo), system-ui, sans-serif; font-weight: 800; }
-.space-orbit { fill: none; stroke: var(--space-line); stroke-width: 1; stroke-dasharray: 2 6; stroke-linecap: round; vector-effect: non-scaling-stroke; }
-.space-site { fill: var(--space-line); transition: fill 0.6s; }
-.space-window { fill: var(--space-detail); transition: fill 0.6s; }
-.space-rock-body { fill: var(--space-body); stroke: var(--space-line); stroke-width: 1.2; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
-.space-rock { transform-box: fill-box; transform-origin: center; animation: space-turn linear infinite; }
-@keyframes space-turn { to { transform: rotate(360deg); } }
-.space-comet-tail { fill: var(--accent); fill-opacity: 0.16; }
-.space-sat { animation: space-bob 4.4s ease-in-out infinite alternate; }
-.space-galaxy-core { opacity: 0.5; }
-.space-planet[data-active] .space-window { fill: var(--accent); }
-.space-planet[data-active] .space-panel { fill: var(--iso-lit-top); }
-.space-planet[data-active] .space-site { fill: var(--accent); }
-.space-ripple { fill: none; stroke: var(--accent); stroke-width: 1.5; vector-effect: non-scaling-stroke; opacity: 0; transform-box: fill-box; transform-origin: center; }
-.space-planet[data-active] .space-ripple { animation: space-ripple 2s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
-@keyframes space-ripple {
-  0% { opacity: 0; transform: scale(1); }
-  10% { opacity: 0.9; }
-  100% { opacity: 0; transform: scale(2.3); }
-}
-.space-dock { opacity: 0; transition: opacity 0.5s; }
-.space-planet[data-docked] .space-dock { opacity: 1; }
-.space-beam { fill: var(--accent); fill-opacity: 0.07; }
-.space-link { stroke: var(--accent); stroke-width: 1.5; stroke-dasharray: 0.08 0.12; vector-effect: non-scaling-stroke; animation: space-signal 1.2s linear infinite; }
-@keyframes space-signal { to { stroke-dashoffset: 0.4; } }
-.space-ship-bob { animation: space-bob 3.2s ease-in-out infinite alternate; }
-@keyframes space-bob { to { transform: translateY(-5px); } }
-.space-mast { stroke: var(--space-line); stroke-width: 1; vector-effect: non-scaling-stroke; }
-.space-light { fill: var(--accent); }
-.space-beacon { animation: space-twinkle 1.6s ease-in-out infinite; }
-.space-halo { opacity: 0; transition: opacity 0.8s; }
-.space-name, .space-date {
-  font-family: var(--font-jetbrains), ui-monospace, monospace;
-  letter-spacing: 0.08em;
-  fill: var(--space-line);
-  transition: fill 0.4s;
-}
-.space-name { font-size: 15px; }
-.space-date { font-size: 13px; opacity: 0.8; }
-.space-planet[data-passed] .space-body,
-.space-planet[data-passed] .space-equator,
-.space-planet[data-passed] .space-annulus { stroke: var(--space-dim); }
-.space-planet[data-active] .space-body,
-.space-planet[data-active] .space-equator,
-.space-planet[data-active] .space-annulus,
-.space-planet[data-active] .space-uncharted { stroke: var(--accent); }
-.space-planet[data-active] .space-annulus { fill: var(--iso-lit-top); }
-.space-planet[data-active] .space-grid { stroke: var(--space-dim); }
-.space-planet[data-active] .space-mark { fill: var(--accent); }
-.space-label[data-active] text { fill: var(--accent); }
-.space-label { transition: opacity 0.5s; }
-.space-label[data-passed]:not([data-active]) { opacity: 0; }
-.space-ship path { stroke-width: 1; stroke-linejoin: round; vector-effect: non-scaling-stroke; }
-.space-ship-hull { fill: var(--iso-body); stroke: var(--ink); }
-.space-ship-hull.is-top { fill: var(--iso-deck); }
-.space-ship-hull.is-side { fill: var(--iso-side); }
-.space-ship-glass { fill: var(--iso-glass-on); stroke: var(--accent); }
-.space-ship-light { fill: var(--accent); stroke: var(--accent); }
-.space-ship-flame { fill: var(--accent); fill-opacity: 0.4; stroke: none; }
-.space-ship-burn { opacity: 0; transition: opacity 0.3s; }
-.space-ship[data-burn] .space-ship-burn { opacity: 1; animation: space-flicker 0.12s steps(2) infinite; }
-@keyframes space-flicker { 50% { opacity: 0.75; } }
-[data-theme="dark"] .space-planet[data-active] .space-halo { opacity: 0.6; }
-[data-theme="dark"] .space-trail-glow { stroke-opacity: 0.18; }
-@media (prefers-reduced-motion: reduce) {
-  .space-star, .space-beacon, .space-ship-burn, .space-rock, .space-sat, .space-ripple, .space-link, .space-ship-bob { animation: none; }
-}
-@media (prefers-reduced-motion: no-preference) {
-  .js .space-stage {
-    position: relative;
-    background: var(--bg);
-    display: block;
-    height: 100svh;
-    padding: 0;
-    overflow: hidden;
-  }
-  .js .space-view { position: absolute; inset: 0; overflow: hidden; }
-  .js .space-layer { position: absolute; top: 0; left: 0; will-change: transform; }
-  .js .space-ship-static { display: none; }
-  .js .space-ship-layer, .js .space-trails { display: block; overflow: visible; }
-  .js .space-hud { display: flex; }
-  .js .space-card {
-    position: absolute;
-    top: 50%;
-    left: max(1rem, 4vw);
-    width: min(34rem, 38vw);
-    opacity: 0;
-    transform: translateY(calc(-50% + var(--card-y, 0px)));
-    will-change: transform, opacity;
-  }
-}
-@media (prefers-reduced-motion: no-preference) and (max-width: 767px), (prefers-reduced-motion: no-preference) and (max-width: 1100px) and (orientation: portrait) {
-  .js .space-card {
-    top: auto;
-    bottom: 3vh;
-    right: max(1rem, 4vw);
-    width: auto;
-    transform: translateY(var(--card-y, 0px));
   }
 }
 
@@ -365,7 +229,6 @@ html.lenis body {
   --iso-detail: rgba(21, 20, 26, 0.2);
   --iso-print: rgba(20, 20, 20, 0.55);
   --iso-accent-hi: #5c66ff;
-  --iso-lit-top: rgba(47, 55, 214, 0.12);
   --iso-glass: #e2ded3;
   --iso-glass-on: #ebebf8;
   --iso-side: #e3dfd4;
@@ -377,7 +240,6 @@ html.lenis body {
   --iso-detail: rgba(236, 235, 230, 0.1);
   --iso-print: rgba(236, 235, 230, 0.45);
   --iso-accent-hi: #b4baff;
-  --iso-lit-top: rgba(125, 135, 255, 0.16);
   --iso-glass: #0f1013;
   --iso-glass-on: #141629;
   --iso-side: #111215;
@@ -419,7 +281,7 @@ html.lenis body {
 }
 .iso-slab:hover .iso-top { stroke: var(--ink); }
 .iso-slab.is-on .iso-face { stroke: var(--accent); }
-/* Opaque, unlike --iso-lit-top: a lit slab is still solid, nothing shows through it. */
+/* Opaque: a lit slab is still solid, nothing shows through it. */
 .iso-slab.is-on .iso-top { fill: color-mix(in srgb, var(--accent) 14%, var(--iso-deck)); }
 .iso-slab.is-on .iso-led,
 .iso .is-on-dot { fill: var(--accent); }
