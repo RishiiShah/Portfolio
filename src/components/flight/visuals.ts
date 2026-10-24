@@ -1199,89 +1199,183 @@ function seriesPress(m: Materials): Visual {
   };
 }
 
-// ─── JARVIS: a smart speaker running the room ───────────────────────────────
-/** The crown lights as it hears a command; the Pi beside it switches its GPIO lines and the devices come on in turn. */
+// ─── JARVIS: a room that does what it's told ────────────────────────────────
+/**
+ * A cutaway room. "Jarvis" wakes the speaker; the request goes up to the
+ * cloud (Llama 3.1 8B on Groq, Azure IoT Hub) and comes down to the Pi by the
+ * wall, whose GPIO lines switch the floor lamp on and start the fan. The
+ * wall screen shows what was heard and the reply.
+ */
 function smartSpeaker(m: Materials): Visual {
   const group = new THREE.Group();
-  group.add(plate(m, 5.8, 4.2));
-  group.add(cyl(m, 0.7, 1.7, -0.3, 0.14, -0.3, false, 40));
-  for (let k = 0; k < 6; k++) group.add(ring(0.71, 0.4 + k * 0.18, m.lineDim, 48).translateX(-0.3).translateZ(-0.3));
-  const crown = cyl(m, 0.62, 0.06, -0.3, 1.84, -0.3, false, 40);
+  const [RW, RD, WH] = [6.0, 4.6, 2.3]; // room width, depth, wall height
+  group.add(plate(m, RW, RD));
+  // Two walls, cut away to show the room: back (−z) and left (−x), with a window.
+  group.add(box(m, RW, WH, 0.12, 0, 0.14, -RD / 2 + 0.06), box(m, 0.12, WH, RD - 0.12, -RW / 2 + 0.06, 0.14, 0.06));
+  const win: number[] = [];
+  const wz = -RD / 2 + 0.125;
+  for (const [x0, x1, y0, y1] of [[0.9, 2.4, 0.95, 2.05]]) {
+    win.push(x0, y0, wz, x1, y0, wz, x1, y0, wz, x1, y1, wz, x1, y1, wz, x0, y1, wz, x0, y1, wz, x0, y0, wz);
+    win.push((x0 + x1) / 2, y0, wz, (x0 + x1) / 2, y1, wz, x0, (y0 + y1) / 2, wz, x1, (y0 + y1) / 2, wz);
+  }
+  group.add(lines(win, m.line));
+  const cycle = 9;
+  // 0–1.5 wake · 1.5–2.6 up to the cloud · 2.6–3.4 cloud · 3.4–4.0 Pi → lamp · 4.0–4.6 → fan · then on until 8.4
+  const at = (t: number) => t % cycle;
+
+  // The speaker on a side table by the back wall.
+  const SX = -0.3;
+  const SZ = -1.45;
+  group.add(box(m, 1.1, 0.55, 0.8, SX, 0.14, SZ));
+  group.add(cyl(m, 0.36, 0.9, SX, 0.69, SZ, false, 36));
+  for (let k = 0; k < 4; k++) group.add(ring(0.365, 0.86 + k * 0.17, m.lineDim, 40).translateX(SX).translateZ(SZ));
+  const crown = cyl(m, 0.31, 0.05, SX, 1.59, SZ, false, 36);
   group.add(crown);
   const waves = [0, 1, 2].map(() => {
-    const r = ring(1, 1.9, m.lineAccent);
-    r.position.set(-0.3, 0, -0.3);
+    const r = ring(1, 1.66, m.lineAccent);
+    r.position.set(SX, 0, SZ);
     group.add(r);
     return r;
   });
-  const halo = glow(m, 2.2);
-  halo.position.set(-0.3, 1.95, -0.3);
-  group.add(halo);
-  // Raspberry Pi: a board with a header of GPIO pins.
-  const pi = box(m, 0.9, 0.08, 0.6, 1.0, 0.14, 0.7);
+  const wakeGlow = glow(m, 1.6);
+  wakeGlow.position.set(SX, 1.7, SZ);
+  group.add(wakeGlow);
+
+  // The cloud above the room: Groq for the LLM, Azure IoT Hub for devices.
+  const cloud = new THREE.Group();
+  const puffs = [
+    [0, 0, 0, 0.42],
+    [0.5, -0.08, 0.05, 0.33],
+    [-0.48, -0.1, 0, 0.3],
+    [0.15, 0.22, -0.05, 0.3],
+  ].map(([x, y, z, r]) => {
+    const p = solid(new THREE.IcosahedronGeometry(r, 1), m);
+    p.position.set(x, y, z);
+    cloud.add(p);
+    return p;
+  });
+  cloud.position.set(1.6, 3.15, -1.2);
+  group.add(cloud);
+  const cloudTag = screen(1.5, 0.42, (c, W, H) => {
+    c.font = font(H * 0.3, 700);
+    c.fillStyle = palette.ink;
+    c.fillText("GROQ · LLAMA 3.1 8B", W * 0.04, H * 0.42);
+    c.font = font(H * 0.26);
+    c.fillStyle = palette.dim;
+    c.fillText("AZURE IOT HUB", W * 0.04, H * 0.85);
+  });
+  cloudTag.mesh.position.set(1.6, 3.95, -1.15);
+  group.add(cloudTag.mesh);
+  const up = wire(m, [new THREE.Vector3(SX + 0.2, 1.62, SZ), new THREE.Vector3(SX + 0.2, 3.15, SZ), new THREE.Vector3(1.15, 3.15, -1.2)]);
+  // Down from the cloud to the Pi on the floor by the left wall.
+  const PX = -2.3;
+  const PZ = 0.55;
+  const down = wire(m, [new THREE.Vector3(1.2, 2.9, -1.2), new THREE.Vector3(PX + 0.3, 2.9, -1.2), new THREE.Vector3(PX + 0.3, 2.9, PZ - 0.3), new THREE.Vector3(PX + 0.3, 0.3, PZ - 0.3)]);
+  group.add(up.group, down.group);
+
+  // Raspberry Pi with its GPIO header.
+  const pi = box(m, 0.85, 0.07, 0.6, PX, 0.14, PZ);
   const pins: number[] = [];
-  for (let k = 0; k < 10; k++) pins.push(0.63 + k * 0.08, 0.22, 0.48, 0.63 + k * 0.08, 0.3, 0.48);
-  group.add(pi, lines(pins, m.line), box(m, 0.22, 0.05, 0.22, 1.15, 0.22, 0.8));
-  const fromSpeaker = wire(m, trace([0.35, -0.3], [0.7, 0.55], 0.16));
-  // Devices: a lamp and a bulb on GPIO, plus a screen echoing the command.
-  const shade = solid(new THREE.CylinderGeometry(0.25, 0.42, 0.42, 24), m);
-  shade.position.set(-2.0, 1.35, 1.1);
-  group.add(cyl(m, 0.25, 0.05, -2.0, 0.14, 1.1), cyl(m, 0.035, 0.98, -2.0, 0.19, 1.1, false, 8), shade);
-  const bulb = solid(new THREE.SphereGeometry(0.22, 18, 14), m);
-  bulb.position.set(2.2, 0.82, -0.6);
-  group.add(cyl(m, 0.08, 0.5, 2.2, 0.14, -0.6, false, 10), bulb);
-  const toLamp = wire(m, trace([0.7, 1.0], [-2.0, 1.1], 0.16));
-  const toBulb = wire(m, trace([1.4, 0.6], [2.2, -0.6], 0.16));
-  group.add(fromSpeaker.group, toLamp.group, toBulb.group);
-  const tvGroup = new THREE.Group();
-  tvGroup.add(box(m, 1.3, 0.85, 0.08, 0, 0.26, 0), box(m, 0.4, 0.26, 0.24, 0, 0, 0));
-  const tv = screen(1.18, 0.73, (c, W, H, t) => {
-    const ph = t % 8;
-    if (ph < 1.2) return;
-    const said = "lights on, play jazz";
-    c.font = font(H * 0.12);
-    c.fillStyle = palette.accent;
-    c.fillText(`“${said.slice(0, Math.floor((ph - 1.2) * 16))}”`, W * 0.06, H * 0.55);
+  for (let k = 0; k < 10; k++) pins.push(PX - 0.36 + k * 0.08, 0.21, PZ - 0.22, PX - 0.36 + k * 0.08, 0.29, PZ - 0.22);
+  group.add(pi, lines(pins, m.line), box(m, 0.2, 0.05, 0.2, PX + 0.15, 0.21, PZ + 0.08));
+
+  // The floor lamp, front left.
+  const LX = -0.25;
+  const LZ = 1.85;
+  const shade = solid(new THREE.CylinderGeometry(0.22, 0.4, 0.42, 24), m);
+  shade.position.set(LX, 1.75, LZ);
+  group.add(cyl(m, 0.24, 0.05, LX, 0.14, LZ), cyl(m, 0.03, 1.4, LX, 0.19, LZ, false, 8), shade);
+  const lampGlow = glow(m, 1.6);
+  lampGlow.position.set(LX, 1.6, LZ);
+  group.add(lampGlow);
+  const toLamp = wire(m, trace([PX + 0.2, PZ + 0.3], [LX, LZ - 0.25], 0.16));
+
+  // The desk fan, front right: blades spin once it is switched on.
+  const FX = 1.7;
+  const FZ = 1.2;
+  group.add(cyl(m, 0.3, 0.06, FX, 0.14, FZ), cyl(m, 0.04, 0.9, FX, 0.2, FZ, false, 8), box(m, 0.22, 0.22, 0.3, FX, 1.0, FZ - 0.05));
+  const guard = ring(0.48, 0, m.line, 40);
+  guard.rotation.x = Math.PI / 2;
+  guard.position.set(FX, 1.12, FZ + 0.16);
+  const rotor = new THREE.Group();
+  for (let k = 0; k < 3; k++) {
+    const blade = box(m, 0.13, 0.4, 0.02, 0, 0, 0);
+    blade.position.set(0, 0.04, 0);
+    const arm = new THREE.Group();
+    arm.add(blade);
+    arm.rotation.z = (k / 3) * Math.PI * 2;
+    rotor.add(arm);
+  }
+  rotor.position.set(FX, 1.08, FZ + 0.15);
+  const hub = cyl(m, 0.07, 0.05, 0, 0, 0, false, 14);
+  hub.rotation.x = Math.PI / 2;
+  hub.position.set(FX, 1.12, FZ + 0.17);
+  group.add(guard, rotor, hub);
+  const toFan = wire(m, trace([PX + 0.4, PZ + 0.1], [FX, FZ - 0.35], 0.16));
+  group.add(toLamp.group, toFan.group);
+
+  // The wall screen, on the left wall: what was heard, then the reply.
+  const said = "lights on, fan to two";
+  const wall = screen(1.7, 1.0, (c, W, H, t) => {
+    const s = at(t);
+    c.font = font(H * 0.11, 700);
+    c.fillStyle = palette.dim;
+    c.fillText("JARVIS", W * 0.06, H * 0.16);
+    if (s < 1.5) {
+      c.fillStyle = palette.accent;
+      c.fillText("listening…", W * 0.06, H * 0.42);
+      return;
+    }
+    c.font = font(H * 0.11);
+    c.fillStyle = palette.ink;
+    c.fillText(`“${said.slice(0, Math.floor((s - 1.5) * 20))}”`, W * 0.06, H * 0.42);
+    if (s > 4.6) {
+      c.fillStyle = palette.accent;
+      c.fillText("Done: lamp on, fan 2.", W * 0.06, H * 0.68);
+    }
   });
-  tv.mesh.position.set(0, 0.685, 0.045);
-  tvGroup.add(tv.mesh);
-  tvGroup.position.set(-1.9, 0.14, -1.2);
-  tvGroup.rotation.y = 0.5;
-  group.add(tvGroup);
-  const deviceGlows = [shade.position, bulb.position].map((p) => {
-    const g = glow(m, 1.3);
-    g.position.copy(p);
-    group.add(g);
-    return g;
-  });
-  const sway = pose(group, 0.5, 0.82);
+  const frame = box(m, 0.08, 1.12, 1.82, -RW / 2 + 0.16, 0.9, -0.75);
+  wall.mesh.rotation.y = Math.PI / 2;
+  wall.mesh.position.set(-RW / 2 + 0.205, 1.46, -0.75);
+  group.add(frame, wall.mesh);
+
+  const sway = pose(group, -0.62, 0.76);
+  let spin = 0;
+  let last = 0;
   return {
     group,
     update(t) {
       sway(t);
-      tv.paint(t);
-      const ph = t % 8;
-      const hearing = ph < 2;
-      setLit(crown, hearing, m);
-      halo.visible = hearing;
+      wall.paint(t);
+      cloudTag.paint(t);
+      const s = at(t);
+      const dt = Math.min(0.05, Math.max(0, t - last));
+      last = t;
+      const waking = s < 1.5;
+      setLit(crown, s < 2.6, m);
+      wakeGlow.visible = waking;
       waves.forEach((w, k) => {
-        const r = ((t * 0.8 + k / 3) % 1) * 1.2 + 0.75;
+        const r = ((t * 0.8 + k / 3) % 1) * 1.1 + 0.45;
         w.scale.set(r, 1, r);
-        w.visible = hearing;
+        w.visible = waking;
       });
-      fromSpeaker.hot(ph > 1.6 && ph < 2.4);
-      fromSpeaker.run(ph > 1.6 && ph < 2.4 ? (ph - 1.6) / 0.8 : -1);
-      setLit(pi, ph > 2.2 && ph < 7, m);
-      const lampOn = ph > 2.8;
-      const bulbOn = ph > 3.6;
-      toLamp.hot(lampOn);
-      toLamp.run(ph > 2.4 && ph < 2.8 ? (ph - 2.4) / 0.4 : -1);
-      toBulb.hot(bulbOn);
-      toBulb.run(ph > 3.2 && ph < 3.6 ? (ph - 3.2) / 0.4 : -1);
+      up.hot(s > 1.5 && s < 2.6);
+      up.run(s > 1.5 && s < 2.6 ? (s - 1.5) / 1.1 : -1);
+      puffs.forEach((p) => setLit(p, s > 2.4 && s < 3.4, m));
+      down.hot(s > 2.6 && s < 3.4);
+      down.run(s > 2.6 && s < 3.4 ? (s - 2.6) / 0.8 : -1);
+      setLit(pi, s > 3.3 && s < 4.8, m);
+      const lampOn = s > 4.0 && s < 8.4;
+      const fanOn = s > 4.6 && s < 8.4;
+      toLamp.hot(s > 3.4 && s < 4.0);
+      toLamp.run(s > 3.4 && s < 4.0 ? (s - 3.4) / 0.6 : -1);
+      toFan.hot(s > 4.0 && s < 4.6);
+      toFan.run(s > 4.0 && s < 4.6 ? (s - 4.0) / 0.6 : -1);
       setLit(shade, lampOn, m);
-      setLit(bulb, bulbOn, m);
-      deviceGlows[0].visible = lampOn;
-      deviceGlows[1].visible = bulbOn;
+      lampGlow.visible = lampOn;
+      setLit(hub, fanOn, m);
+      spin += dt * (fanOn ? 14 : 0);
+      rotor.rotation.z = spin;
     },
   };
 }
