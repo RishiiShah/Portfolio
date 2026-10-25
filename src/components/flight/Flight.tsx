@@ -3,12 +3,11 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { legAt } from "@/lib/flight";
-import { isStacked, motion } from "@/lib/motion";
+import { motion } from "@/lib/motion";
 import { buildVisual, palette, type Materials } from "./visuals";
 
 const SPACING = 30; // distance between stations along -z
-const VIEW_DISTANCE = 8.5; // how far in front of each visual the camera parks
-const FRAME_SHIFT = 2.6; // sideways look offset so the visual sits opposite its panel
+const VIEW_DISTANCE = 7.2; // how far in front of each visual the camera parks
 
 interface Layout {
   curve: THREE.CatmullRomCurve3;
@@ -17,7 +16,7 @@ interface Layout {
 }
 
 /** Builds the spline: approach → park at each station, swooping wide between them. */
-function buildLayout(stations: THREE.Vector3[], narrow: boolean): Layout {
+function buildLayout(stations: THREE.Vector3[]): Layout {
   const cams = stations.map((s) => s.clone().add(new THREE.Vector3(0, 0.6, VIEW_DISTANCE)));
   const pts: THREE.Vector3[] = [cams[0].clone().add(new THREE.Vector3(-4, 4, 26))];
   cams.forEach((c, i) => {
@@ -31,10 +30,8 @@ function buildLayout(stations: THREE.Vector3[], narrow: boolean): Layout {
   pts.push(cams[cams.length - 1].clone().add(new THREE.Vector3(3, 2, -24)));
   const curve = new THREE.CatmullRomCurve3(pts, false, "centripetal");
   const stationT = cams.map((_, i) => (1 + 2 * i) / (pts.length - 1));
-  // Even stations: visual on the right (panel left); odd: the reverse. Narrow: visual above the panel.
-  const look = stations.map((s, i) =>
-    s.clone().add(narrow ? new THREE.Vector3(0, -1.6, 0) : new THREE.Vector3(i % 2 ? FRAME_SHIFT : -FRAME_SHIFT, 0, 0))
-  );
+  // The figure panel is its own frame, so each visual sits centred in it.
+  const look = stations.map((s) => s.clone());
   return { curve, stationT, look };
 }
 
@@ -131,9 +128,7 @@ export function Flight({ slugs, className }: { slugs: string[]; className?: stri
       return v;
     });
 
-    // Path-dependent pieces are rebuilt when the layout flips between wide and narrow.
-    let narrow = isStacked();
-    let layout = buildLayout(stations, narrow);
+    const layout = buildLayout(stations);
     const pathGroup = new THREE.Group();
     scene.add(pathGroup);
     const buildPath = () => {
@@ -177,12 +172,6 @@ export function Flight({ slugs, className }: { slugs: string[]; className?: stri
       // The field of view is vertical, so narrow screens see less width: scale objects to fit.
       const fit = Math.max(0.5, Math.min(1, camera.aspect / 1.15));
       holders.forEach((g) => g.scale.setScalar(fit));
-      const nowNarrow = isStacked();
-      if (nowNarrow !== narrow) {
-        narrow = nowNarrow;
-        layout = buildLayout(stations, narrow);
-        buildPath();
-      }
     };
     resize();
     const ro = new ResizeObserver(resize);

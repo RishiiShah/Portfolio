@@ -1,10 +1,6 @@
 @import "tailwindcss";
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
-/* Side-by-side scroll scenes: wider than a phone and not an upright tablet (see STACKED in lib/motion.ts). */
-@custom-variant split (@media (min-width: 768px) and ((orientation: landscape) or (min-width: 1101px)));
-/* Split and tall enough for a card's full detail. */
-@custom-variant roomy (@media (min-width: 768px) and ((orientation: landscape) or (min-width: 1101px)) and (min-height: 860px));
 
 @theme inline {
   --font-sans: var(--font-archivo);
@@ -173,67 +169,6 @@ html.lenis body {
 .cursor-dot, .cursor-frame i { transition: background-color 0.2s, border-color 0.2s, width 0.3s, height 0.3s; }
 .cursor-dot[data-contrast] { background: var(--bg); }
 .cursor-frame[data-contrast] i { border-color: var(--bg); }
-
-/* Project flythrough: a plain list by default, a pinned 3D flight when JS + motion are available */
-.fly-stage {
-  display: grid;
-  gap: 4vh;
-  padding: 6vh max(1rem, 4vw);
-}
-.fly-hud,
-.fly-canvas {
-  display: none;
-}
-@media (prefers-reduced-motion: no-preference) {
-  .js .fly-stage {
-    display: block;
-    position: relative;
-    height: 100svh;
-    padding: 0;
-    overflow: hidden;
-  }
-  .js .fly-hud {
-    display: flex;
-  }
-  .js .fly-canvas {
-    display: block;
-  }
-  /* Centred by layout, not translate(-50%): a half-pixel offset blurs text on 1x screens.
-     Only the travel offset is a transform, whole pixels, and zero when parked. */
-  .js .fly-card {
-    position: absolute;
-    top: 0;
-    height: fit-content;
-    margin-block: auto;
-    width: clamp(26rem, 30vw, 38rem);
-    opacity: 0;
-    transform: translateY(var(--fly-y, 0px));
-  }
-  /* Each card centres in the height its side leaves free: the counter sits bottom-left, the project list bottom-right. */
-  .js .fly-card[data-side="left"] {
-    left: max(1rem, 4vw);
-    bottom: calc(5vh + 4.5rem);
-  }
-  .js .fly-card[data-side="right"] {
-    right: max(1rem, 4vw);
-    bottom: calc(5vh + 4.5rem);
-  }
-  @media (min-height: 860px) {
-    .js .fly-card[data-side="right"] {
-      bottom: calc(5vh + 12.5rem);
-    }
-  }
-}
-@media (prefers-reduced-motion: no-preference) and (max-width: 767px), (prefers-reduced-motion: no-preference) and (max-width: 1100px) and (orientation: portrait) {
-  .js .fly-card[data-side] {
-    top: auto;
-    bottom: 4vh;
-    margin-block: 0;
-    left: max(1rem, 4vw);
-    right: max(1rem, 4vw);
-    width: auto;
-  }
-}
 
 /* Lab-notebook graph paper: fine grid with a heavier line every fifth square */
 .graph-paper {

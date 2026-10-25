@@ -1,14 +1,13 @@
 "use client";
 
-import { useMemo, useRef } from "react";
+import { useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { ArrowUpRight } from "lucide-react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 import type { Project } from "@/data";
-import { stationVisibility } from "@/lib/flight";
-import { motion, pagedScene } from "@/lib/motion";
+import { motion } from "@/lib/motion";
 import { RevealText } from "../anim";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -17,196 +16,133 @@ gsap.registerPlugin(ScrollTrigger);
 const Flight = dynamic(() => import("../flight/Flight").then((m) => m.Flight), { ssr: false });
 
 const LINK_LABEL = { demo: "Live", video: "Video", source: "Source", paper: "Paper", blog: "Writeup" } as const;
-const SCROLL_PER_STATION = 1.5; // viewport heights of scrolling per project
-const GLIDE_SECONDS = 2; // one project to the next
-
 const shortTitle = (t: string) => t.split(/:| via | & /)[0];
+const pad = (n: number) => String(n).padStart(2, "0");
 
 /**
- * Project flythrough: the stage pins and scrolling flies a camera along a
- * spline past one 3D visual per project (see flight/). Each project's panel
- * fades in while the camera is parked at its station.
- * Without JS or with reduced motion, CSS falls back to a plain list of panels.
+ * Selected work as a sticky split: the case studies scroll normally on one side,
+ * and a sticky 3D panel on the other flies to each project's figure as its case
+ * study reaches the middle of the screen. Nothing is pinned.
  */
 export function FeaturedWork({ items }: { items: Project[] }) {
   const root = useRef<HTMLElement>(null);
-  const stage = useRef<HTMLDivElement>(null);
-  const counter = useRef<HTMLSpanElement>(null);
-  const distance = useRef<HTMLSpanElement>(null);
-  const bar = useRef<HTMLSpanElement>(null);
+  const [active, setActive] = useState(0);
   const slugs = useMemo(() => items.map((p) => p.slug), [items]);
-  const legs = items.length;
-  const glideTo = useRef<((station: number) => void) | null>(null);
 
   useGSAP(
     () => {
-      const mm = gsap.matchMedia();
-      mm.add("(prefers-reduced-motion: no-preference)", () => {
-        const panels = gsap.utils.toArray<HTMLElement>(".fly-card");
-        const navItems = gsap.utils.toArray<HTMLElement>(".fly-nav-item");
-
-        const render = (progress: number) => {
-          const f = progress * legs;
-          motion.flight = f;
-          panels.forEach((panel, i) => {
-            const v = stationVisibility(f, i);
-            panel.style.opacity = String(v);
-            panel.style.setProperty("--fly-y", `${Math.round((f - (i + 1)) * -60)}px`);
-            // Cards soften as they leave and sharpen as they arrive.
-            panel.style.filter = v > 0.99 || v < 0.01 ? "" : `blur(${((1 - v) * 6).toFixed(1)}px)`;
-            panel.style.visibility = v < 0.01 ? "hidden" : "visible";
-            panel.style.pointerEvents = v > 0.6 ? "auto" : "none";
-          });
-          const active = Math.max(0, Math.min(legs - 1, Math.round(f - 1)));
-          navItems.forEach((el, i) => el.toggleAttribute("data-active", i === active));
-          if (counter.current) counter.current.textContent = String(active + 1).padStart(2, "0");
-          if (distance.current) distance.current.textContent = `${(f * 0.42).toFixed(2)} km flown`;
-          if (bar.current) bar.current.style.transform = `scaleY(${progress})`;
-        };
-
-        // Paged flight: the camera never rests between two projects.
-        const paged = pagedScene({
-          trigger: stage.current!,
-          last: legs,
-          first: 1,
-          vhPerStation: SCROLL_PER_STATION,
-          seconds: GLIDE_SECONDS,
-          render,
+      motion.flight = 1;
+      const fly = (i: number) => {
+        setActive(i);
+        gsap.to(motion, { flight: i + 1, duration: 1.6, ease: "power2.inOut", overwrite: true });
+      };
+      gsap.utils.toArray<HTMLElement>(".case").forEach((el, i) => {
+        ScrollTrigger.create({
+          trigger: el,
+          start: "top 55%",
+          end: "bottom 55%",
+          onToggle: (self) => self.isActive && fly(i),
         });
-        glideTo.current = paged.glide;
-        return () => {
-          glideTo.current = null;
-        };
       });
     },
     { scope: root }
   );
 
-  // Park on station i (f = i + 1), through the same locked glide as scrolling.
-  const jumpTo = (i: number) => {
-    glideTo.current?.(i + 1);
-  };
-
+  const current = items[active];
   return (
-    <section ref={root} id="work" data-shape="1" className="relative">
-      <div className="px-[max(1rem,4vw)] pt-[12vh]">
-        <div className="label flex items-center justify-between border-t border-line pt-4 text-ink-3">
-          <span>
-            <span className="text-accent">(01)</span> Selected work
-          </span>
-          <span>{items.length} case studies · scroll to fly</span>
-        </div>
-        <RevealText as="h2" text="Selected work" className="display mt-[4vh] block text-[11vw] md:text-[10vw]" />
+    <section ref={root} id="work" data-shape="1" data-field="off" className="relative px-[max(1rem,4vw)] pt-[12vh] pb-[8vh]">
+      <div className="label flex items-center justify-between border-t border-line pt-4 text-ink-3">
+        <span>
+          <span className="text-accent">(01)</span> Selected work
+        </span>
+        <span>{items.length} case studies</span>
       </div>
+      <RevealText as="h2" text="Selected work" className="display mt-[3vh] block text-[11vw] md:text-[7vw]" />
 
-      <div ref={stage} className="fly-stage">
-        <Flight slugs={slugs} className="fly-canvas absolute inset-0" />
-
-        {items.map((p, i) => (
-          <Panel key={p.slug} project={p} index={i + 1} side={i % 2 ? "right" : "left"} />
-        ))}
-
-        <div className="fly-hud label pointer-events-none absolute inset-x-[max(1rem,4vw)] top-[11vh] items-start justify-between text-ink-3 split:top-auto split:bottom-[5vh] split:items-end">
-          <div className="flex items-end gap-4">
-            <span className="relative block h-14 w-px bg-line">
-              <span ref={bar} className="absolute inset-0 origin-top scale-y-0 bg-accent" />
+      <div className="mt-[6vh] md:grid md:grid-cols-12 md:gap-x-[3vw]">
+        {/* The figure: on top on phones, beside the case studies from md up */}
+        <figure className="sticky top-0 z-10 -mx-[max(1rem,4vw)] h-[38svh] border-b border-line bg-bg motion-reduce:hidden md:top-[12vh] md:self-start md:order-2 md:col-span-7 md:mx-0 md:h-[76svh] md:border md:bg-bg">
+          <Flight slugs={slugs} className="absolute inset-0" />
+          <figcaption className="label pointer-events-none absolute inset-x-4 bottom-3 flex justify-between text-ink-3 md:inset-x-5 md:bottom-4">
+            <span>
+              <span className="text-accent">Fig. {pad(active + 1)}</span> · {shortTitle(current.title)}
             </span>
-            <div>
-              <p className="wide text-3xl font-bold text-ink split:text-4xl">
-                <span ref={counter}>01</span>
-                <span className="text-ink-3">/{String(items.length).padStart(2, "0")}</span>
-              </p>
-              <span ref={distance} className="mt-1 block">0.00 km flown</span>
-            </div>
-          </div>
-          <ol className="pointer-events-auto hidden flex-col items-end gap-1.5 roomy:flex">
-            {items.map((p, i) => (
-              <li key={p.slug}>
-                <button
-                  type="button"
-                  onClick={() => jumpTo(i)}
-                  className="fly-nav-item group flex items-center gap-2 transition-colors hover:text-ink data-[active]:text-accent"
-                >
-                  {shortTitle(p.title)}
-                  <span className="inline-block h-px w-4 bg-current transition-all group-data-[active]:w-8" />
-                </button>
-              </li>
-            ))}
-          </ol>
-        </div>
+            <span>
+              {pad(active + 1)}/{pad(items.length)}
+            </span>
+          </figcaption>
+        </figure>
+
+        <ol className="md:order-1 md:col-span-5">
+          {items.map((p, i) => (
+            <li key={p.slug} className="case flex min-h-[70svh] items-center py-[6vh] md:min-h-[80svh]">
+              <Case project={p} index={i + 1} dim={i !== active} />
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
   );
 }
 
-function Panel({ project: p, index, side }: { project: Project; index: number; side: "left" | "right" }) {
+function Case({ project: p, index, dim }: { project: Project; index: number; dim: boolean }) {
   const badge = p.award ? "Winner" : p.latest ? "Latest" : p.links?.some((l) => l.type === "paper") ? "Published" : null;
   return (
-    <article
-      data-side={side}
-      className="fly-card group relative flex flex-col border border-line bg-bg/90 p-[clamp(1.25rem,2vw,2.25rem)]"
-    >
-      <div className="label flex items-center justify-between gap-4 text-ink-3">
+    <article className={`w-full transition-opacity duration-500 ${dim ? "opacity-35" : ""}`}>
+      <p className="label flex items-center justify-between gap-4 text-ink-3">
         <span>
-          <span className="text-accent">No. {String(index).padStart(2, "0")}</span> · {p.year} · {p.tags.slice(0, 2).join(" / ")}
+          <span className="text-accent">No. {pad(index)}</span> · {p.year} · {p.tags.slice(0, 2).join(" / ")}
         </span>
         {badge && <span className="border border-accent px-1.5 py-0.5 text-accent">{badge}</span>}
-      </div>
+      </p>
 
-      <h3 className="wide mt-5 text-[clamp(1.6rem,2.6vw,3rem)] leading-[0.95] font-bold tracking-tight">{shortTitle(p.title)}</h3>
-      {p.award && <p className="label mt-2 text-accent">{p.award}</p>}
+      <h3 className="wide mt-5 text-[clamp(2rem,3.4vw,3.75rem)] leading-[0.95] font-bold tracking-tight">{shortTitle(p.title)}</h3>
+      {p.award && <p className="label mt-3 text-accent">{p.award}</p>}
 
-      {/* The case in three lines: what was wrong, what got built, what came of it */}
-      {p.caseStudy ? (
-        <dl className="mt-5 grid grid-cols-[4.75rem_1fr] gap-x-4 gap-y-3 border-t border-line pt-4 text-[clamp(0.9rem,0.95vw,1.02rem)] leading-snug">
+      {p.caseStudy && (
+        <dl className="mt-6 grid grid-cols-[4.75rem_1fr] gap-x-4 gap-y-3 border-t border-line pt-5 text-[clamp(0.95rem,1vw,1.05rem)] leading-snug">
           {(
             [
-              ["Problem", p.caseStudy.problem, "text-ink-2 hidden split:block"],
-              ["Built", p.caseStudy.built, "text-ink-2"],
-              ["Result", p.caseStudy.result, "text-ink"],
+              ["Problem", p.caseStudy.problem],
+              ["Built", p.caseStudy.built],
+              ["Result", p.caseStudy.result],
             ] as const
-          ).map(([label, text, tone]) => (
+          ).map(([label, text]) => (
             <div key={label} className="contents">
-              <dt className={`label pt-[0.2em] ${label === "Result" ? "text-accent" : "text-ink-3"} ${label === "Problem" ? "hidden split:block" : ""}`}>
-                {label}
-              </dt>
-              <dd className={tone}>{text}</dd>
+              <dt className={`label pt-[0.2em] ${label === "Result" ? "text-accent" : "text-ink-3"}`}>{label}</dt>
+              <dd className={label === "Result" ? "text-ink" : "text-ink-2"}>{text}</dd>
             </div>
           ))}
         </dl>
-      ) : (
-        <p className="mt-3 text-[clamp(0.9rem,1vw,1.05rem)] leading-snug text-ink-2">{p.tagline}</p>
       )}
 
       {p.metrics && (
-        <dl className="mt-5 flex flex-wrap gap-x-6 gap-y-2 border-t border-line pt-4 [@media(max-height:820px)]:hidden">
-          {p.metrics.slice(0, 3).map((m, i) => (
-            <div key={m.label} className={`flex flex-col-reverse ${i > 1 ? "hidden split:flex" : ""}`}>
+        <dl className="mt-6 flex flex-wrap gap-x-8 gap-y-3 border-t border-line pt-5">
+          {p.metrics.slice(0, 3).map((m) => (
+            <div key={m.label} className="flex flex-col-reverse">
               <dt className="label mt-1 text-ink-3">{m.label}</dt>
-              <dd className="wide text-[clamp(1rem,1.25vw,1.35rem)] font-bold tracking-tight whitespace-nowrap">{m.value}</dd>
+              <dd className="wide text-[clamp(1.1rem,1.4vw,1.5rem)] font-bold tracking-tight whitespace-nowrap">{m.value}</dd>
             </div>
           ))}
         </dl>
       )}
 
-      <div className="mt-6 flex flex-wrap items-end justify-between gap-3">
-        <p className="label hidden max-w-[60%] text-ink-3 split:block">{p.tech.slice(0, 5).map((t) => t.replace("-", "\u2011")).join(" · ")}</p>
-        {p.links && (
-          <div className="flex gap-2">
-            {p.links.map((l) => (
-              <a
-                key={l.url}
-                href={l.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex h-9 items-center gap-1.5 bg-ink px-4 text-sm font-medium text-bg transition-colors hover:bg-accent hover:text-accent-ink"
-              >
-                {LINK_LABEL[l.type]} <ArrowUpRight size={14} />
-              </a>
-            ))}
-          </div>
-        )}
-      </div>
+      <p className="label mt-6 text-ink-3">{p.tech.slice(0, 6).join(" · ")}</p>
+      {p.links && (
+        <div className="mt-5 flex gap-2">
+          {p.links.map((l) => (
+            <a
+              key={l.url}
+              href={l.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex h-9 items-center gap-1.5 bg-ink px-4 text-sm font-medium text-bg transition-colors hover:bg-accent hover:text-accent-ink"
+            >
+              {LINK_LABEL[l.type]} <ArrowUpRight size={14} />
+            </a>
+          ))}
+        </div>
+      )}
     </article>
   );
 }
