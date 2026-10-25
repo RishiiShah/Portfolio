@@ -6,10 +6,12 @@ import { D, isoFrame } from "@/lib/iso";
 import { Section } from "../Section";
 
 /*
- * Toolkit as an exploded isometric stack (iso-glow style): one slab per skill
- * category, one LED on its front edge per tool. Selecting a layer, from the
- * figure or the list, pulls that slab out and lights it; a signal pulse runs
- * down the riser into it.
+ * Toolkit as an isometric rack (iso-glow style): one slab per skill category,
+ * one LED on its front edge per tool. Selecting a layer, from the figure or the
+ * list, slides that slab out like a drawer: its top face, printed with the
+ * layer's tools, comes into view and lights, a cable follows it from the bus,
+ * and a signal pulse runs down the riser into it. Hovering a tool in the list
+ * lights its LED and its name on the drawer.
  */
 
 const W = 220; // slab width (x)
@@ -19,7 +21,7 @@ const GAP = 26; // vertical gap between slabs
 const BASE = 14; // base plate height
 const RISER = W + 40; // the vertical bus stands just right of the stack…
 const BUS_Y = 24; // …near the back corner, so it never crosses a slab
-const PULL = 18; // how far the active slab slides out (+y)
+const PULL = 112; // how far the active slab slides out (+y), enough to show most of its top
 // Category 01 is the top slab, matching the list read top to bottom.
 const slabZ = (i: number) => BASE + 16 + (skills.length - 1 - i) * (H + GAP);
 const TOP_Z = slabZ(0) + H;
@@ -27,7 +29,8 @@ const TOP_Z = slabZ(0) + H;
 const { P, TOP, FRONT, SIDE, path, Box, viewBox, filterRegion } = isoFrame([
   [-30, -30, 0],
   [W + 60, -20, 0],
-  [-30, DEPTH + PULL + 30, 0],
+  [-30, DEPTH + PULL + 20, 0],
+  [W, DEPTH + PULL, TOP_Z],
   [W + 60, DEPTH + 20, 0],
   [0, 0, TOP_Z + 20],
   [RISER, BUS_Y, TOP_Z + 20],
@@ -68,11 +71,13 @@ export function Skills() {
 
   const group = skills[active];
   const stubZ = slabZ(active) + H / 2;
-  const signal = [
-    [RISER, BUS_Y, TOP_Z + 16],
+  // The drawer's cable runs out along the riser side to wherever the drawer now is.
+  const cable = [
     [RISER, BUS_Y, stubZ],
-    [W, BUS_Y, stubZ],
+    [RISER, BUS_Y + PULL + 30, stubZ],
+    [W, BUS_Y + PULL + 30, stubZ],
   ];
+  const signal = [[RISER, BUS_Y, TOP_Z + 16], ...cable];
 
   return (
     <Section id="skills" index="04" title="Toolkit" meta={`${total} tools · ${skills.length} layers`} shape={4} field="off">
@@ -124,7 +129,6 @@ export function Skills() {
                   style={{ transform: `translate(${dx}px, ${dy}px)` }}
                   onClick={() => select(i)}
                 >
-                  <title>{g.category}</title>
                   <Box x={0} y={0} z={z} w={W} d={DEPTH} h={H} />
                   {/* Front edge: one LED per tool */}
                   <g transform={FRONT(0, DEPTH, z + H)}>
@@ -149,12 +153,37 @@ export function Skills() {
                       {short(g.category).toUpperCase()}
                     </text>
                   </g>
-                  {/* Top: a vent grille as texture */}
+                  {/* Top: a vent grille, or on the open drawer, the layer's tools printed in a grid */}
                   <g transform={TOP(0, 0, z + H)}>
                     <rect className="iso-detail" x={10} y={10} width={W - 20} height={DEPTH - 20} rx={4} />
-                    {Array.from({ length: 9 }, (_, k) => (
-                      <line key={k} className="iso-detail" x1={W - 70 + k * 6} y1={22} x2={W - 70 + k * 6} y2={DEPTH - 22} />
-                    ))}
+                    {on ? (
+                      <>
+                        <text className="iso-print iso-name" x={20} y={DEPTH - 96} fontSize={11}>
+                          {short(g.category).toUpperCase()}
+                        </text>
+                        {g.items.map((item, k) => {
+                          const cols = g.items.length > 12 ? 3 : 2;
+                          const rows = Math.ceil(g.items.length / cols);
+                          const colW = (W - 40) / cols;
+                          const rowH = Math.min(14, 76 / rows);
+                          return (
+                            <text
+                              key={item}
+                              className={`iso-print iso-tool ${k === peak ? "is-peak" : ""}`}
+                              x={20 + (k % cols) * colW}
+                              y={DEPTH - 80 + Math.floor(k / cols) * rowH}
+                              fontSize={Math.min(7.5, rowH * 0.62)}
+                            >
+                              {item.length > (cols === 3 ? 13 : 20) ? item.slice(0, cols === 3 ? 12 : 19) + "…" : item}
+                            </text>
+                          );
+                        })}
+                      </>
+                    ) : (
+                      Array.from({ length: 9 }, (_, k) => (
+                        <line key={k} className="iso-detail" x1={W - 70 + k * 6} y1={22} x2={W - 70 + k * 6} y2={DEPTH - 22} />
+                      ))
+                    )}
                   </g>
                 </g>
               );
@@ -162,14 +191,12 @@ export function Skills() {
 
             {/* Bus riser and the stubs into each layer, drawn last: they sit in front of the side faces */}
             <path className="iso-wire" d={path([[RISER, BUS_Y, BASE], [RISER, BUS_Y, TOP_Z + 16]])} />
-            {skills.map((g, i) => (
-              <path
-                key={g.category}
-                className={`iso-wire ${i === active ? "is-hot" : ""}`}
-                d={path([[W, BUS_Y, slabZ(i) + H / 2], [RISER, BUS_Y, slabZ(i) + H / 2]])}
-              />
-            ))}
-            <path className="iso-wire is-hot" d={path(signal.slice(0, 2))} />
+            {skills.map((g, i) =>
+              i === active ? null : (
+                <path key={g.category} className="iso-wire" d={path([[W, BUS_Y, slabZ(i) + H / 2], [RISER, BUS_Y, slabZ(i) + H / 2]])} />
+              )
+            )}
+            <path className="iso-wire is-hot" d={path(signal)} />
             <path key={pulse} className="iso-pulse" pathLength={1000} d={path(signal)} />
             <circle className="iso-led is-on-dot" {...pt(RISER, BUS_Y, TOP_Z + 16)} r={3} />
           </svg>

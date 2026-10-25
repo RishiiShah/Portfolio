@@ -8,6 +8,7 @@ import { useGSAP } from "@gsap/react";
 import { education, experience, publications, teaching } from "@/data";
 import { toIsoDate } from "@/lib/dates";
 import { RevealText } from "../anim";
+import { STOP_FIGURES } from "./StopFigures";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -46,8 +47,8 @@ const STOPS: Stop[] = [
     start: mumbai.start,
     end: mumbai.end,
     place: mumbai.location,
-    title: "University of Mumbai",
-    role: mumbai.degree,
+    title: "B.Tech. AI & Data Science",
+    role: mumbai.institution.replace(" - ", ", "),
     bullets: [`Studied AI & Data Science, published ${publications.length} papers, and took two engineering internships along the way.`],
     summary: `AI & Data Science, ${publications.length} papers, two internships.`,
     highlights: [{ value: mumbai.gpa.split(" ")[0], label: "GPA, of 10" }],
@@ -71,8 +72,8 @@ const STOPS: Stop[] = [
     start: rutgers.start,
     end: rutgers.end,
     place: rutgers.location,
-    title: "Rutgers University",
-    role: rutgers.degree,
+    title: "M.S. Computer Science",
+    role: rutgers.institution.replace(" - ", ", "),
     bullets: ["Master's in Computer Science, and building developer tooling for coding agents on the side."],
     summary: "M.S. in Computer Science; building developer tooling for coding agents.",
     highlights: [{ value: rutgers.gpa.split(" ")[0], label: "GPA, of 4.0" }],
@@ -178,14 +179,15 @@ export function Experience() {
 }
 
 function Card({ stop: s, index }: { stop: Stop; index: number }) {
+  const Figure = STOP_FIGURES[index];
   return (
     <article className="deck-card relative min-h-[min(64svh,40rem)] origin-top overflow-hidden border border-line bg-bg">
       <div className="grid gap-y-6 p-[clamp(1.25rem,2.4vw,2.75rem)] md:grid-cols-12 md:gap-x-[3vw]">
         {/* Where and when */}
-        <div className="flex flex-col justify-between gap-6 md:col-span-4 md:border-r md:border-line md:pr-[3vw]">
+        <div className="flex flex-col justify-between gap-6 md:col-span-3 md:border-r md:border-line md:pr-[2vw]">
           <div>
             <div className="flex items-start justify-between gap-4">
-              <p className="wide text-[clamp(2.5rem,5vw,5.5rem)] leading-[0.85] font-bold tracking-tight">
+              <p className="wide text-[clamp(2.2rem,3.6vw,4.2rem)] leading-[0.85] font-bold tracking-tight">
                 {pad(index + 1)}
                 <span className="text-ink-3">/{pad(N)}</span>
               </p>
@@ -205,7 +207,7 @@ function Card({ stop: s, index }: { stop: Stop; index: number }) {
         </div>
 
         {/* What happened there */}
-        <div className="md:col-span-8">
+        <div className="md:col-span-9 lg:col-span-5">
           <h3 className="wide text-[clamp(1.6rem,2.8vw,3.2rem)] leading-[1] font-bold tracking-tight">{s.title}</h3>
           <p className="mt-2 text-[clamp(1rem,1.15vw,1.2rem)] text-accent">{s.role}</p>
           {s.highlights.length > 0 && (
@@ -232,6 +234,11 @@ function Card({ stop: s, index }: { stop: Stop; index: number }) {
               Get in touch <ArrowRight size={15} className="transition-transform group-hover:translate-x-1" />
             </a>
           )}
+        </div>
+
+        {/* What it looked like: a figure per stop, beside the text where there is room for it */}
+        <div className="hidden self-center lg:col-span-4 lg:block">
+          <Figure />
         </div>
       </div>
       {/* Dims the card once the next one covers it */}

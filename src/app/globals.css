@@ -287,7 +287,10 @@ html.lenis body {
   cursor: pointer;
   transition: transform 0.6s var(--ease);
 }
-.iso-slab:hover .iso-top { stroke: var(--ink); }
+/* Hover previews a layer: its LEDs glow faintly, no outline. */
+.iso-slab:not(.is-on):hover .iso-led { fill: color-mix(in srgb, var(--accent) 45%, var(--iso-detail)); }
+.iso-tool { fill: var(--iso-print); transition: fill 0.2s; }
+.iso-tool.is-peak { fill: var(--accent); }
 .iso-slab.is-on .iso-face { stroke: var(--accent); }
 /* Opaque: a lit slab is still solid, nothing shows through it. */
 .iso-slab.is-on .iso-top { fill: color-mix(in srgb, var(--accent) 14%, var(--iso-deck)); }
@@ -338,6 +341,24 @@ html.lenis body {
 .iso-key.is-hot { fill: var(--accent); stroke: var(--accent); transition: none; }
 .iso-halo { fill: var(--accent); opacity: 0; transition: opacity 0.5s; }
 [data-theme="dark"] .iso-halo.is-hot { opacity: 0.22; }
+
+/* Experience stop figures: each carries its own glow filter (--xglow) */
+.xfig .x-edge.iso-face { stroke: var(--accent); }
+.xfig .x-bar { fill: var(--accent); }
+.xfig .x-bar-dim { fill: var(--iso-detail); }
+.xfig .x-door { fill: var(--accent); }
+.xfig .x-spill { fill: var(--accent); opacity: 0.12; }
+.xfig .x-flow { stroke-dasharray: 5 7; animation: x-flow 1.1s linear infinite; }
+.xfig .x-blink { animation: x-blink 1.4s steps(1) infinite; }
+@keyframes x-flow { to { stroke-dashoffset: -12; } }
+@keyframes x-blink { 50% { opacity: 0.25; } }
+[data-theme="dark"] .xfig .iso-lit,
+[data-theme="dark"] .xfig .is-on-dot,
+[data-theme="dark"] .xfig .iso-wire.is-hot,
+[data-theme="dark"] .xfig .iso-scr,
+[data-theme="dark"] .xfig .x-door { filter: var(--xglow); }
+[data-theme="dark"] .xfig .x-spill { opacity: 0.2; }
+@media (prefers-reduced-motion: reduce) { .xfig .x-flow, .xfig .x-blink { animation: none; } }
 
 /* Glow only in the dark theme; the light theme keeps flat accent */
 [data-theme="dark"] .iso-slab.is-on .iso-led,
