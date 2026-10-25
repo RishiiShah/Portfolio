@@ -94,6 +94,23 @@ body {
   text-transform: uppercase;
 }
 
+/* Bento card: opaque, so the background field never sits under text */
+.tile {
+  position: relative;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  transition: border-color 0.4s var(--ease), transform 0.5s var(--ease);
+}
+.tile:hover { border-color: color-mix(in srgb, var(--accent) 60%, var(--line)); }
+a.tile:hover { transform: translateY(-4px); }
+.chip {
+  border: 1px solid var(--line);
+  padding: 0.35rem 0.7rem;
+  transition: border-color 0.25s, color 0.25s;
+}
+.chip:hover { border-color: var(--accent); color: var(--ink); }
+@media (prefers-reduced-motion: reduce) { .tile, .chip { transition: none; } a.tile:hover { transform: none; } }
+
 /* Height animation for expandable rows */
 .expander {
   display: grid;

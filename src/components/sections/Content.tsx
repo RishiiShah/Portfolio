@@ -1,39 +1,35 @@
 import { ArrowUpRight } from "lucide-react";
 import { bio, projects, publications } from "@/data";
 import { Section } from "../Section";
-import { DrawLine, RevealText } from "../anim";
+import { RevealText, Stagger } from "../anim";
 
 const LINK_LABEL = { demo: "Live", video: "Video", source: "Source", paper: "Paper", blog: "Writeup" } as const;
 const more = projects.filter((p) => !p.featured).sort((a, b) => (b.year ?? "").localeCompare(a.year ?? ""));
 
-/** Everything not in Selected work, one line each. */
+/** Everything not in Selected work, as small cards. */
 export function Archive() {
   return (
-    <section data-shape="2" className="relative px-[max(1rem,4vw)] pb-[16vh]">
-      <div className="grid gap-[4vh] xl:grid-cols-12 xl:gap-x-[min(4vh,2.5vw)]">
-        <div className="xl:col-span-4">
-          <p className="label text-ink-3">More work</p>
-          <RevealText
-            as="h3"
-            text="Everything else, filed."
-            className="wide mt-3 block text-[clamp(1.75rem,3.4vw,3.75rem)] leading-[1] font-bold tracking-tight"
-          />
-        </div>
-        <ol className="border-b border-line xl:col-span-8">
-          {more.map((p) => (
-            <li
-              key={p.slug}
-              className="grid grid-cols-[1fr_auto] items-baseline gap-x-6 gap-y-1 border-t border-line py-4 md:grid-cols-[3.5rem_1fr_16rem_auto] md:px-3"
-            >
-              <span className="hidden font-mono text-xs text-ink-3 md:block">{p.year}</span>
-              <span className="min-w-0">
-                <span className="wide block text-lg leading-tight font-semibold tracking-tight">{p.title}</span>
-                <span className="label mt-1 block truncate text-ink-3 md:hidden">
-                  {p.year} · {p.tech.slice(0, 3).join(" · ")}
-                </span>
-              </span>
-              <span className="label hidden truncate text-ink-3 md:block">{p.tech.slice(0, 3).join(" · ")}</span>
-              <span className="flex gap-4">
+    <section data-shape="2" className="relative px-[max(1rem,4vw)] pb-[12vh]">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <RevealText
+          as="h3"
+          text="More work"
+          className="wide block text-[clamp(1.75rem,3vw,3.25rem)] leading-[1] font-bold tracking-tight"
+        />
+        <p className="label text-ink-3">{more.length} projects · {more.at(-1)?.year} → {more[0]?.year}</p>
+      </div>
+      <Stagger className="mt-[4vh] grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {more.map((p) => (
+          <article key={p.slug} className="tile flex flex-col p-5">
+            <p className="label flex justify-between text-ink-3">
+              <span>{p.tags[0]}</span>
+              <span>{p.year}</span>
+            </p>
+            <h4 className="wide mt-4 text-[clamp(1.05rem,1.3vw,1.35rem)] leading-tight font-semibold tracking-tight">{p.title}</h4>
+            <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-ink-2">{p.tagline}</p>
+            <div className="mt-auto flex items-end justify-between gap-4 pt-5">
+              <span className="label truncate text-ink-3">{p.tech.slice(0, 3).join(" · ")}</span>
+              <span className="flex shrink-0 gap-3">
                 {p.links?.map((l) => (
                   <a
                     key={l.url}
@@ -47,10 +43,21 @@ export function Archive() {
                   </a>
                 ))}
               </span>
-            </li>
-          ))}
-        </ol>
-      </div>
+            </div>
+          </article>
+        ))}
+        <a
+          href={bio.github}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="tile group flex flex-col justify-between p-5 text-ink-2 hover:text-accent"
+        >
+          <span className="label text-ink-3">GitHub</span>
+          <span className="wide mt-6 inline-flex items-center gap-2 text-[clamp(1.05rem,1.3vw,1.35rem)] font-semibold tracking-tight">
+            Everything else, with source <ArrowUpRight size={18} className="transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+          </span>
+        </a>
+      </Stagger>
     </section>
   );
 }
@@ -59,34 +66,36 @@ export function Research() {
   const sorted = [...publications].sort((a, b) => b.year - a.year);
   return (
     <Section id="research" index="02" title="Research" meta={`${publications.length} papers`} shape={3}>
-      <ol className="border-b border-line">
+      <Stagger className="grid gap-3 md:grid-cols-3">
         {sorted.map((pub) => {
           const link = pub.links?.[0];
+          const Card = link ? "a" : "div";
           return (
-            <li key={pub.title} className="relative grid gap-x-6 gap-y-2 border-t border-line py-6 md:grid-cols-[3.5rem_1fr_auto] md:px-3">
-              <DrawLine className="absolute top-[-1px] left-0 h-px w-full" />
-              <span className="font-mono text-xs text-ink-3 md:pt-1.5">{pub.year}</span>
-              <div>
-                <h3 className="wide text-[clamp(1.15rem,1.7vw,1.75rem)] leading-[1.1] font-semibold tracking-tight">
-                  {link ? (
-                    <a href={link.url} target="_blank" rel="noopener noreferrer" className="group transition-colors hover:text-accent">
-                      {pub.title}
-                      <ArrowUpRight className="ml-2 inline size-[0.8em] align-baseline transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
-                    </a>
-                  ) : (
-                    pub.title
-                  )}
-                </h3>
-                <p className="mt-2 text-sm text-ink-3">{pub.venue}</p>
-              </div>
-              <p className="label text-accent md:pt-1.5 md:text-right">
-                {pub.publisher ?? "Conference paper"}
-                {pub.authors[0] === bio.name && <span className="block text-ink-3">First author</span>}
+            <Card
+              key={pub.title}
+              {...(link && { href: link.url, target: "_blank", rel: "noopener noreferrer" })}
+              className="tile group flex min-h-[22rem] flex-col p-6"
+            >
+              <p className="label flex items-center justify-between">
+                <span className="text-accent">{pub.publisher ?? "Conference paper"}</span>
+                <span className="text-ink-3">{pub.year}</span>
               </p>
-            </li>
+              <h3 className="wide mt-8 text-[clamp(1.2rem,1.55vw,1.65rem)] leading-[1.12] font-semibold tracking-tight transition-colors group-hover:text-accent">
+                {pub.title}
+              </h3>
+              <p className="mt-4 text-sm leading-relaxed text-ink-3">{pub.venue}</p>
+              <p className="label mt-auto flex items-center justify-between border-t border-line pt-4 text-ink-3">
+                <span>{pub.authors[0] === bio.name ? "First author" : `${pub.authors.length} authors`}</span>
+                {link && (
+                  <span className="inline-flex items-center gap-1 text-ink-2 group-hover:text-accent">
+                    Read <ArrowUpRight size={12} />
+                  </span>
+                )}
+              </p>
+            </Card>
           );
         })}
-      </ol>
+      </Stagger>
     </Section>
   );
 }

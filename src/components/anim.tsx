@@ -133,24 +133,6 @@ export function CountUp({ value, className }: { value: string; className?: strin
   );
 }
 
-/** A rule that draws itself (vertical or horizontal) as its parent scrolls past. */
-export function DrawLine({ vertical, className }: { vertical?: boolean; className?: string }) {
-  const ref = useRef<HTMLDivElement>(null);
-  useGSAP(() => {
-    if (reduced()) return;
-    gsap.fromTo(
-      ref.current,
-      vertical ? { scaleY: 0 } : { scaleX: 0 },
-      {
-        ...(vertical ? { scaleY: 1 } : { scaleX: 1 }),
-        ease: "none",
-        scrollTrigger: { trigger: ref.current!.parentElement, start: "top 70%", end: "bottom 60%", scrub: true },
-      }
-    );
-  });
-  return <div ref={ref} aria-hidden="true" className={`${vertical ? "origin-top" : "origin-left"} bg-accent ${className ?? ""}`} />;
-}
-
 /** Pulls its child toward the cursor while hovered, then springs back. Fine pointers only. */
 export function Magnetic({ children, strength = 0.35 }: { children: ReactNode; strength?: number }) {
   const ref = useRef<HTMLSpanElement>(null);
