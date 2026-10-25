@@ -3,8 +3,8 @@
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 @theme inline {
-  --font-sans: var(--font-archivo);
-  --font-mono: var(--font-jetbrains);
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-instrument);
   --color-bg: var(--bg);
   --color-bg-2: var(--bg-2);
   --color-ink: var(--ink);
@@ -15,38 +15,34 @@
   --color-accent-ink: var(--accent-ink);
 }
 
+/* Paper and ink, with one warm accent used sparingly. */
 :root {
-  --bg: #f2efe8;
-  --bg-2: #e8e4da;
-  --ink: #15141a;
-  --ink-2: #48453f;
-  --ink-3: #66625b;
-  --line: rgba(21, 20, 26, 0.15);
-  --field-ink: #9a948a;
-  --grid: rgba(20, 20, 20, 0.05);
-  --grid-major: rgba(20, 20, 20, 0.09);
-  --accent: #2f37d6;
+  --bg: #f4f1ea;
+  --bg-2: #ebe6db;
+  --ink: #161513;
+  --ink-2: #4a463f;
+  --ink-3: #6e695f;
+  --line: rgba(22, 21, 19, 0.14);
+  --accent: #c2410c;
   --accent-ink: #ffffff;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   color-scheme: light;
 }
 
 [data-theme="dark"] {
-  --field-ink: #ecebe6;
-  --bg: #0e0f11;
-  --bg-2: #17181b;
-  --ink: #ecebe6;
-  --ink-2: #a8a69f;
-  --ink-3: #8b8a84;
-  --line: rgba(236, 235, 230, 0.13);
-  --grid: rgba(236, 235, 230, 0.045);
-  --grid-major: rgba(236, 235, 230, 0.09);
-  --accent: #7d87ff;
-  --accent-ink: #0e0f11;
+  --bg: #12110f;
+  --bg-2: #1b1a17;
+  --ink: #edeae3;
+  --ink-2: #b3aea4;
+  --ink-3: #8f8a80;
+  --line: rgba(237, 234, 227, 0.13);
+  --accent: #f0743a;
+  --accent-ink: #12110f;
   color-scheme: dark;
 }
 
 html {
+  scroll-behavior: smooth;
   scroll-padding-top: 5rem;
   -webkit-text-size-adjust: 100%;
 }
@@ -56,8 +52,6 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: var(--font-sans), system-ui, sans-serif;
-  font-feature-settings: "ss01";
-  transition: background-color 0.3s var(--ease), color 0.3s var(--ease);
 }
 
 ::selection {
@@ -66,193 +60,81 @@ body {
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 1px solid var(--accent);
   outline-offset: 3px;
 }
 
-/* Expanded display type */
+/* Small uppercase captions */
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Large serif display type */
 .display {
-  font-variation-settings: "wdth" 125;
-  font-weight: 800;
-  letter-spacing: -0.035em;
-  line-height: 0.86;
-  text-transform: uppercase;
+  font-family: var(--font-serif), Georgia, serif;
+  font-weight: 400;
+  line-height: 0.92;
+  letter-spacing: -0.02em;
 }
 
-.wide {
-  font-variation-settings: "wdth" 112;
+/* Underline that draws in on hover */
+.link-line {
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+  transition: background-size 0.5s var(--ease);
+}
+.link-line:hover {
+  background-size: 100% 1px;
 }
 
-.label {
-  font-family: var(--font-mono), ui-monospace, monospace;
-  font-size: 0.6875rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+/*
+ * Intro: on the first load of a browser session the loader holds for a moment, then
+ * lifts away; the hero reveals as it goes. Later loads skip both (html.intro-seen),
+ * and so does reduced motion. CSS only, so nothing waits on JavaScript.
+ */
+:root {
+  --intro: 1.15s;
 }
-
-/* Bento card: opaque, so the background field never sits under text */
-.tile {
-  position: relative;
-  border: 1px solid var(--line);
-  background: var(--bg);
-  transition: border-color 0.4s var(--ease), transform 0.5s var(--ease);
+html.intro-seen {
+  --intro: 0s;
 }
-.tile:hover { border-color: color-mix(in srgb, var(--accent) 60%, var(--line)); }
-a.tile:hover { transform: translateY(-4px); }
-.chip {
-  border: 1px solid var(--line);
-  padding: 0.35rem 0.7rem;
-  transition: border-color 0.25s, color 0.25s;
-}
-.chip:hover { border-color: var(--accent); color: var(--ink); }
-@media (prefers-reduced-motion: reduce) { .tile, .chip { transition: none; } a.tile:hover { transform: none; } }
-
-/* Height animation for expandable rows */
-.expander {
-  display: grid;
-  grid-template-rows: 0fr;
-  transition: grid-template-rows 0.5s var(--ease);
-}
-.expander[data-open="true"] {
-  grid-template-rows: 1fr;
-}
-.expander > * {
-  overflow: hidden;
-  min-height: 0;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-  .expander {
-    transition: none;
-    animation: none;
-  }
-}
-
-html:not(.js) .loader,
-html.intro-seen .loader {
+.loader {
   display: none;
 }
-
-/* Lenis */
-html.lenis,
-html.lenis body {
-  height: auto;
-}
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-.lenis.lenis-stopped {
-  overflow: hidden;
-}
-
-@media (pointer: fine) {
-  /* The custom cursor (Cursor.tsx) replaces the native one everywhere, including clickable drawings */
-  html.js,
-  html.js * {
-    cursor: none;
+@media (prefers-reduced-motion: no-preference) {
+  html.js:not(.intro-seen) .loader {
+    display: flex;
+    animation: loader-out 0.7s var(--ease) 0.85s forwards;
   }
-  html.js :is(input, textarea, select, [contenteditable]) { cursor: text; }
+  .loader-word {
+    animation: rise 0.7s var(--ease) both;
+  }
+  .loader-bar {
+    transform-origin: left;
+    animation: grow 0.8s cubic-bezier(0.65, 0, 0.35, 1) both;
+  }
+  html.js .reveal {
+    animation: rise 1s var(--ease) both;
+    animation-delay: calc(var(--intro) + var(--d, 0s));
+  }
+  html.js .fade {
+    animation: fade 1.2s var(--ease) both;
+    animation-delay: calc(var(--intro) + var(--d, 0s));
+  }
 }
-
-/* Cursor: a dot inside four corner ticks (see Cursor.tsx) */
-.cursor-dot { width: 5px; height: 5px; background: var(--accent); }
-.cursor-frame { transform-origin: center; }
-.cursor-frame i { position: absolute; width: 7px; height: 7px; border: 0 solid var(--accent); transition: width 0.3s, height 0.3s; }
-.cursor-frame i:nth-child(1) { top: 0; left: 0; border-top-width: 1.5px; border-left-width: 1.5px; }
-.cursor-frame i:nth-child(2) { top: 0; right: 0; border-top-width: 1.5px; border-right-width: 1.5px; }
-.cursor-frame i:nth-child(3) { bottom: 0; left: 0; border-bottom-width: 1.5px; border-left-width: 1.5px; }
-.cursor-frame i:nth-child(4) { bottom: 0; right: 0; border-bottom-width: 1.5px; border-right-width: 1.5px; }
-.cursor-frame[data-hot] i { width: 11px; height: 11px; }
-.cursor-dot, .cursor-frame i { transition: background-color 0.2s, border-color 0.2s, width 0.3s, height 0.3s; }
-.cursor-dot[data-contrast] { background: var(--bg); }
-.cursor-frame[data-contrast] i { border-color: var(--bg); }
-
-/* Lab-notebook graph paper: fine grid with a heavier line every fifth square */
-.graph-paper {
-  background-image:
-    linear-gradient(var(--grid-major) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid-major) 1px, transparent 1px),
-    linear-gradient(var(--grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size: 120px 120px, 120px 120px, 24px 24px, 24px 24px;
-  background-position: -1px -1px;
+@keyframes rise {
+  from { transform: translateY(105%); }
 }
-
-/* Iso-glow figure (Toolkit stack): hairline faces, accent only on what is live */
-.iso {
-  --iso-body: #f4f1ea;
-  --iso-deck: #fdfbf7;
-  --iso-line: rgba(21, 20, 26, 0.55);
-  --iso-detail: rgba(21, 20, 26, 0.2);
-  --iso-print: rgba(20, 20, 20, 0.55);
-  --iso-accent-hi: #5c66ff;
-  --iso-glass: #e2ded3;
-  --iso-glass-on: #ebebf8;
-  --iso-side: #e3dfd4;
+@keyframes fade {
+  from { opacity: 0; }
 }
-[data-theme="dark"] .iso {
-  --iso-body: #16171a;
-  --iso-deck: #1b1c20;
-  --iso-line: rgba(236, 235, 230, 0.3);
-  --iso-detail: rgba(236, 235, 230, 0.1);
-  --iso-print: rgba(236, 235, 230, 0.45);
-  --iso-accent-hi: #b4baff;
-  --iso-glass: #0f1013;
-  --iso-glass-on: #141629;
-  --iso-side: #111215;
+@keyframes grow {
+  from { transform: scaleX(0); }
 }
-.iso-face {
-  fill: var(--iso-body);
-  stroke: var(--iso-line);
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-  stroke-linejoin: round;
-  transition: fill 0.4s, stroke 0.4s;
-}
-.iso-top { fill: var(--iso-deck); }
-.iso-detail {
-  fill: none;
-  stroke: var(--iso-detail);
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-}
-.iso-print {
-  fill: var(--iso-print);
-  font-family: var(--font-jetbrains), ui-monospace, monospace;
-  letter-spacing: 0.06em;
-}
-.iso-led { fill: var(--iso-detail); transition: fill 0.3s; }
-.iso .is-on-dot { fill: var(--accent); }
-.iso-press { cursor: pointer; }
-.iso-lit.iso-face { fill: var(--accent); stroke: var(--iso-accent-hi); }
-.iso-glass { fill: var(--iso-glass); transition: fill 0.3s; }
-.iso-glass.is-hot { fill: var(--iso-glass-on); stroke: var(--accent); stroke-width: 1; vector-effect: non-scaling-stroke; }
-.iso-scr {
-  fill: var(--iso-accent-hi);
-  font-family: var(--font-jetbrains), ui-monospace, monospace;
-}
-.iso-scr-dim { fill: var(--accent); }
-.iso-key {
-  fill: none;
-  stroke: var(--iso-detail);
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-  transition: fill 0.3s;
-}
-.iso-key.is-hot { fill: var(--accent); stroke: var(--accent); transition: none; }
-.iso-halo { fill: var(--accent); opacity: 0; transition: opacity 0.5s; }
-[data-theme="dark"] .iso-halo.is-hot { opacity: 0.22; }
-
-/* Glow only in the dark theme; the light theme keeps flat accent */
-[data-theme="dark"] .iso .is-on-dot,
-[data-theme="dark"] .iso-lit,
-[data-theme="dark"] .iso-scr,
-[data-theme="dark"] .iso-key.is-hot { filter: url(#iso-soft); }
-@media (prefers-reduced-motion: reduce) {
-  .iso-face, .iso-led, .iso-glass, .iso-key, .iso-halo { transition: none; }
+@keyframes loader-out {
+  to { transform: translateY(-100%); visibility: hidden; }
 }
 
 /* Theme switch: the toggle animates a circular reveal itself, so turn off the default crossfade */

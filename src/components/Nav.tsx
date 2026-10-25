@@ -1,103 +1,122 @@
 "use client";
 
 import { ArrowUpRight } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { bio } from "@/data";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./ThemeToggle";
 
-const sections = [
-  { id: "work", index: "01", label: "Work" },
-  { id: "research", index: "02", label: "Research" },
-  { id: "experience", index: "03", label: "Experience" },
-  { id: "skills", index: "04", label: "Toolkit" },
-  { id: "about", index: "05", label: "About" },
-  { id: "contact", index: "06", label: "Contact" },
+const links = [
+  { href: "#work", label: "Work" },
+  { href: "#experience", label: "Experience" },
+  { href: "#about", label: "About" },
+  { href: "#contact", label: "Contact" },
 ] as const;
 
-/** Fixed nav: hides while scrolling down, returns on scroll up, tracks the current section. */
+/**
+ * Fixed bar that gains a rule once the page scrolls; on phones the links open as a full-screen
+ * menu, rendered outside the header because its backdrop blur would contain a fixed child.
+ */
 export function Nav() {
-  const [active, setActive] = useState<string | null>(null);
-  const [hidden, setHidden] = useState(false);
-  const progress = useRef<HTMLSpanElement>(null);
+  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    let lastY = window.scrollY;
-    let frame = 0;
-    const update = () => {
-      frame = 0;
-      const y = window.scrollY;
-      const max = document.documentElement.scrollHeight - window.innerHeight;
-      if (progress.current) progress.current.style.transform = `scaleX(${max > 0 ? y / max : 0})`;
-      if (Math.abs(y - lastY) > 6) {
-        setHidden(y > lastY && y > window.innerHeight * 0.8);
-        lastY = y;
-      }
-      const line = window.innerHeight * 0.4;
-      const current = sections.find((s) => {
-        const r = document.getElementById(s.id)?.getBoundingClientRect();
-        return r && r.top <= line && r.bottom > line;
-      });
-      setActive(current?.id ?? null);
-    };
-    const onScroll = () => {
-      if (!frame) frame = requestAnimationFrame(update);
-    };
-    update();
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      cancelAnimationFrame(frame);
-    };
+    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  return (
-    <header
-      className={cn(
-        "fixed inset-x-0 top-0 z-50 border-b border-line bg-bg/60 backdrop-blur-md transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]",
-        hidden && "-translate-y-full"
-      )}
-      onFocusCapture={() => setHidden(false)}
-    >
-      <div className="flex h-14 items-center justify-between gap-6 px-[max(1rem,4vw)]">
-        <a href="#top" className="flex items-center gap-3 font-semibold tracking-tight">
-          <span className="wide grid size-7 place-items-center bg-ink text-[11px] font-extrabold text-bg">RS</span>
-          <span className="hidden sm:inline">{bio.name}</span>
-        </a>
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
+    document.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [open]);
 
-        <nav aria-label="Sections" className="hidden md:block">
-          <ul className="flex items-center gap-[clamp(1rem,2vw,2rem)]">
-            {sections.map((s) => (
-              <li key={s.id}>
-                <a
-                  href={`#${s.id}`}
-                  aria-current={active === s.id ? "location" : undefined}
-                  className="group relative flex items-baseline gap-1.5 py-1 text-sm text-ink-2 transition-colors hover:text-ink aria-[current]:text-ink"
-                >
-                  <span className="font-mono text-[10px] text-ink-3 group-hover:text-accent group-aria-[current]:text-accent">
-                    {s.index}
-                  </span>
-                  {s.label}
-                  <span className="absolute inset-x-0 -bottom-0.5 h-px origin-left scale-x-0 bg-accent transition-transform duration-500 group-hover:scale-x-100 group-aria-[current]:scale-x-100" />
+  return (
+    <>
+      <header
+        className={cn(
+          "fade fixed inset-x-0 top-0 z-50 border-b transition-colors duration-500",
+          scrolled ? "border-line bg-bg/80 backdrop-blur-md" : "border-transparent",
+        )}
+        style={{ "--d": "0.5s" } as React.CSSProperties}
+      >
+        <div className="px-[max(1.25rem,4vw)]">
+          <div className="mx-auto flex h-16 max-w-[90rem] items-center justify-between gap-6">
+            <a href="#top" className="display text-[1.6rem] leading-none">
+              {bio.name}
+            </a>
+
+            <nav aria-label="Sections" className="hidden md:block">
+              <ul className="flex items-center gap-8 text-sm text-ink-2">
+                {links.map((l) => (
+                  <li key={l.href}>
+                    <a href={l.href} className="link-line pb-0.5 transition-colors hover:text-ink">
+                      {l.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <a
+                href={bio.resume}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden h-9 items-center gap-1.5 rounded-full bg-ink px-4 text-sm text-bg transition-colors hover:bg-accent hover:text-accent-ink sm:flex"
+              >
+                Résumé <ArrowUpRight size={14} />
+              </a>
+              <button
+                type="button"
+                onClick={() => setOpen(true)}
+                aria-expanded={open}
+                aria-controls="menu"
+                className="h-9 rounded-full border border-line px-4 text-sm md:hidden"
+              >
+                Menu
+              </button>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {open && (
+        <div id="menu" className="fixed inset-0 z-50 flex flex-col bg-bg px-[max(1.25rem,4vw)] md:hidden">
+          <div className="flex h-16 items-center justify-between">
+            <span className="display text-[1.6rem] leading-none">{bio.name}</span>
+            <button type="button" onClick={() => setOpen(false)} className="h-9 rounded-full border border-line px-4 text-sm">
+              Close
+            </button>
+          </div>
+          <ul className="mt-[8vh] space-y-2">
+            {links.map((l) => (
+              <li key={l.href}>
+                <a href={l.href} onClick={() => setOpen(false)} className="display block text-[clamp(3rem,14vw,5rem)]">
+                  {l.label}
                 </a>
               </li>
             ))}
           </ul>
-        </nav>
-
-        <div className="flex items-center gap-2">
-          <ThemeToggle />
           <a
             href={bio.resume}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex h-9 items-center gap-1.5 bg-ink px-4 text-sm font-medium text-bg transition-colors hover:bg-accent hover:text-accent-ink"
+            className="mt-auto mb-10 inline-flex items-center gap-1.5 text-ink-2"
           >
             Résumé <ArrowUpRight size={14} />
           </a>
         </div>
-      </div>
-      <span ref={progress} aria-hidden="true" className="absolute inset-x-0 -bottom-px h-px origin-left scale-x-0 bg-accent" />
-    </header>
+      )}
+    </>
   );
 }

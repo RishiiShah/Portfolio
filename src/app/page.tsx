@@ -1,43 +1,17 @@
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
-import { Scene } from "@/components/SceneLazy";
 import { Loader } from "@/components/Loader";
-import { Cursor } from "@/components/Cursor";
-import { SmoothScroll } from "@/components/SmoothScroll";
-import { Hero } from "@/components/sections/Hero";
-import { FeaturedWork } from "@/components/sections/FeaturedWork";
-import { About } from "@/components/sections/About";
-import { Archive, Research } from "@/components/sections/Content";
-import { Experience } from "@/components/sections/Experience";
-import { Skills } from "@/components/sections/Toolkit";
-import { Intro } from "@/components/sections/Intro";
-import { Contact } from "@/components/sections/Contact";
-import { projects } from "@/data";
-
-const featured = projects.filter((p) => p.featured);
+import { Hero } from "@/components/Hero";
 
 export default function Page() {
   return (
     <>
       <Loader />
-      <SmoothScroll />
-      <Scene />
-      <Cursor />
       <Nav />
-      <main id="main" tabIndex={-1} className="relative z-10 outline-none">
+      <main id="main" tabIndex={-1} className="outline-none">
         <Hero />
-        <Intro />
-        <FeaturedWork items={featured} />
-        <Archive />
-        <Research />
-        <Experience />
-        <Skills />
-        <About />
-        <Contact />
       </main>
-      <div className="relative z-10">
-        <Footer />
-      </div>
+      <Footer />
     </>
   );
 }

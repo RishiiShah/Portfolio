@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Archivo, JetBrains_Mono } from "next/font/google";
+import { Instrument_Serif, Inter } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { ThemeProvider } from "next-themes";
@@ -7,15 +7,16 @@ import { bio } from "@/data";
 import { getSiteUrl, sanitizeForMeta } from "@/lib/site";
 import { buildStructuredData } from "@/lib/structured-data";
 
-const archivo = Archivo({
-  variable: "--font-archivo",
+const instrument = Instrument_Serif({
+  variable: "--font-instrument",
   subsets: ["latin"],
-  axes: ["wdth"],
+  weight: "400",
+  style: ["normal", "italic"],
   display: "swap",
 });
 
-const jetbrains = JetBrains_Mono({
-  variable: "--font-jetbrains",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
   display: "swap",
 });
@@ -122,8 +123,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f2efe8" },
-    { media: "(prefers-color-scheme: dark)", color: "#0e0f11" },
+    { media: "(prefers-color-scheme: light)", color: "#f4f1ea" },
+    { media: "(prefers-color-scheme: dark)", color: "#12110f" },
   ],
   colorScheme: "light dark",
   width: "device-width",
@@ -134,7 +135,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en"
-      className={`${archivo.variable} ${jetbrains.variable}`}
+      className={`${instrument.variable} ${inter.variable}`}
       suppressHydrationWarning
     >
       <head>
@@ -157,7 +158,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           Skip to content
         </a>
-        <ThemeProvider attribute="data-theme" defaultTheme="system" enableSystem disableTransitionOnChange>
+        <ThemeProvider attribute="data-theme" defaultTheme="light" enableSystem disableTransitionOnChange>
           {children}
         </ThemeProvider>
         <Analytics />
