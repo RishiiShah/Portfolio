@@ -219,6 +219,7 @@ export const projects: Project[] = [
     tech: ["Python", "FastAPI", "PostgreSQL", "React", "TypeScript", "Flutter", "ECharts", "Docker"],
     tags: ["Full-stack", "Backend", "Systems"],
     latest: true,
+    featured: true,
     award: "Winner, Sevaro × Rutgers Health Hack",
     impact:
       "Won the Sevaro / Rutgers Health Hack: detects breaching consults, demand surges, and coverage gaps up to 90 minutes ahead, then proposes the cheapest safe fix and runs it end to end with an append-only audit log.",
@@ -292,7 +293,7 @@ export const projects: Project[] = [
     impact:
       "Adaptive FTS/BM25 and graph-proximity retrieval with token budgets and strict schemas, serving task-scoped context across 9 CLI commands and 6 MCP tools.",
     links: [{ type: "source", url: "https://github.com/RishiiShah/Csegraph" }],
-    featured: false,
+    featured: true,
     metrics: [
       { label: "CLI Commands", value: "9" },
       { label: "MCP Tools", value: "6" },
@@ -336,7 +337,7 @@ export const projects: Project[] = [
     links: [
       { type: "demo", url: "https://snapinterview.app" },
     ],
-    featured: false,
+    featured: true,
     metrics: [
       { label: "Eval Scale", value: "0 to 100" },
       { label: "Role Prompts", value: "28" },
@@ -391,7 +392,7 @@ export const projects: Project[] = [
       },
       { type: "paper", url: "https://ieeexplore.ieee.org/document/11371065/" },
     ],
-    featured: true,
+    featured: false,
     metrics: [
       { label: "End-to-End Accuracy", value: "93.76%" },
       { label: "Vehicle Detection", value: "97.56%" },
@@ -490,7 +491,7 @@ export const projects: Project[] = [
         url: "https://www.researchgate.net/profile/Vijay-Shelake/publication/393335295_Next-Gen_Predictive_Maintenancepage310_320/links/686616a5e4632b045dc9754a/Next-Gen-Predictive-Maintenancepage310-320.pdf#page=141",
       },
     ],
-    featured: false,
+    featured: true,
     metrics: [
       { label: "Modules", value: "4" },
       { label: "LLM", value: "Llama 3.1 8B" },

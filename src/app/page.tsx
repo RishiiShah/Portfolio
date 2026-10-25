@@ -14,7 +14,7 @@ import { Intro } from "@/components/sections/Intro";
 import { Contact } from "@/components/sections/Contact";
 import { projects } from "@/data";
 
-const featured = projects.filter((p) => p.problem);
+const featured = projects.filter((p) => p.featured);
 
 export default function Page() {
   return (

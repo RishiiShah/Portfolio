@@ -5,7 +5,7 @@ import { gsap } from "gsap";
 
 const RETICLE = 22; // px, the idle reticle's box
 const PAD = 6; // px of breathing room when the brackets frame a target
-const HOT = "a, button, summary, label, [role='button'], .iso-press, .iso-slab";
+const HOT = "a, button, summary, label, [role='button'], .iso-press";
 
 const rgb = (c: string) => c.match(/[\d.]+/g)?.map(Number) ?? [];
 /** Accent as [r, g, b], read from the theme (hex or rgb). */

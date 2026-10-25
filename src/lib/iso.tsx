@@ -8,7 +8,7 @@ const C = Math.cos(Math.PI / 6);
 const S = Math.sin(Math.PI / 6);
 
 /** Screen offset of a 3D vector, without the frame origin. */
-export const D = (x: number, y: number, z: number) => [(x - y) * C, (x + y) * S - z];
+const D = (x: number, y: number, z: number) => [(x - y) * C, (x + y) * S - z];
 
 interface BoxProps {
   x: number;

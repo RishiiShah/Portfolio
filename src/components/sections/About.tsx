@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { education } from "@/data";
 import { isoFrame } from "@/lib/iso";
 import { Section } from "../Section";
 import { ScrubText, Stagger } from "../anim";
@@ -152,6 +153,20 @@ export function About() {
               developer tooling for coding agents and the infrastructure that makes AI products reliable.
             </p>
           </Stagger>
+          <dl className="mt-[6vh] max-w-[58ch] border-b border-line">
+            {education.map((e) => (
+              <div key={e.degree} className="grid grid-cols-[1fr_auto] gap-x-6 border-t border-line py-4">
+                <dt>
+                  <span className="block font-semibold">{e.degree}</span>
+                  <span className="mt-1 block text-sm text-ink-3">{e.institution.replace(" - ", ", ")}</span>
+                </dt>
+                <dd className="label text-right text-ink-3">
+                  {e.start.slice(-4)}–{e.end.slice(-4)}
+                  <span className="mt-1 block text-ink-2">GPA {e.gpa}</span>
+                </dd>
+              </div>
+            ))}
+          </dl>
         </div>
 
         <figure className="md:col-span-5 md:col-start-8 md:self-start md:sticky md:top-[14vh]">
