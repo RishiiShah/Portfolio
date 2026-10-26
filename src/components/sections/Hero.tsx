@@ -1,25 +1,22 @@
 import { bio, education, teaching } from "@/data";
-import { GraphField } from "@/components/GraphField";
+import { HeroBackdrop } from "@/components/HeroBackdrop";
 import { SplitText } from "@/components/SplitText";
 
 export function Hero() {
   const ms = education[0];
   return (
     <section id="top" className="relative flex min-h-[100svh] flex-col overflow-hidden pt-16">
-      <GraphField />
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,var(--color-bg)_85%)]" />
-      <div className="pointer-events-none absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-bg to-transparent" />
+      <HeroBackdrop />
 
-      <div className="shell relative flex flex-1 flex-col justify-between gap-12 py-10 md:py-14">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <p className="label flex items-center gap-2 !text-ink-2">
-            <span className="size-2 rounded-full bg-accent [animation:blink_1.6s_steps(2)_infinite]" />
+      <div className="shell relative flex flex-1 flex-col justify-between gap-10 py-8 md:py-12">
+        <p className="label flex items-start gap-2 !text-ink-2">
+          <span className="mt-[0.3em] size-2 shrink-0 rounded-full bg-accent [animation:blink_1.6s_steps(2)_infinite]" />
+          <span>
             {teaching.role}, {teaching.organization} · {teaching.courseShort}
-          </p>
-          <p className="label hidden md:block">Move your cursor. That&apos;s the stack.</p>
-        </div>
+          </span>
+        </p>
 
-        <h1 className="display text-[clamp(4.5rem,17vw,17rem)]">
+        <h1 className="display text-[clamp(4rem,min(17vw,30svh),17rem)]">
           <span className="block">
             <SplitText text="Rishabh" />
           </span>
