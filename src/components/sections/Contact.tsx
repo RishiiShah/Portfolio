@@ -12,12 +12,15 @@ export function Contact() {
     <section id="contact" className="relative scroll-mt-16 overflow-hidden border-t border-line">
       <div className="shell pb-10 pt-28 md:pt-40">
         <Reveal>
-          <p className="label">05 · Contact</p>
-          <h2 className="display mt-8 text-[clamp(3.5rem,12vw,12rem)]">
-            Let&apos;s build
+          <p className="label">05 · Say hi</p>
+          <h2 className="display mt-8 text-[clamp(3.5rem,11vw,11rem)]">
+            Got a problem
             <br />
-            <span className="text-accent">something</span> that ships.
+            worth <span className="flourish text-accent">solving?</span>
           </h2>
+          <p className="mt-8 max-w-xl text-xl text-ink-2">
+            I&apos;m happiest on the messy ones. Send it over and I&apos;ll bring curiosity, a plan, and a very sharp eye for detail.
+          </p>
         </Reveal>
 
         <ul className="mt-20 border-t border-line">
@@ -45,7 +48,7 @@ export function Contact() {
 
         <footer className="mt-28 flex flex-wrap items-end justify-between gap-6 text-sm text-ink-3">
           <p>
-            © {new Date().getFullYear()} {bio.name}. Designed and built from scratch.
+            © {new Date().getFullYear()} {bio.name}. Designed and built from scratch, every pixel on purpose.
           </p>
           <a href="#top" className="link-sweep text-ink-2">
             Back to top ↑

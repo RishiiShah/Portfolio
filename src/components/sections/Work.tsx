@@ -125,8 +125,9 @@ export function Work() {
     <section id="work" className="shell scroll-mt-16 py-28 md:py-40">
       <SectionHead
         index="01"
-        title="Selected work"
-        note="Two hackathon wins, three published papers, and the projects that taught me the most. Open any row."
+        title="Things I've"
+        flourish="built"
+        note="Problems I couldn't leave alone, including two hackathon wins. Open any row for the story."
       />
       <Reveal>
         <ul>
@@ -143,7 +144,7 @@ export function Work() {
       </Reveal>
 
       <Reveal className="mt-20">
-        <p className="label mb-6">Also built</p>
+        <p className="flourish mb-6 text-3xl text-ink-2">Plus a few earlier experiments</p>
         <ul className="grid gap-px overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-4">
           {others.map((p) => {
             const href = p.links?.[0]?.url;

@@ -9,8 +9,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: sanitizeForMeta(bio.description),
     start_url: "/",
     display: "standalone",
-    background_color: "#0a0a0b",
-    theme_color: "#0a0a0b",
+    background_color: "#f5f1e8",
+    theme_color: "#f5f1e8",
     categories: ["portfolio", "technology", "education"],
     lang: "en-US",
     icons: [

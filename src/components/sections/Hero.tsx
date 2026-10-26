@@ -1,6 +1,24 @@
-import { bio, education, teaching } from "@/data";
+import { bio, education } from "@/data";
 import { HeroBackdrop } from "@/components/HeroBackdrop";
 import { SplitText } from "@/components/SplitText";
+import { Sticker } from "@/components/Sticker";
+
+function Redline() {
+  return (
+    <div aria-hidden className="pointer-events-none absolute -inset-x-3 -inset-y-4 hidden md:block">
+      {["left-0 top-0 border-l border-t", "right-0 top-0 border-r border-t", "bottom-0 left-0 border-b border-l", "bottom-0 right-0 border-b border-r"].map(
+        (c) => (
+          <span key={c} className={`absolute size-4 border-accent ${c}`} />
+        ),
+      )}
+      <span className="absolute -top-7 left-0 right-0 flex items-center gap-2 font-mono text-[0.65rem] text-accent">
+        <span className="h-px flex-1 bg-accent/60" />
+        1 problem solver, drawn to scale
+        <span className="h-px flex-1 bg-accent/60" />
+      </span>
+    </div>
+  );
+}
 
 export function Hero() {
   const ms = education[0];
@@ -8,52 +26,46 @@ export function Hero() {
     <section id="top" className="relative flex min-h-[100svh] flex-col overflow-hidden pt-16">
       <HeroBackdrop />
 
-      <div className="shell relative flex flex-1 flex-col justify-between gap-10 py-8 md:py-12">
-        <p className="label flex items-start gap-2 !text-ink-2">
-          <span className="mt-[0.3em] size-2 shrink-0 rounded-full bg-accent [animation:blink_1.6s_steps(2)_infinite]" />
-          <span>
-            {teaching.role}, {teaching.organization} · {teaching.courseShort}
-          </span>
-        </p>
+      <div className="shell relative flex flex-1 flex-col justify-center gap-10 py-10 md:py-14">
+        <div className="relative grid items-center gap-10 lg:grid-cols-[1fr_auto]">
+          <div>
+            <p className="flourish text-[clamp(1.75rem,3.5vw,3rem)] text-ink-2">
+              Hey there, I&apos;m
+            </p>
+            <h1 className="relative mt-12 w-fit">
+              <Redline />
+              <span className="display block text-[clamp(4rem,min(15vw,26svh),15rem)]">
+                <SplitText text="Rishabh" />
+                <br />
+                <SplitText text="Shah" offset={7} />
+                <span className="text-accent">
+                  <SplitText text="." offset={11} />
+                </span>
+              </span>
+            </h1>
+          </div>
 
-        <h1 className="display text-[clamp(4rem,min(17vw,30svh),17rem)]">
-          <span className="block">
-            <SplitText text="Rishabh" />
-          </span>
-          <span className="block">
-            <SplitText text="Shah" offset={7} />
-            <span className="rise inline-block overflow-hidden align-bottom text-accent">
-              <span style={{ "--i": 12 } as React.CSSProperties}>.</span>
-            </span>
-          </span>
-        </h1>
+          <div className="flex flex-wrap gap-4 lg:w-72 lg:flex-col lg:items-start" aria-label="Highlights, drag them around">
+            <Sticker rotate={-6} className="bg-sun text-xl">✦ 2× hackathon winner</Sticker>
+            <Sticker rotate={4} className="bg-cobalt text-xl text-bg lg:ml-14">3 papers published</Sticker>
+            <Sticker rotate={-3} className="bg-accent text-2xl lg:ml-4">−86% P95 latency</Sticker>
+            <Sticker rotate={7} className="bg-mint text-lg lg:ml-20">TA · Rutgers CS205</Sticker>
+            <p className="flourish hidden pl-6 text-xl text-ink-3 lg:block">↖ go on, drag them</p>
+          </div>
+        </div>
 
         <div className="grid gap-8 border-t border-line pt-8 md:grid-cols-12">
-          <p className="text-balance text-xl leading-snug text-ink md:col-span-6 md:text-2xl">
-            Software engineer who makes slow backends fast and gets models out of notebooks and into production.
+          <p className="text-balance text-xl leading-snug md:col-span-7 md:text-2xl">
+            I solve problems end to end, from a <span className="flourish text-[1.15em] text-accent">three-second</span> API
+            to a stroke-consult scheduler, and I sweat the details nobody asked about.
           </p>
-          <dl className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm md:col-span-4">
-            <div>
-              <dt className="label">Now</dt>
-              <dd className="mt-1 text-ink-2">{ms.degree}, Rutgers</dd>
-            </div>
-            <div>
-              <dt className="label">Graduating</dt>
-              <dd className="mt-1 text-ink-2">{ms.end}</dd>
-            </div>
-            <div>
-              <dt className="label">Based in</dt>
-              <dd className="mt-1 text-ink-2">{bio.location}</dd>
-            </div>
-            <div>
-              <dt className="label">Open to</dt>
-              <dd className="mt-1 text-ink-2">SWE &amp; ML roles</dd>
-            </div>
-          </dl>
+          <p className="text-ink-2 md:col-span-3">
+            {ms.degree} at Rutgers, graduating {ms.end}. Based in {bio.location}, open to SWE &amp; ML roles.
+          </p>
           <div className="flex items-end gap-3 md:col-span-2 md:flex-col md:items-end md:justify-end">
             <a
               href="#work"
-              className="inline-flex h-11 items-center rounded-full bg-ink px-5 text-sm font-medium text-bg transition-colors hover:bg-accent"
+              className="inline-flex h-11 items-center rounded-full bg-ink px-5 text-sm font-medium text-bg transition-all hover:-translate-y-0.5 hover:bg-accent hover:text-accent-ink"
             >
               See the work ↓
             </a>
@@ -61,7 +73,7 @@ export function Hero() {
               href={bio.resume}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex h-11 items-center rounded-full border border-line-2 px-5 text-sm text-ink transition-colors hover:border-ink"
+              className="inline-flex h-11 items-center rounded-full border border-line-2 px-5 text-sm transition-colors hover:border-ink"
             >
               Résumé
             </a>

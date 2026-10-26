@@ -47,7 +47,7 @@ export function Latency() {
         <div className="shell grid gap-12 md:grid-cols-12 md:items-end">
           <div className="md:col-span-8">
             <p id="latency-title" className="label">
-              Case file · Aaditya Technologies · P95 API latency
+              A problem I loved solving · Aaditya Technologies · P95 API latency
             </p>
             <p
               className={`display mt-6 tabular-nums text-[clamp(5rem,19vw,19rem)] transition-colors duration-700 ${

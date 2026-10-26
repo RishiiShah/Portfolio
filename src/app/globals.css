@@ -1,18 +1,22 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #0a0a0b;
-  --color-bg-2: #121214;
-  --color-bg-3: #1a1a1d;
-  --color-line: rgb(237 234 226 / 0.1);
-  --color-line-2: rgb(237 234 226 / 0.2);
-  --color-ink: #edeae2;
-  --color-ink-2: #a8a59e;
-  --color-ink-3: #6e6c67;
+  --color-bg: #f5f1e8;
+  --color-bg-2: #ede7da;
+  --color-bg-3: #e3dbca;
+  --color-line: rgb(22 19 15 / 0.1);
+  --color-line-2: rgb(22 19 15 / 0.22);
+  --color-ink: #16130f;
+  --color-ink-2: #514b42;
+  --color-ink-3: #8a8377;
   --color-accent: #ff5a1f;
-  --color-accent-ink: #0a0a0b;
+  --color-accent-ink: #16130f;
+  --color-cobalt: #2f55ff;
+  --color-sun: #ffc93c;
+  --color-mint: #8fdcb4;
 
   --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-instrument), ui-serif, Georgia, serif;
   --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-jetbrains), ui-monospace, monospace;
 
@@ -23,7 +27,7 @@
   html {
     background: var(--color-bg);
     color: var(--color-ink);
-    color-scheme: dark;
+    color-scheme: light;
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
   }
@@ -74,6 +78,25 @@
     font-weight: 600;
     letter-spacing: -0.045em;
     line-height: 0.88;
+  }
+
+  .flourish {
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-weight: 400;
+    letter-spacing: -0.02em;
+  }
+
+  .char {
+    display: inline-block;
+    transition:
+      transform 0.5s cubic-bezier(0.34, 1.8, 0.5, 1),
+      color 0.3s;
+  }
+  .char:hover {
+    transform: translateY(-0.09em) rotate(-5deg);
+    color: var(--color-accent);
+    transition-duration: 0.18s;
   }
 
   .grain {

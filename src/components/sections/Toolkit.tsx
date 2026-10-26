@@ -5,7 +5,7 @@ import { Reveal } from "@/components/Reveal";
 export function Toolkit() {
   return (
     <section id="toolkit" className="shell scroll-mt-16 py-28 md:py-40">
-      <SectionHead index="04" title="Toolkit" note="What I reach for, grouped the way I think about it." />
+      <SectionHead index="04" title="My" flourish="toolbox" note="What I reach for when a new problem shows up." />
 
       <div className="grid gap-px overflow-hidden rounded-3xl border border-line bg-line md:grid-cols-2 lg:grid-cols-3">
         {skills.map((group, i) => (

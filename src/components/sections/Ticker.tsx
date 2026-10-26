@@ -12,7 +12,8 @@ const ITEMS = [
 export function Ticker() {
   const row = [...ITEMS, ...ITEMS];
   return (
-    <div className="overflow-hidden border-y border-line bg-bg-2 py-5" aria-label="Highlights">
+    <div className="overflow-hidden py-6" aria-label="Highlights">
+      <div className="-mx-4 -rotate-1 overflow-hidden bg-ink py-5 text-bg">
       <ul className="marquee">
         {row.map((item, i) => (
           <li
@@ -25,6 +26,7 @@ export function Ticker() {
           </li>
         ))}
       </ul>
+      </div>
     </div>
   );
 }

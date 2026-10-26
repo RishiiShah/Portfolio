@@ -1,18 +1,19 @@
 import { bio, publications } from "@/data";
 import { Reveal } from "@/components/Reveal";
+import { SectionHead } from "@/components/SectionHead";
 
 export function Research() {
   const sorted = [...publications].sort((a, b) => b.year - a.year);
   return (
     <section id="research" className="scroll-mt-16 bg-ink py-28 text-bg md:py-40">
       <div className="shell">
-        <Reveal className="mb-14 flex flex-wrap items-end justify-between gap-6 border-b border-bg/15 pb-6 md:mb-20">
-          <h2 className="display text-[clamp(3rem,9vw,8rem)]">
-            <span className="mr-4 align-top font-mono text-sm font-normal tracking-normal text-accent">03</span>
-            Research
-          </h2>
-          <p className="max-w-sm text-bg/60">Computer vision, generative models, and voice interfaces, written up and peer reviewed.</p>
-        </Reveal>
+        <SectionHead
+          index="03"
+          title="Ideas, in"
+          flourish="print"
+          tone="dark"
+          note="Computer vision, generative models, and voice interfaces, written up properly."
+        />
 
         <ul className="grid gap-6 lg:grid-cols-3">
           {sorted.map((pub, i) => {

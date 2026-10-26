@@ -28,7 +28,12 @@ export function Experience() {
 
   return (
     <section id="experience" className="shell scroll-mt-16 py-28 md:py-40">
-      <SectionHead index="02" title="Experience" note="Two engineering internships, then back to school to teach the fundamentals." />
+      <SectionHead
+        index="02"
+        title="Where I've"
+        flourish="worked"
+        note="Two internships shipping to production, and now teaching the fundamentals at Rutgers."
+      />
       <ol>
         {entries.map((e, i) => (
           <Reveal as="li" key={e.organization + e.role} delay={i * 60} className="grid gap-8 border-b border-line py-12 md:grid-cols-12">
