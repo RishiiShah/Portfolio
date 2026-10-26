@@ -1,114 +1,54 @@
 import type { Metadata, Viewport } from "next";
-import { Instrument_Serif, Inter } from "next/font/google";
-import "./globals.css";
+import { Bricolage_Grotesque, Geist, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
-import { ThemeProvider } from "next-themes";
 import { bio } from "@/data";
-import { getSiteUrl, sanitizeForMeta } from "@/lib/site";
 import { buildStructuredData } from "@/lib/structured-data";
+import { getSiteUrl, sanitizeForMeta } from "@/lib/site";
+import "./globals.css";
 
-const instrument = Instrument_Serif({
-  variable: "--font-instrument",
+const bricolage = Bricolage_Grotesque({
+  variable: "--font-bricolage",
   subsets: ["latin"],
-  weight: "400",
-  style: ["normal", "italic"],
   display: "swap",
 });
 
-const inter = Inter({
-  variable: "--font-inter",
+const geist = Geist({
+  variable: "--font-geist",
   subsets: ["latin"],
   display: "swap",
+});
+
+const mono = JetBrains_Mono({
+  variable: "--font-jetbrains",
+  subsets: ["latin"],
+  display: "swap",
+  weight: ["400", "500"],
 });
 
 const siteUrl = getSiteUrl();
 const description = sanitizeForMeta(bio.description);
-const metaTitleValue = sanitizeForMeta(bio.name + " | " + bio.title);
+const title = sanitizeForMeta(`${bio.name} | ${bio.title}`);
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: {
-    default: metaTitleValue,
-    template: `%s | ${bio.name}`,
-  },
+  title: { default: title, template: `%s | ${bio.name}` },
   description,
-  applicationName: `${bio.name} Portfolio`,
-  keywords: [
-    bio.name,
-    "Software Engineer",
-    "ML Engineer",
-    "Machine Learning Engineer",
-    "Computer Vision",
-    "MLOps",
-    "Backend Engineer",
-    "Full Stack Developer",
-    "Rutgers University",
-    "Next.js Portfolio",
-    "Python",
-    "TypeScript",
-    "PyTorch",
-    "YOLO",
-    "WGAN-GP",
-    "Research",
-    "IEEE Publication",
-    "Software Engineering Intern",
-  ],
   authors: [{ name: bio.name, url: siteUrl }],
   creator: bio.name,
-  publisher: bio.name,
-  alternates: {
-    canonical: "/",
-  },
-  formatDetection: {
-    email: false,
-    address: false,
-    telephone: false,
-  },
+  alternates: { canonical: "/" },
   openGraph: {
     type: "profile",
     locale: "en_US",
     url: siteUrl,
     siteName: `${bio.name} Portfolio`,
-    title: metaTitleValue,
+    title,
     description,
     firstName: "Rishabh",
     lastName: "Shah",
-    username: "RishiiShah",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-        alt: `${bio.name}, ${bio.title}`,
-        type: "image/png",
-      },
-    ],
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: title }],
   },
-  twitter: {
-    card: "summary_large_image",
-    title: metaTitleValue,
-    description,
-    creator: "@RishiiShah",
-    site: "@RishiiShah",
-    images: [
-      {
-        url: "/og-image.png",
-        alt: `${bio.name}, ${bio.title}`,
-      },
-    ],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-snippet": -1,
-      "max-image-preview": "large",
-      "max-video-preview": -1,
-    },
-  },
-  category: "technology",
+  twitter: { card: "summary_large_image", title, description, images: ["/og-image.png"] },
+  robots: { index: true, follow: true },
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
@@ -117,50 +57,24 @@ export const metadata: Metadata = {
     apple: [{ url: "/apple-icon", sizes: "180x180", type: "image/png" }],
   },
   manifest: "/manifest.webmanifest",
-  // Google Search Console's HTML-tag check, if that's the method used (DNS needs nothing here).
-  ...(process.env.GOOGLE_SITE_VERIFICATION && { verification: { google: process.env.GOOGLE_SITE_VERIFICATION } }),
 };
 
 export const viewport: Viewport = {
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f4f1ea" },
-    { media: "(prefers-color-scheme: dark)", color: "#12110f" },
-  ],
-  colorScheme: "light dark",
+  themeColor: "#0a0a0b",
+  colorScheme: "dark",
   width: "device-width",
   initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="en"
-      className={`${instrument.variable} ${inter.variable}`}
-      suppressHydrationWarning
-    >
+    <html lang="en" className={`${bricolage.variable} ${geist.variable} ${mono.variable}`}>
       <head>
-        {/* Before first paint: mark JS, and skip the intro after the first load of a browser session. */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html:
-              'var d=document.documentElement;d.classList.add("js");try{if(sessionStorage.getItem("intro"))d.classList.add("intro-seen");else sessionStorage.setItem("intro","1")}catch(e){}',
-          }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: buildStructuredData() }}
-        />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: buildStructuredData() }} />
       </head>
-      <body className="antialiased">
-        <a
-          href="#main"
-          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[100] focus:bg-bg-2 focus:px-4 focus:py-2 focus:text-sm focus:text-ink focus:border focus:border-line"
-        >
-          Skip to content
-        </a>
-        <ThemeProvider attribute="data-theme" defaultTheme="light" enableSystem disableTransitionOnChange>
-          {children}
-        </ThemeProvider>
+      <body className="bg-bg font-sans text-ink antialiased">
+        <div className="grain" aria-hidden />
+        {children}
         <Analytics />
       </body>
     </html>
