@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { bio } from "@/data";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const links = [
   { href: "#work", label: "Work" },
@@ -54,6 +55,9 @@ export function Nav() {
           </span>
         </a>
         <ul className="flex items-center gap-1 text-sm">
+          <li className="mr-1">
+            <ThemeToggle />
+          </li>
           {links.map((l) => (
             <li key={l.href} className={l.href === "#contact" ? "" : "hidden md:block"}>
               <a

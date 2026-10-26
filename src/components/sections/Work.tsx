@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { projects, type Project, type ProjectLink } from "@/data";
 import { SectionHead } from "@/components/SectionHead";
 import { Reveal } from "@/components/Reveal";
@@ -16,11 +16,38 @@ const LINK_LABEL: Record<ProjectLink["type"], string> = {
 const caseStudies = projects.filter((p): p is Project & Required<Pick<Project, "caseStudy">> => !!p.caseStudy);
 const others = projects.filter((p) => !p.caseStudy);
 
-function Row({ project, index, open, onToggle }: { project: Project; index: number; open: boolean; onToggle: () => void }) {
+const FILTERS = [
+  { label: "Everything", tags: [] },
+  { label: "Full-stack", tags: ["Full-stack"] },
+  { label: "Backend & systems", tags: ["Backend", "Systems", "Developer Tools"] },
+  { label: "AI / ML", tags: ["AI/ML", "MLOps"] },
+  { label: "Research", tags: ["Research"] },
+] as const;
+
+const PREVIEW_COLORS = ["bg-sun", "bg-mint", "bg-accent", "bg-cobalt !text-white"];
+
+function Row({
+  project,
+  index,
+  open,
+  onToggle,
+  onHover,
+}: {
+  project: Project;
+  index: number;
+  open: boolean;
+  onToggle: () => void;
+  onHover: (slug: string | null) => void;
+}) {
   const cs = project.caseStudy!;
   const panelId = `case-${project.slug}`;
   return (
-    <li className="border-b border-line">
+    <li
+      className="border-b border-line [animation:pop-in_0.6s_var(--ease-out-expo)_backwards]"
+      style={{ animationDelay: `${index * 60}ms` }}
+      onPointerEnter={(e) => e.pointerType === "mouse" && onHover(project.slug)}
+      onPointerLeave={() => onHover(null)}
+    >
       <button
         type="button"
         onClick={onToggle}
@@ -118,8 +145,83 @@ function Row({ project, index, open, onToggle }: { project: Project; index: numb
   );
 }
 
+function CursorPreview({ project, visible, color }: { project: Project | null; visible: boolean; color: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    let raf = 0;
+    let x = -999;
+    let y = -999;
+    let tx = x;
+    let ty = y;
+    const tick = () => {
+      x += (tx - x) * 0.18;
+      y += (ty - y) * 0.18;
+      const tilt = Math.max(-10, Math.min(10, (tx - x) * 0.15));
+      el.style.transform = `translate(${x}px, ${y}px) rotate(${tilt}deg)`;
+      raf = Math.abs(tx - x) + Math.abs(ty - y) > 0.3 ? requestAnimationFrame(tick) : 0;
+    };
+    const onMove = (e: PointerEvent) => {
+      tx = e.clientX + 24;
+      ty = e.clientY + 24;
+      if (x < -900) {
+        x = tx;
+        y = ty;
+      }
+      if (!raf) raf = requestAnimationFrame(tick);
+    };
+    window.addEventListener("pointermove", onMove, { passive: true });
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("pointermove", onMove);
+    };
+  }, []);
+
+  const metrics = project?.metrics?.slice(0, 2) ?? [];
+  return (
+    <div ref={ref} aria-hidden className="pointer-events-none fixed left-0 top-0 z-40 hidden md:block">
+      <div
+        className={`w-72 origin-top-left rounded-2xl border-2 border-ink p-5 text-[#16130f] shadow-[6px_6px_0_var(--color-ink)] transition-[opacity,scale] duration-300 ease-[cubic-bezier(0.34,1.6,0.5,1)] ${color} ${
+          project && visible ? "scale-100 opacity-100" : "scale-75 opacity-0"
+        }`}
+      >
+        {project ? (
+          <>
+            <p className="font-mono text-[0.65rem] uppercase tracking-wider opacity-70">What came of it</p>
+            <p className="mt-2 font-display text-lg font-semibold leading-snug tracking-tight">{project.caseStudy?.result}</p>
+            {metrics.length ? (
+              <dl className="mt-4 grid grid-cols-2 gap-3 border-t border-current/20 pt-3">
+                {metrics.map((m) => (
+                  <div key={m.label}>
+                    <dt className="text-[0.65rem] uppercase tracking-wider opacity-70">{m.label}</dt>
+                    <dd className="font-display font-semibold">{m.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            ) : null}
+            <p className="flourish mt-4 text-base opacity-80">click to open the story →</p>
+          </>
+        ) : null}
+      </div>
+    </div>
+  );
+}
+
 export function Work() {
   const [open, setOpen] = useState<string | null>(caseStudies[0]?.slug ?? null);
+  const [filter, setFilter] = useState<(typeof FILTERS)[number]["label"]>("Everything");
+  const [hover, setHover] = useState<{ slug: string | null; on: boolean }>({ slug: null, on: false });
+  const onHover = (slug: string | null) => setHover((h) => (slug ? { slug, on: true } : { ...h, on: false }));
+
+  const active = FILTERS.find((f) => f.label === filter)!;
+  const shown = caseStudies.filter(
+    (p) => active.tags.length === 0 || p.tags.some((t) => (active.tags as readonly string[]).includes(t)),
+  );
+  const hoveredIndex = shown.findIndex((p) => p.slug === hover.slug);
+  const previewProject = shown[hoveredIndex] ?? null;
+  const previewOn = hover.on && hover.slug !== open;
 
   return (
     <section id="work" className="shell scroll-mt-16 py-28 md:py-40">
@@ -127,21 +229,51 @@ export function Work() {
         index="01"
         title="Things I've"
         flourish="built"
-        note="Problems I couldn't leave alone, including two hackathon wins. Open any row for the story."
+        note="Problems I couldn't leave alone, including two hackathon wins. Hover for the punchline, click for the story."
       />
       <Reveal>
-        <ul>
-          {caseStudies.map((p, i) => (
+        <div className="mb-8 flex flex-wrap items-center gap-2" role="group" aria-label="Filter projects">
+          {FILTERS.map((f) => {
+            const count = caseStudies.filter(
+              (p) => f.tags.length === 0 || p.tags.some((t) => (f.tags as readonly string[]).includes(t)),
+            ).length;
+            const on = f.label === filter;
+            return (
+              <button
+                key={f.label}
+                type="button"
+                aria-pressed={on}
+                onClick={() => setFilter(f.label)}
+                className={`inline-flex h-10 items-center gap-2 rounded-full border px-4 text-sm transition-all duration-300 ${
+                  on
+                    ? "-rotate-2 border-ink bg-ink text-bg shadow-[3px_3px_0_var(--color-accent)]"
+                    : "border-line-2 text-ink-2 hover:-translate-y-0.5 hover:border-ink hover:text-ink"
+                }`}
+              >
+                {f.label}
+                <span className={`font-mono text-xs ${on ? "text-accent" : "text-ink-3"}`}>{count}</span>
+              </button>
+            );
+          })}
+        </div>
+        <ul key={filter}>
+          {shown.map((p, i) => (
             <Row
               key={p.slug}
               project={p}
               index={i}
               open={open === p.slug}
               onToggle={() => setOpen(open === p.slug ? null : p.slug)}
+              onHover={onHover}
             />
           ))}
         </ul>
       </Reveal>
+      <CursorPreview
+        project={previewProject}
+        visible={previewOn}
+        color={PREVIEW_COLORS[Math.max(0, hoveredIndex) % PREVIEW_COLORS.length]}
+      />
 
       <Reveal className="mt-20">
         <p className="flourish mb-6 text-3xl text-ink-2">Plus a few earlier experiments</p>

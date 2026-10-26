@@ -47,10 +47,10 @@ export function Hero() {
 
           <div className="flex flex-wrap gap-4 lg:w-72 lg:flex-col lg:items-start" aria-label="Highlights, drag them around">
             <Sticker rotate={-6} className="bg-sun text-xl">✦ 2× hackathon winner</Sticker>
-            <Sticker rotate={4} className="bg-cobalt text-xl text-bg lg:ml-14">3 papers published</Sticker>
+            <Sticker rotate={4} className="bg-cobalt text-xl !text-white lg:ml-14">3 papers published</Sticker>
             <Sticker rotate={-3} className="bg-accent text-2xl lg:ml-4">−86% P95 latency</Sticker>
             <Sticker rotate={7} className="bg-mint text-lg lg:ml-20">TA · Rutgers CS205</Sticker>
-            <p className="flourish hidden pl-6 text-xl text-ink-3 lg:block">↖ go on, drag them</p>
+            <p className="flourish hidden pl-6 text-xl text-ink-3 lg:block">↖ go on, drag them. Or click the background.</p>
           </div>
         </div>
 

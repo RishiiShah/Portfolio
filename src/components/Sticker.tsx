@@ -20,6 +20,7 @@ export function Sticker({
 
   return (
     <div
+      data-sticker
       onPointerDown={(e) => {
         e.currentTarget.setPointerCapture(e.pointerId);
         start.current = { px: e.clientX, py: e.clientY, x: pos.x, y: pos.y };
@@ -39,7 +40,7 @@ export function Sticker({
         transform: `translate(${pos.x}px, ${pos.y}px) rotate(${dragging ? 0 : rotate}deg) scale(${dragging ? 1.08 : 1})`,
         zIndex: z,
       }}
-      className={`touch-none select-none rounded-2xl border-2 border-ink px-4 py-3 font-display font-semibold leading-tight tracking-tight shadow-[4px_4px_0_var(--color-ink)] transition-[transform,box-shadow] duration-300 ease-[cubic-bezier(0.34,1.6,0.5,1)] ${
+      className={`touch-none select-none rounded-2xl text-[#16130f] border-2 border-ink px-4 py-3 font-display font-semibold leading-tight tracking-tight shadow-[4px_4px_0_var(--color-ink)] transition-[transform,box-shadow] duration-300 ease-[cubic-bezier(0.34,1.6,0.5,1)] ${
         dragging ? "cursor-grabbing shadow-[10px_10px_0_var(--color-ink)] !duration-0" : "cursor-grab hover:shadow-[6px_6px_0_var(--color-ink)]"
       } ${className}`}
     >

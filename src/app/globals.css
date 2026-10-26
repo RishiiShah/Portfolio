@@ -23,11 +23,24 @@
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+[data-theme="dark"] {
+  --color-bg: #13110e;
+  --color-bg-2: #1c1915;
+  --color-bg-3: #27231d;
+  --color-line: rgb(245 241 232 / 0.1);
+  --color-line-2: rgb(245 241 232 / 0.22);
+  --color-ink: #f5f1e8;
+  --color-ink-2: #bdb5a7;
+  --color-ink-3: #7f786c;
+  color-scheme: dark;
+}
+
 @layer base {
   html {
     background: var(--color-bg);
     color: var(--color-ink);
     color-scheme: light;
+    transition: background-color 0.4s, color 0.4s;
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
   }
@@ -128,14 +141,6 @@
     animation-delay: calc(var(--i) * 45ms + 150ms);
   }
 
-  .blob {
-    position: absolute;
-    border-radius: 9999px;
-    filter: blur(90px);
-    opacity: 0.3;
-    animation: drift 18s ease-in-out infinite alternate;
-  }
-
   .link-sweep {
     background-image: linear-gradient(currentColor, currentColor);
     background-size: 0% 1px;
@@ -154,15 +159,10 @@
   }
 }
 
-@keyframes drift {
-  0% {
-    transform: translate(0, 0) scale(1);
-  }
-  50% {
-    transform: translate(6%, -8%) scale(1.12);
-  }
-  100% {
-    transform: translate(-5%, 6%) scale(0.94);
+@keyframes pop-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
   }
 }
 

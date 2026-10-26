@@ -33,6 +33,8 @@ const mono = JetBrains_Mono({
   weight: ["400", "500"],
 });
 
+const themeScript = `try{var t=localStorage.getItem("theme");if(t!=="light"&&t!=="dark")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.dataset.theme=t}catch(e){}`;
+
 const siteUrl = getSiteUrl();
 const description = sanitizeForMeta(bio.description);
 const title = sanitizeForMeta(`${bio.name} | ${bio.title}`);
@@ -68,16 +70,24 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f5f1e8",
-  colorScheme: "light",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f5f1e8" },
+    { media: "(prefers-color-scheme: dark)", color: "#13110e" },
+  ],
+  colorScheme: "light dark",
   width: "device-width",
   initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${bricolage.variable} ${geist.variable} ${instrument.variable} ${mono.variable}`}>
+    <html
+      lang="en"
+      className={`${bricolage.variable} ${geist.variable} ${instrument.variable} ${mono.variable}`}
+      suppressHydrationWarning
+    >
       <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: buildStructuredData() }} />
       </head>
       <body className="bg-bg font-sans text-ink antialiased">
