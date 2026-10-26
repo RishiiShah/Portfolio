@@ -128,13 +128,12 @@
     animation-delay: calc(var(--i) * 45ms + 150ms);
   }
 
-  .marquee {
-    display: flex;
-    width: max-content;
-    animation: marquee 40s linear infinite;
-  }
-  .marquee:hover {
-    animation-play-state: paused;
+  .blob {
+    position: absolute;
+    border-radius: 9999px;
+    filter: blur(90px);
+    opacity: 0.3;
+    animation: drift 18s ease-in-out infinite alternate;
   }
 
   .link-sweep {
@@ -155,9 +154,15 @@
   }
 }
 
-@keyframes marquee {
-  to {
-    transform: translateX(-50%);
+@keyframes drift {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(6%, -8%) scale(1.12);
+  }
+  100% {
+    transform: translate(-5%, 6%) scale(0.94);
   }
 }
 

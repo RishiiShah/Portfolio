@@ -2,6 +2,13 @@
 
 import { useEffect, useRef } from "react";
 
+const BLOBS = [
+  { color: "var(--color-accent)", size: "26rem", top: "-10%", left: "66%", depth: 40, delay: "0s" },
+  { color: "var(--color-sun)", size: "24rem", top: "42%", left: "78%", depth: -30, delay: "-6s" },
+  { color: "var(--color-mint)", size: "26rem", top: "58%", left: "-8%", depth: 25, delay: "-12s" },
+  { color: "var(--color-cobalt)", size: "16rem", top: "6%", left: "22%", depth: -45, delay: "-3s" },
+];
+
 export function HeroBackdrop() {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -12,22 +19,22 @@ export function HeroBackdrop() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
     let raf = 0;
-    let tx = 0.7;
-    let ty = 0.35;
-    let x = tx;
-    let y = ty;
+    let tx = 0;
+    let ty = 0;
+    let x = 0;
+    let y = 0;
 
     const tick = () => {
-      x += (tx - x) * 0.06;
-      y += (ty - y) * 0.06;
-      el.style.setProperty("--mx", `${x * 100}%`);
-      el.style.setProperty("--my", `${y * 100}%`);
+      x += (tx - x) * 0.05;
+      y += (ty - y) * 0.05;
+      el.style.setProperty("--px", x.toFixed(4));
+      el.style.setProperty("--py", y.toFixed(4));
       raf = Math.abs(tx - x) + Math.abs(ty - y) > 0.001 ? requestAnimationFrame(tick) : 0;
     };
     const onMove = (e: PointerEvent) => {
       const r = host.getBoundingClientRect();
-      tx = (e.clientX - r.left) / r.width;
-      ty = (e.clientY - r.top) / r.height;
+      tx = (e.clientX - r.left) / r.width - 0.5;
+      ty = (e.clientY - r.top) / r.height - 0.5;
       if (!raf) raf = requestAnimationFrame(tick);
     };
 
@@ -39,9 +46,26 @@ export function HeroBackdrop() {
   }, []);
 
   return (
-    <div ref={ref} aria-hidden className="pointer-events-none absolute inset-0 [--mx:70%] [--my:35%]">
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,var(--color-line)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-line)_1px,transparent_1px)] bg-[size:6rem_6rem] [mask-image:radial-gradient(ellipse_70%_60%_at_var(--mx)_var(--my),black,transparent)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(40rem_circle_at_var(--mx)_var(--my),rgb(255_90_31/0.14),transparent_60%)]" />
+    <div ref={ref} aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden [--px:0] [--py:0]">
+      {BLOBS.map((b) => (
+        <div
+          key={b.color}
+          className="absolute"
+          style={{
+            top: b.top,
+            left: b.left,
+            width: b.size,
+            height: b.size,
+            transform: `translate(calc(var(--px) * ${b.depth}px), calc(var(--py) * ${b.depth}px))`,
+          }}
+        >
+          <div
+            className={`blob inset-0 ${b.color.includes("cobalt") ? "!opacity-15" : ""}`}
+            style={{ background: b.color, animationDelay: b.delay }}
+          />
+        </div>
+      ))}
+      <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-bg to-transparent" />
     </div>
   );
 }
