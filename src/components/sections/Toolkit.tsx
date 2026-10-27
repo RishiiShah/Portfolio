@@ -52,6 +52,7 @@ const slab =
 
 export function Toolkit() {
   const { tooling, layers, pillars, foundation } = stack;
+  const bachelors = education.find((e) => "curriculum" in e);
 
   return (
     <section id="toolkit" className="shell scroll-mt-16 py-28 md:py-40">
@@ -149,7 +150,10 @@ export function Toolkit() {
                 <p className="font-mono text-xs text-accent">GPA {e.gpa}</p>
               </div>
               <p className="mt-3 font-display text-xl font-semibold leading-snug tracking-tight">{e.degree}</p>
-              <p className="mt-1 text-sm text-ink-2">{e.institution}</p>
+              <p className="mt-1 text-sm text-ink-2">
+                {"college" in e ? `${e.college}, ` : ""}
+                {e.institution}
+              </p>
               {"honors" in e ? <p className="flourish mt-2 text-lg text-accent">{e.honors}</p> : null}
               <ul className="mt-5 flex flex-wrap gap-1.5" aria-label="Relevant coursework">
                 {e.coursework.map((c) => (
@@ -161,6 +165,55 @@ export function Toolkit() {
             </article>
           ))}
         </div>
+
+        {bachelors ? (
+          <details className="group mt-4 rounded-2xl border border-line">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 md:px-7 [&::-webkit-details-marker]:hidden">
+              <span>
+                <span className="font-display text-lg font-semibold tracking-tight">The full B.Tech curriculum</span>
+                <span className="ml-3 hidden font-mono text-xs text-ink-3 sm:inline">6 semesters · honors track</span>
+              </span>
+              <span className="grid size-8 shrink-0 place-items-center rounded-full border border-line-2 text-lg transition-transform duration-500 group-open:rotate-45">
+                +
+              </span>
+            </summary>
+            <div className="border-t border-line p-5 md:p-7">
+              <ol className="grid gap-x-6 gap-y-8 sm:grid-cols-2 lg:grid-cols-3">
+                {bachelors.curriculum.map((sem, i) => (
+                  <li key={sem.term}>
+                    <p className="flex items-baseline gap-2 font-mono text-xs">
+                      <span className="text-accent">{sem.term}</span>
+                      <span className="text-ink-3">· Year {Math.floor(i / 2) + 2}</span>
+                    </p>
+                    <ul className="mt-3 space-y-1.5 border-l border-line pl-4 text-sm text-ink-2">
+                      {sem.courses.map((c) => (
+                        <li key={c}>{c}</li>
+                      ))}
+                    </ul>
+                  </li>
+                ))}
+              </ol>
+
+              <div className="mt-10 rounded-xl bg-bg-2 p-5">
+                <p className="label !text-accent">{bachelors.honors}</p>
+                <ol className="mt-4 grid gap-4 sm:grid-cols-4">
+                  {bachelors.honorsTrack.map((h, i) => (
+                    <li key={h.term} className="relative">
+                      <span className="flex items-center gap-2">
+                        <span className="grid size-6 place-items-center rounded-full bg-accent font-mono text-[0.65rem] text-accent-ink">
+                          {i + 1}
+                        </span>
+                        <span className="hidden h-px flex-1 bg-line-2 sm:block" />
+                      </span>
+                      <p className="mt-2 font-mono text-[0.65rem] text-ink-3">{h.term}</p>
+                      <p className="mt-0.5 text-sm font-medium leading-snug">{h.course}</p>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            </div>
+          </details>
+        ) : null}
       </Reveal>
     </section>
   );
