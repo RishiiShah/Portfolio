@@ -60,7 +60,7 @@ export function Hero() {
             to a stroke-consult scheduler, and I sweat the details nobody asked about.
           </p>
           <p className="text-ink-2 md:col-span-3">
-            {ms.degree} at Rutgers, graduating {ms.end}. Open to SWE &amp; ML roles.
+            {ms.degree} at Rutgers, graduating {ms.end}. Open to full-time SWE &amp; ML roles.
           </p>
           <div className="flex items-end gap-3 md:col-span-2 md:flex-col md:items-end md:justify-end">
             <a
