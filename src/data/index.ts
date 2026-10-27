@@ -59,69 +59,69 @@ export interface StackGroup {
   name: string;
   blurb: string;
   items: string[];
+  /** Takes two columns in the bento grid. */
+  wide?: boolean;
 }
 
-export const stack: {
-  tooling: StackGroup;
-  layers: StackGroup[];
-  pillars: StackGroup[];
-  foundation: StackGroup;
-} = {
-  tooling: {
+/** Ordered for the bento grid: each row of four columns is filled exactly. */
+export const stack: StackGroup[] = [
+  {
+    name: "Languages",
+    blurb: "What everything is written in.",
+    items: ["Python", "TypeScript", "JavaScript", "Go", "Java", "C++", "SQL"],
+    wide: true,
+  },
+  {
+    name: "AI / ML",
+    blurb: "Training, tuning and shipping models.",
+    items: ["PyTorch", "TensorFlow", "Scikit-learn", "OpenCV", "YOLO", "Groq API", "Gemini"],
+    wide: true,
+  },
+  {
+    name: "Backend",
+    blurb: "APIs that stay fast and stay secure.",
+    items: ["Django", "FastAPI", "Express.js", "Node.js", "REST APIs", "Pydantic", "JWT Auth", "OAuth2", "RBAC"],
+    wide: true,
+  },
+  {
     name: "AI tooling",
     blurb: "Agents in the loop, me on the review.",
     items: ["Claude Code", "Codex", "Cursor", "Kiro", "GitHub Copilot", "MCP"],
+    wide: true,
   },
-  layers: [
-    {
-      name: "Frontend",
-      blurb: "Interfaces people enjoy using.",
-      items: ["Next.js", "React", "Tailwind CSS"],
-    },
-    {
-      name: "Backend",
-      blurb: "APIs that stay fast and stay secure.",
-      items: ["Django", "FastAPI", "Express.js", "Node.js", "REST APIs", "Pydantic", "JWT Auth", "OAuth2", "RBAC"],
-    },
-    {
-      name: "AI / ML",
-      blurb: "Training, tuning and shipping models.",
-      items: ["PyTorch", "TensorFlow", "Scikit-learn", "OpenCV", "YOLO", "Groq API", "Gemini"],
-    },
-    {
-      name: "Data science",
-      blurb: "Asking the data first, modeling second.",
-      items: ["Pandas", "NumPy", "SciPy", "Matplotlib"],
-    },
-    {
-      name: "Databases",
-      blurb: "Where the data lives, indexed properly.",
-      items: ["PostgreSQL", "pgvector", "MySQL", "MongoDB", "SQLite", "Redis", "Prisma"],
-    },
-    {
-      name: "Cloud",
-      blurb: "Where it all runs.",
-      items: ["AWS", "GCP", "Azure", "Vercel", "Render"],
-    },
-  ],
-  pillars: [
-    {
-      name: "DevOps & MLOps",
-      blurb: "Getting it shipped, and keeping it shipped.",
-      items: ["Docker", "GitHub Actions", "Git", "Linux"],
-    },
-    {
-      name: "Testing",
-      blurb: "So deploys are boring.",
-      items: ["Pytest", "Vitest", "Playwright"],
-    },
-  ],
-  foundation: {
-    name: "Languages",
-    blurb: "What everything above is written in.",
-    items: ["Python", "TypeScript", "JavaScript", "Go", "Java", "C++", "SQL"],
+  {
+    name: "Databases",
+    blurb: "Where the data lives, indexed properly.",
+    items: ["PostgreSQL", "pgvector", "MySQL", "MongoDB", "SQLite", "Redis", "Prisma"],
+    wide: true,
   },
-};
+  {
+    name: "Data science",
+    blurb: "Asking the data first.",
+    items: ["Pandas", "NumPy", "SciPy", "Matplotlib"],
+  },
+  {
+    name: "Frontend",
+    blurb: "Interfaces people enjoy.",
+    items: ["Next.js", "React", "Tailwind CSS"],
+  },
+  {
+    name: "Cloud",
+    blurb: "Where it all runs.",
+    items: ["AWS", "GCP", "Azure", "Vercel", "Render"],
+    wide: true,
+  },
+  {
+    name: "DevOps & MLOps",
+    blurb: "Shipped, and kept shipped.",
+    items: ["Docker", "GitHub Actions", "Git", "Linux"],
+  },
+  {
+    name: "Testing",
+    blurb: "So deploys are boring.",
+    items: ["Pytest", "Vitest", "Playwright"],
+  },
+];
 
 // ─── Experience ──────────────────────────────────────────────────────────────
 

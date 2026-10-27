@@ -364,11 +364,6 @@ export const techIcons: Record<string, { src: string; dark?: string; ratio: numb
     "src": "/tech/logos-clerk-icon.svg",
     "ratio": 0.79
   },
-  "pgvector": {
-    "src": "/tech/logos-postgresql.svg",
-    "dark": "/tech/logos-postgresql-dark.svg",
-    "ratio": 0.97
-  },
   "Render": {
     "src": "/tech/si-render.svg",
     "dark": "/tech/si-render-dark.svg",

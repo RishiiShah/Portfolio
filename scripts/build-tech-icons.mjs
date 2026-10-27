@@ -97,7 +97,6 @@ const MAP = {
   Go: "logos:go",
   Pydantic: "logos:pydantic-icon",
   Clerk: "logos:clerk-icon",
-  pgvector: "logos:postgresql",
   Render: "si:render#000000",
   Keras: "si:keras#D00000",
   Matplotlib: "logos:matplotlib-icon",

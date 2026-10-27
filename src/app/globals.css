@@ -168,13 +168,14 @@
     }
   }
 
-  .wire {
-    background-image: repeating-linear-gradient(180deg, var(--color-ink-3) 0 4px, transparent 4px 8px);
-    background-size: 2px 8px;
-    animation: flow-y 0.6s linear infinite;
+  .logo-pop {
+    transition:
+      transform 0.6s cubic-bezier(0.34, 1.6, 0.5, 1) var(--d, 0ms),
+      opacity 0.4s ease var(--d, 0ms);
   }
-  .stack:has(.slab:hover) .slab:not(:hover) {
-    opacity: 0.55;
+  .reveal:not([data-shown="true"]) .logo-pop {
+    opacity: 0;
+    transform: scale(0.5) rotate(-12deg);
   }
 
   .grow-x {
