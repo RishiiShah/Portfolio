@@ -86,7 +86,7 @@ export function Nav() {
             RS
           </span>
           <span className="label hidden !text-ink-2 sm:inline">
-            New Brunswick{time ? ` · ${time} ET` : ""}
+            {time ? `My time · ${time} ET` : "\u00a0"}
           </span>
         </a>
 
