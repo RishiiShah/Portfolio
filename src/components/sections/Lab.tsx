@@ -91,7 +91,7 @@ export function Lab() {
                   href={l.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex h-10 items-center rounded-full border border-line-2 px-4 text-sm transition-colors hover:border-accent hover:text-accent"
+                  className="inline-flex h-10 items-center rounded-xl border border-line-2 px-4 text-sm transition-colors hover:border-accent hover:text-accent"
                 >
                   {LINK_LABEL[l.type]} ↗
                 </a>

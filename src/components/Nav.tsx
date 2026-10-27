@@ -65,8 +65,8 @@ export function Nav() {
                 href={l.href}
                 className={
                   l.href === "#contact"
-                    ? "ml-2 inline-flex h-9 items-center rounded-full bg-accent px-4 font-medium text-accent-ink transition-transform hover:-translate-y-0.5"
-                    : "rounded-full px-3 py-2 text-ink-2 transition-colors hover:text-ink"
+                    ? "ml-2 inline-flex h-9 items-center rounded-lg bg-accent px-4 font-medium text-accent-ink transition-transform hover:-translate-y-0.5"
+                    : "rounded-lg px-3 py-2 text-ink-2 transition-colors hover:text-ink"
                 }
               >
                 {l.label}

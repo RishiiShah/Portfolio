@@ -45,7 +45,7 @@ export function Research() {
                         href={link.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex h-10 items-center rounded-full bg-bg px-4 text-sm text-ink transition-colors hover:bg-accent hover:text-accent-ink"
+                        className="inline-flex h-10 items-center rounded-xl bg-bg px-4 text-sm text-ink transition-colors hover:bg-accent hover:text-accent-ink"
                       >
                         Read the paper ↗
                       </a>

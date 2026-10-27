@@ -10,7 +10,7 @@ export default function NotFound() {
       <p className="mt-8 max-w-md text-lg text-ink-2">Even problem solvers can&apos;t fix a link that never existed.</p>
       <Link
         href="/"
-        className="mt-10 inline-flex h-12 w-fit items-center rounded-full bg-ink px-6 font-medium text-bg transition-colors hover:bg-accent"
+        className="mt-10 inline-flex h-12 w-fit items-center rounded-xl bg-ink px-6 font-medium text-bg transition-colors hover:bg-accent"
       >
         Back to the portfolio
       </Link>

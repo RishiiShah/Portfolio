@@ -45,6 +45,7 @@ export const skills = [
     items: [
       "Django",
       "Django ORM",
+      "FastAPI",
       "Express.js",
       "Next.js",
       "React",
@@ -95,7 +96,7 @@ export const skills = [
   },
   {
     category: "AI/ML",
-    items: ["TensorFlow", "PyTorch", "Scikit-learn", "OpenCV", "YOLO"],
+    items: ["TensorFlow", "PyTorch", "Scikit-learn", "OpenCV", "YOLO", "NumPy", "Pandas", "Groq API", "MCP", "Streamlit"],
   },
 ] as const;
 

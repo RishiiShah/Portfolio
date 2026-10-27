@@ -6,6 +6,7 @@ import { Experience } from "@/components/sections/Experience";
 import { Research } from "@/components/sections/Research";
 import { Toolkit } from "@/components/sections/Toolkit";
 import { Contact } from "@/components/sections/Contact";
+import { Footer } from "@/components/Footer";
 
 export default function Home() {
   return (
@@ -20,6 +21,7 @@ export default function Home() {
         <Toolkit />
         <Contact />
       </main>
+      <Footer />
     </>
   );
 }

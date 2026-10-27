@@ -62,14 +62,14 @@ function DeepDive({ project }: { project: Project }) {
     <div className="mt-10 rounded-2xl border border-line p-6 md:p-8">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <p className="flourish text-2xl text-ink">Under the hood</p>
-        <div className="flex gap-1 rounded-full bg-bg-3 p-1" role="group" aria-label="Project details">
+        <div className="flex gap-1 rounded-xl bg-bg-3 p-1" role="group" aria-label="Project details">
           {tabs.map(([label], i) => (
             <button
               key={label}
               type="button"
               aria-pressed={i === tab}
               onClick={() => setTab(i)}
-              className={`rounded-full px-3.5 py-1.5 text-sm transition-all duration-300 ${
+              className={`rounded-lg px-3.5 py-1.5 text-sm transition-all duration-300 ${
                 i === tab ? "bg-ink text-bg" : "text-ink-2 hover:text-ink"
               }`}
             >
@@ -204,7 +204,7 @@ function Row({
                       href={l.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex h-10 items-center rounded-full border border-line-2 px-4 text-sm transition-colors hover:border-accent hover:text-accent"
+                      className="inline-flex h-10 items-center rounded-xl border border-line-2 px-4 text-sm transition-colors hover:border-accent hover:text-accent"
                     >
                       {LINK_LABEL[l.type]} ↗
                     </a>
@@ -318,7 +318,7 @@ export function Work() {
                 type="button"
                 aria-pressed={on}
                 onClick={() => setFilter(f.label)}
-                className={`inline-flex h-10 items-center gap-2 rounded-full border px-4 text-sm transition-all duration-300 ${
+                className={`inline-flex h-10 items-center gap-2 rounded-xl border px-4 text-sm transition-all duration-300 ${
                   on
                     ? "-rotate-2 border-ink bg-ink text-bg shadow-[3px_3px_0_var(--color-accent)]"
                     : "border-line-2 text-ink-2 hover:-translate-y-0.5 hover:border-ink hover:text-ink"

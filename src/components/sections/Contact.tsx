@@ -10,7 +10,7 @@ const links = [
 export function Contact() {
   return (
     <section id="contact" className="relative scroll-mt-16 overflow-hidden border-t border-line">
-      <div className="shell pb-10 pt-28 md:pt-40">
+      <div className="shell pb-28 pt-28 md:pb-40 md:pt-40">
         <Reveal>
           <p className="label">06 · Say hi</p>
           <h2 className="display mt-8 text-[clamp(3.5rem,11vw,11rem)]">
@@ -45,22 +45,7 @@ export function Contact() {
             </Reveal>
           ))}
         </ul>
-
-        <footer className="mt-28 flex flex-wrap items-end justify-between gap-6 text-sm text-ink-3">
-          <p>
-            © {new Date().getFullYear()} {bio.name}. Designed and built from scratch, every pixel on purpose.
-          </p>
-          <a href="#top" className="link-sweep text-ink-2">
-            Back to top ↑
-          </a>
-        </footer>
       </div>
-      <p
-        aria-hidden
-        className="display pointer-events-none select-none whitespace-nowrap text-center text-[22vw] leading-[0.75] text-bg-3"
-      >
-        Rishabh
-      </p>
     </section>
   );
 }
