@@ -46,6 +46,55 @@ function TechStack({ tech, className }: { tech: string[]; className: string }) {
   );
 }
 
+function DeepDive({ project }: { project: Project }) {
+  const tabs = (
+    [
+      ["How it works", project.architectureNotes],
+      ["Hard parts", project.challenges],
+      ["What I learned", project.lessons],
+    ] as [string, string[] | undefined][]
+  ).filter((t): t is [string, string[]] => !!t[1]?.length);
+  const [tab, setTab] = useState(0);
+  if (!tabs.length) return null;
+  const [, items] = tabs[Math.min(tab, tabs.length - 1)];
+
+  return (
+    <div className="mt-10 rounded-2xl border border-line p-6 md:p-8">
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <p className="flourish text-2xl text-ink">Under the hood</p>
+        <div className="flex gap-1 rounded-full bg-bg-3 p-1" role="group" aria-label="Project details">
+          {tabs.map(([label], i) => (
+            <button
+              key={label}
+              type="button"
+              aria-pressed={i === tab}
+              onClick={() => setTab(i)}
+              className={`rounded-full px-3.5 py-1.5 text-sm transition-all duration-300 ${
+                i === tab ? "bg-ink text-bg" : "text-ink-2 hover:text-ink"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+      {project.role ? <p className="mt-5 text-sm leading-relaxed text-ink-3">My role: {project.role}</p> : null}
+      <ul key={tab} className="mt-6 grid gap-3 md:grid-cols-3">
+        {items.map((item, i) => (
+          <li
+            key={item}
+            className="rounded-xl bg-bg-2 p-5 text-[0.95rem] leading-relaxed text-ink-2 [animation:pop-in_0.45s_var(--ease-out-expo)_backwards]"
+            style={{ animationDelay: `${i * 70}ms` }}
+          >
+            <span className="mb-2 block font-mono text-xs text-accent">0{i + 1}</span>
+            {item}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 function Row({
   project,
   index,
@@ -130,8 +179,8 @@ function Row({
               </div>
 
               {project.metrics?.length ? (
-                <dl className="mt-8 grid grid-cols-2 gap-6 md:grid-cols-4">
-                  {project.metrics.slice(0, 4).map((m) => (
+                <dl className={`mt-8 grid grid-cols-2 gap-6 ${project.metrics.length > 4 ? "md:grid-cols-3 lg:grid-cols-6" : "md:grid-cols-4"}`}>
+                  {project.metrics.map((m) => (
                     <div key={m.label}>
                       <dt className="label">{m.label}</dt>
                       <dd className="mt-2 font-display text-2xl font-medium tracking-tight">{m.value}</dd>
@@ -139,6 +188,8 @@ function Row({
                   ))}
                 </dl>
               ) : null}
+
+              <DeepDive project={project} />
 
               <div className="mt-10 flex flex-wrap items-center justify-between gap-6">
                 <ul className="flex flex-wrap gap-2">

@@ -8,7 +8,7 @@ export function Research() {
     <section id="research" className="scroll-mt-16 bg-ink py-28 text-bg md:py-40">
       <div className="shell">
         <SectionHead
-          index="03"
+          index="04"
           title="Ideas, in"
           flourish="print"
           tone="dark"

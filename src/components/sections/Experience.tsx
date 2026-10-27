@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore, type KeyboardEvent } from "react";
+import { useRef, useState, useSyncExternalStore, type KeyboardEvent } from "react";
+import { CountUp } from "@/components/CountUp";
 import { education, experience, teaching } from "@/data";
 import { SectionHead } from "@/components/SectionHead";
 import { Reveal } from "@/components/Reveal";
@@ -220,34 +221,6 @@ function Timeline({ active, onPick }: { active: number; onPick: (i: number) => v
   );
 }
 
-function CountUp({ value }: { value: string }) {
-  const ref = useRef<HTMLSpanElement>(null);
-
-  useEffect(() => {
-    const el = ref.current;
-    const match = value.match(/^([^\d]*)(\d+)(.*)$/);
-    if (!el || !match) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    const [, prefix, digits, suffix] = match;
-    const target = Number(digits);
-    const t0 = performance.now();
-    let raf = 0;
-    const tick = (now: number) => {
-      const t = Math.min(1, (now - t0) / 900);
-      const eased = 1 - Math.pow(1 - t, 3);
-      el.textContent = `${prefix}${Math.round(target * eased)}${suffix}`;
-      if (t < 1) raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => {
-      cancelAnimationFrame(raf);
-      el.textContent = value;
-    };
-  }, [value]);
-
-  return <span ref={ref}>{value}</span>;
-}
-
 export function Experience() {
   const [active, setActive] = useState(0);
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
@@ -265,7 +238,7 @@ export function Experience() {
   return (
     <section id="experience" className="shell scroll-mt-16 py-28 md:py-40">
       <SectionHead
-        index="02"
+        index="03"
         title="Where I've"
         flourish="worked"
         note="Two internships shipping to production, and now teaching the fundamentals at Rutgers. Pick a stop on the timeline."

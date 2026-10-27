@@ -614,6 +614,129 @@ export const projects: Project[] = [
   },
 ];
 
+// ─── AI/ML lab ────────────────────────────────────────────────────────────────
+
+export interface LabModel {
+  slug: Project["slug"];
+  name: string;
+  kind: string;
+  stages: { label: string; detail: string }[];
+  stats: { value: string; label: string }[];
+  /** Index into the project's `lessons` for the pull quote. */
+  lesson: number;
+}
+
+export const labModels: LabModel[] = [
+  {
+    slug: "traffic-violation-detection",
+    name: "Traffic surveillance",
+    kind: "Computer vision",
+    stages: [
+      { label: "Live video", detail: "Roadside camera feeds, frame-skipped for speed" },
+      { label: "YOLOv12x", detail: "Fine-tuned on red lights, helmets and speeding" },
+      { label: "ByteTrack", detail: "Per-vehicle state and duplicate-ticket suppression" },
+      { label: "Llama 4 Scout", detail: "Plate OCR, then regex and registry checks" },
+      { label: "Challan", detail: "PDF evidence to S3, delivered by Twilio SMS" },
+    ],
+    stats: [
+      { value: "93.76%", label: "End-to-end accuracy" },
+      { value: "97.56%", label: "Vehicle detection" },
+      { value: "92.7%", label: "Plate extraction" },
+    ],
+    lesson: 0,
+  },
+  {
+    slug: "wgan-gp-financial-timeseries",
+    name: "Synthetic markets",
+    kind: "Generative model",
+    stages: [
+      { label: "Market windows", detail: "AAPL daily OHLCV as log returns, plus noise" },
+      { label: "Attention", detail: "Multi-head attention over the past window" },
+      { label: "TCN · LSTM · GRU", detail: "Temporal convolutions into recurrent layers" },
+      { label: "WGAN-GP critic", detail: "Conv1D critic, 5 steps per generator step" },
+      { label: "Filter & mix", detail: "Pearson, Spearman and R² gate what joins training" },
+    ],
+    stats: [
+      { value: "98.83%", label: "Downstream accuracy, from 97.93%" },
+      { value: ">0.80", label: "Pearson correlation" },
+      { value: "3000", label: "Training epochs" },
+    ],
+    lesson: 0,
+  },
+  {
+    slug: "music-genre-detection",
+    name: "Genre classifier",
+    kind: "Audio",
+    stages: [
+      { label: "Audio clip", detail: "Uploaded track, features extracted on the fly" },
+      { label: "Librosa", detail: "MFCCs plus spectral centroid and rolloff" },
+      { label: "Bi-LSTM", detail: "Two bidirectional layers with dropout" },
+      { label: "Quantize", detail: "Post-training quantization for cheap serving" },
+      { label: "Streamlit", detail: "Per-genre probabilities and confidence" },
+    ],
+    stats: [
+      { value: "98.73%", label: "Accuracy across 10 genres" },
+      { value: "−15%", label: "Model size" },
+      { value: "+22%", label: "Inference speed" },
+    ],
+    lesson: 0,
+  },
+  {
+    slug: "jarvis-voice-assistant",
+    name: "JARVIS",
+    kind: "Voice + LLM",
+    stages: [
+      { label: "Wake word", detail: "“JARVIS”, after noise filtering" },
+      { label: "Speech to text", detail: "Spectral filtering for accents and noisy rooms" },
+      { label: "Fast path", detail: "Math, reminders and apps skip the LLM entirely" },
+      { label: "Llama 3.1 8B", detail: "On Groq, behind guard prompts for privacy" },
+      { label: "Home", detail: "Azure IoT Hub to Raspberry Pi GPIO" },
+    ],
+    stats: [
+      { value: "4", label: "Modules" },
+      { value: "0", label: "Voice commands stored" },
+      { value: "ISTE", label: "Published 2025" },
+    ],
+    lesson: 0,
+  },
+  {
+    slug: "csegraph",
+    name: "CseGraph",
+    kind: "Retrieval for agents",
+    stages: [
+      { label: "Repository", detail: "Python, JavaScript and TypeScript sources" },
+      { label: "Tree-sitter", detail: "Symbols, imports, calls and tests into a SQLite graph" },
+      { label: "FTS5 · BM25", detail: "Keyword search fused with graph proximity" },
+      { label: "Token budget", detail: "Only the context the task actually needs" },
+      { label: "MCP tools", detail: "Served to coding agents over 6 tools and a CLI" },
+    ],
+    stats: [
+      { value: "−82%", label: "Context per task, 1,540 → 273 tokens" },
+      { value: "177K+", label: "Symbols indexed" },
+      { value: "379", label: "Tests passing" },
+    ],
+    lesson: 0,
+  },
+  {
+    slug: "snap-interview",
+    name: "SnapInterview",
+    kind: "LLM evaluation",
+    stages: [
+      { label: "Résumé PDF", detail: "Parsed into skills and experience" },
+      { label: "Role prompt", detail: "One of 28 role-specific interview scripts" },
+      { label: "Groq stream", detail: "Questions streamed live, answers recorded to S3" },
+      { label: "Schema scoring", detail: "Structured output, scored 0 to 100 per skill" },
+      { label: "Shareable report", detail: "Transcript and feedback, saved in Postgres" },
+    ],
+    stats: [
+      { value: "28", label: "Role prompts" },
+      { value: "0–100", label: "Per-skill scoring" },
+      { value: "4", label: "Rate-limited endpoint types" },
+    ],
+    lesson: 1,
+  },
+];
+
 // ─── Publications ─────────────────────────────────────────────────────────────
 
 export interface PublicationLink {

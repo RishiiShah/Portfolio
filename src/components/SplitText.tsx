@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 
 export function SplitText({ text, offset = 0 }: { text: string; offset?: number }) {
   return (
-    <span className="rise -mb-[0.1em] -mt-[0.12em] inline-block overflow-hidden pb-[0.18em] pt-[0.12em] align-bottom">
+    <span className="rise -mb-[0.1em] -mt-[0.12em] inline-block overflow-x-visible overflow-y-clip pb-[0.18em] pt-[0.12em] align-bottom">
       <span className="sr-only">{text}</span>
       {[...text].map((ch, i) => (
         <span key={i} aria-hidden style={{ "--i": i + offset } as CSSProperties}>
