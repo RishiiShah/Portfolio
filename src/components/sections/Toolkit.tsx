@@ -10,14 +10,12 @@ export function Toolkit() {
     <section id="toolkit" className="shell scroll-mt-16 py-28 md:py-40">
       <SectionHead index="05" title="My" flourish="stack" note="What I reach for when a new problem shows up. Hover a logo for its name." />
 
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         {stack.map((group, i) => (
           <Reveal
             key={group.name}
-            delay={(i % 4) * 70}
-            className={`group/tile rounded-3xl border border-line bg-bg-2 p-6 transition-colors duration-300 hover:border-ink md:p-7 ${
-              group.wide ? "md:col-span-2" : ""
-            }`}
+            delay={(i % 2) * 80}
+            className="group/tile rounded-3xl border border-line bg-bg-2 p-6 transition-colors duration-300 hover:border-ink md:p-7"
           >
             <div className="flex items-baseline justify-between gap-3">
               <h3 className="font-display text-xl font-semibold tracking-tight">{group.name}</h3>
@@ -29,7 +27,7 @@ export function Toolkit() {
 
             <ul className="mt-6 flex flex-wrap gap-2.5">
               {group.items.map((item, j) => (
-                <li key={item} className="logo-pop" style={{ "--d": `${j * 45 + (i % 4) * 70}ms` } as CSSProperties}>
+                <li key={item} className="logo-pop" style={{ "--d": `${j * 45 + (i % 2) * 80}ms` } as CSSProperties}>
                   <div className="group/logo relative grid size-14 place-items-center rounded-2xl border border-line bg-bg transition-all duration-300 ease-[cubic-bezier(0.34,1.6,0.5,1)] hover:z-10 hover:-translate-y-1.5 hover:-rotate-6 hover:border-ink hover:shadow-[3px_3px_0_var(--color-ink)] md:size-16">
                     {techIcons[item] ? (
                       <>

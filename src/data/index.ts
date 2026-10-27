@@ -59,62 +59,54 @@ export interface StackGroup {
   name: string;
   blurb: string;
   items: string[];
-  /** Takes two columns in the bento grid. */
-  wide?: boolean;
 }
 
-/** Ordered for the bento grid: each row of four columns is filled exactly. */
+/** Ordered in pairs for the two-column bento grid. */
 export const stack: StackGroup[] = [
   {
     name: "Languages",
     blurb: "What everything is written in.",
     items: ["Python", "TypeScript", "JavaScript", "Go", "Java", "C++", "SQL"],
-    wide: true,
   },
   {
     name: "AI / ML",
     blurb: "Training, tuning and shipping models.",
     items: ["PyTorch", "TensorFlow", "Scikit-learn", "OpenCV", "YOLO", "Groq API", "Gemini"],
-    wide: true,
   },
   {
     name: "Backend",
     blurb: "APIs that stay fast and stay secure.",
     items: ["Django", "FastAPI", "Express.js", "Node.js", "REST APIs", "Pydantic", "JWT Auth", "OAuth2", "RBAC"],
-    wide: true,
   },
   {
     name: "AI tooling",
     blurb: "Agents in the loop, me on the review.",
     items: ["Claude Code", "Codex", "Cursor", "Kiro", "GitHub Copilot", "MCP"],
-    wide: true,
+  },
+  {
+    name: "Data science",
+    blurb: "Asking the data first, at any scale.",
+    items: ["Pandas", "NumPy", "SciPy", "Matplotlib", "Apache Spark", "Hadoop", "Tableau", "Power BI"],
   },
   {
     name: "Databases",
     blurb: "Where the data lives, indexed properly.",
     items: ["PostgreSQL", "pgvector", "MySQL", "MongoDB", "SQLite", "Redis", "Prisma"],
-    wide: true,
-  },
-  {
-    name: "Data science",
-    blurb: "Asking the data first.",
-    items: ["Pandas", "NumPy", "SciPy", "Matplotlib"],
   },
   {
     name: "Frontend",
-    blurb: "Interfaces people enjoy.",
-    items: ["Next.js", "React", "Tailwind CSS"],
+    blurb: "Interfaces people enjoy using.",
+    items: ["Next.js", "React", "Tailwind CSS", "Streamlit", "Bootstrap", "HTML5", "CSS3"],
   },
   {
     name: "Cloud",
     blurb: "Where it all runs.",
-    items: ["AWS", "GCP", "Azure", "Vercel", "Render"],
-    wide: true,
+    items: ["AWS", "GCP", "Azure", "Oracle Cloud", "Vercel", "Render"],
   },
   {
     name: "DevOps & MLOps",
     blurb: "Shipped, and kept shipped.",
-    items: ["Docker", "GitHub Actions", "Git", "Linux"],
+    items: ["Docker", "Kubernetes", "GitHub Actions", "Git", "Linux"],
   },
   {
     name: "Testing",

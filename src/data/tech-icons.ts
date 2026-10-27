@@ -80,10 +80,45 @@ export const techIcons: Record<string, { src: string; dark?: string; ratio: numb
     "dark": "/tech/logos-html-5-dark.svg",
     "ratio": 0.709
   },
+  "HTML5": {
+    "src": "/tech/logos-html-5.svg",
+    "dark": "/tech/logos-html-5-dark.svg",
+    "ratio": 0.709
+  },
   "CSS": {
     "src": "/tech/logos-css-3.svg",
     "dark": "/tech/logos-css-3-dark.svg",
     "ratio": 0.709
+  },
+  "CSS3": {
+    "src": "/tech/logos-css-3.svg",
+    "dark": "/tech/logos-css-3-dark.svg",
+    "ratio": 0.709
+  },
+  "Oracle Cloud": {
+    "src": "/tech/si-oracle.svg",
+    "ratio": 1
+  },
+  "Kubernetes": {
+    "src": "/tech/logos-kubernetes.svg",
+    "ratio": 1.028
+  },
+  "Hadoop": {
+    "src": "/tech/si-apachehadoop.svg",
+    "ratio": 1
+  },
+  "Apache Spark": {
+    "src": "/tech/si-apachespark.svg",
+    "ratio": 1
+  },
+  "Tableau": {
+    "src": "/tech/logos-tableau-icon.svg",
+    "ratio": 1.02
+  },
+  "Power BI": {
+    "src": "/tech/logos-microsoft-power-bi.svg",
+    "dark": "/tech/logos-microsoft-power-bi-dark.svg",
+    "ratio": 0.749
   },
   "Docker": {
     "src": "/tech/logos-docker-icon.svg",
