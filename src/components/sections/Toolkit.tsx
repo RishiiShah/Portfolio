@@ -17,18 +17,6 @@ function Tools({ group, dense = false }: { group: StackGroup; dense?: boolean })
           {item}
         </li>
       ))}
-      {group.patterns?.map((p) => (
-        <li
-          key={p.name}
-          title={p.detail}
-          className={`inline-flex items-center gap-1.5 rounded-lg border border-dashed border-accent/70 font-mono text-accent ${
-            dense ? "px-2 py-1 text-[0.65rem]" : "px-2.5 py-1.5 text-xs"
-          }`}
-        >
-          <span aria-hidden>◇</span>
-          {p.name}
-        </li>
-      ))}
     </ul>
   );
 }
@@ -55,20 +43,12 @@ export function Toolkit() {
 
   return (
     <section id="toolkit" className="shell scroll-mt-16 py-28 md:py-40">
-      <SectionHead index="05" title="My" flourish="stack" note="Drawn the way I'd draw any system: layers, the things that cut across them, and the patterns at each level." />
+      <SectionHead index="05" title="My" flourish="stack" note="Drawn the way I'd draw any system: the layers, and the things that cut across them." />
 
       <Reveal>
         <figure className="stack relative rounded-3xl border-2 border-ink bg-bg-2 bg-[linear-gradient(var(--color-line)_1px,transparent_1px),linear-gradient(90deg,var(--color-line)_1px,transparent_1px)] bg-[size:28px_28px] p-3 shadow-[6px_6px_0_var(--color-ink)] md:p-6">
           <figcaption className="mb-4 flex flex-wrap items-center justify-between gap-3 px-1 font-mono text-[0.65rem] uppercase tracking-wider text-ink-3">
             <span>fig. 05 · rishabh.stack</span>
-            <span className="flex items-center gap-4">
-              <span className="flex items-center gap-1.5">
-                <span className="size-3 rounded border border-line bg-bg-2" /> tool
-              </span>
-              <span className="flex items-center gap-1.5 text-accent">
-                <span className="size-3 rounded border border-dashed border-accent" /> pattern or method
-              </span>
-            </span>
           </figcaption>
 
           <div className={`${slab} border-dashed bg-bg/80`}>

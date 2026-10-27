@@ -59,8 +59,6 @@ export interface StackGroup {
   name: string;
   blurb: string;
   items: string[];
-  /** System design patterns applied at this layer, shown without logos. */
-  patterns?: { name: string; detail: string }[];
 }
 
 export const stack: {
@@ -84,42 +82,21 @@ export const stack: {
       name: "Backend",
       blurb: "APIs that stay fast and stay secure.",
       items: ["Django", "FastAPI", "Express.js", "Node.js", "REST APIs", "Pydantic", "JWT Auth", "OAuth2", "RBAC"],
-      patterns: [
-        { name: "Latency profiling", detail: "P95 cut 86% by finding the slow path first" },
-        { name: "API contracts", detail: "Consistent schemas, errors and status codes across endpoints" },
-        { name: "Rate limiting", detail: "Postgres-backed limits, CSRF checks and presigned per-user keys" },
-        { name: "Event replay", detail: "Server-side state rebuilt from an event stream with an injected clock" },
-      ],
     },
     {
       name: "AI / ML",
       blurb: "Training, tuning and shipping models.",
       items: ["PyTorch", "TensorFlow", "Scikit-learn", "OpenCV", "YOLO", "Groq API", "Gemini"],
-      patterns: [
-        { name: "RAG & embeddings", detail: "Grounded generation over pgvector with retrieval verification" },
-        { name: "BM25 + graph ranking", detail: "Keyword search fused with symbol-graph proximity under a token budget" },
-        { name: "Strict-schema output", detail: "JSON Schema responses with exact-quote citations" },
-      ],
     },
     {
       name: "Data science",
       blurb: "Asking the data first, modeling second.",
       items: ["Pandas", "NumPy", "SciPy", "Matplotlib"],
-      patterns: [
-        { name: "Time-series forecasting", detail: "LSTM and TCN forecasters, judged on MAPE" },
-        { name: "Hypothesis testing", detail: "Deciding whether a difference is real before acting on it" },
-        { name: "Correlation analysis", detail: "Pearson, Spearman and correlation-matrix distance" },
-      ],
     },
     {
       name: "Databases",
       blurb: "Where the data lives, indexed properly.",
       items: ["PostgreSQL", "pgvector", "MySQL", "MongoDB", "SQLite", "Redis", "Prisma"],
-      patterns: [
-        { name: "Indexing & query tuning", detail: "Targeted indexes and fewer ORM round trips" },
-        { name: "Connection pooling", detail: "Sizing pools so the database is never the queue" },
-        { name: "Append-only audit logs", detail: "Every privileged action traceable and reversible" },
-      ],
     },
     {
       name: "Cloud",
@@ -132,16 +109,11 @@ export const stack: {
       name: "DevOps & MLOps",
       blurb: "Getting it shipped, and keeping it shipped.",
       items: ["Docker", "GitHub Actions", "Git", "Linux"],
-      patterns: [
-        { name: "Eval-gated releases", detail: "PR and nightly evaluation suites must hold 100% recall to ship" },
-        { name: "Model quantization", detail: "15% smaller, 22% faster inference after training" },
-      ],
     },
     {
       name: "Testing",
       blurb: "So deploys are boring.",
       items: ["Pytest", "Vitest", "Playwright"],
-      patterns: [{ name: "Regression gates", detail: "55+ tests, zero rollbacks across 9 releases" }],
     },
   ],
   foundation: {
