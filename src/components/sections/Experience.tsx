@@ -18,6 +18,7 @@ const COLORS = ["bg-mint", "bg-sun", "bg-accent"];
 
 type Entry = {
   id: string;
+  kind: "work" | "study";
   role: string;
   organization: string;
   location?: string;
@@ -28,12 +29,14 @@ type Entry = {
   bullets: string[];
   highlights: { value: string; label: string }[];
   tech: string[];
+  coursework: string[];
   color: string;
 };
 
 const entries: Entry[] = [
   {
     id: "rutgers-ta",
+    kind: "work",
     role: teaching.role,
     organization: teaching.organization,
     location: teaching.location,
@@ -44,10 +47,12 @@ const entries: Entry[] = [
     bullets: [...teaching.bullets],
     highlights: [{ value: "50+", label: "Students each week" }],
     tech: [],
+    coursework: [],
     color: COLORS[0],
   },
   ...experience.map((e, i) => ({
     id: e.organization.toLowerCase().replace(/\W+/g, "-"),
+    kind: "work" as const,
     role: e.role,
     organization: e.organization,
     location: e.location,
@@ -58,21 +63,35 @@ const entries: Entry[] = [
     bullets: e.bullets,
     highlights: e.highlights ?? [],
     tech: e.tech ?? [],
+    coursework: [],
     color: COLORS[(i + 1) % COLORS.length],
+  })),
+  ...education.map((ed) => ({
+    id: ed.degree.toLowerCase().replace(/\W+/g, "-"),
+    kind: "study" as const,
+    role: ed.degree,
+    organization: ed.institution.split(" - ")[0],
+    location: ed.location,
+    when: `${short(ed.start)} – ${short(ed.end)}`,
+    start: toMonth(ed.start),
+    end: toMonth(ed.end),
+    summary: "honors" in ed ? `${ed.college}. ${ed.honors}.` : "",
+    bullets: [],
+    highlights: [{ value: ed.gpa.split(" / ")[0], label: `GPA out of ${ed.gpa.split(" / ")[1]}` }],
+    tech: [],
+    coursework: [...ed.coursework],
+    color: "bg-cobalt",
   })),
 ];
 
-const study = education.map((ed) => ({
-  id: ed.degree,
-  label: ed.degree.startsWith("M.S.") ? "M.S. Computer Science" : "B.Tech AI & Data Sci.",
-  place: ed.institution.split(" - ")[0],
-  start: toMonth(ed.start),
-  end: toMonth(ed.end),
-}));
+const SHORT_DEGREE: Record<string, string> = { "M.S.": "M.S. Computer Science", "B.Tech.": "B.Tech AI & Data Sci." };
+const lanes = entries.map((x, i) => ({ ...x, index: i }));
+const work = lanes.filter((x) => x.kind === "work");
+const study = lanes.filter((x) => x.kind === "study");
 const [masters, bachelors] = study;
 
-const axisStart = Math.min(...entries.map((e) => e.start)) - 3;
-const axisEnd = Math.max(...study.map((s) => s.end), ...entries.map((e) => e.end ?? 0)) + 2;
+const axisStart = Math.min(...work.map((e) => e.start)) - 3;
+const axisEnd = Math.max(...entries.map((e) => e.end ?? 0)) + 2;
 const clamp = (n: number) => Math.min(100, Math.max(0, n));
 const pct = (m: number) => clamp(((m - axisStart) / (axisEnd - axisStart)) * 100);
 const months = Array.from({ length: axisEnd - axisStart + 1 }, (_, i) => axisStart + i);
@@ -94,7 +113,7 @@ const useNowMonth = () =>
 
 function Timeline({ active, onPick }: { active: number; onPick: (i: number) => void }) {
   const now = useNowMonth();
-  const movePct = (pct(bachelors.end) + pct(masters.start)) / 2;
+  const movePct = (pct(bachelors.end!) + pct(masters.start)) / 2;
 
   return (
     <div className="mb-16 hidden grid-cols-[4.5rem_1fr] md:grid" aria-hidden>
@@ -133,7 +152,8 @@ function Timeline({ active, onPick }: { active: number; onPick: (i: number) => v
           </div>
         ) : null}
 
-        {entries.map((x, i) => {
+        {work.map((x) => {
+          const i = x.index;
           const left = pct(x.start);
           const end = x.end ?? axisEnd;
           const right = pct(end);
@@ -153,7 +173,7 @@ function Timeline({ active, onPick }: { active: number; onPick: (i: number) => v
               }`}
               style={{ left: `${left}%`, width: `${Math.max(right - left, 2)}%` }}
             >
-              <span className="grow-x relative block h-full" style={{ ["--d" as string]: `${300 + (entries.length - i) * 120}ms` }}>
+              <span className="grow-x relative block h-full" style={{ ["--d" as string]: `${300 + (work.length - i) * 120}ms` }}>
                 {/* Bar and shadow share one masked layer, extended to cover the shadow, so they fade out together. */}
                 <span
                   className="absolute -bottom-1 left-0 right-0 top-0"
@@ -186,27 +206,32 @@ function Timeline({ active, onPick }: { active: number; onPick: (i: number) => v
 
         {study.map((s, i) => {
           const left = pct(s.start);
-          const right = pct(s.end);
+          const right = pct(s.end!);
           const clipped = s.start < axisStart;
+          const on = s.index === active;
           return (
-            <div
+            <button
               key={s.id}
-              className="absolute top-[8.75rem] h-7"
+              type="button"
+              tabIndex={-1}
+              onClick={() => onPick(s.index)}
+              data-cursor={on ? undefined : "view"}
+              className={`absolute top-[8.75rem] h-7 transition-transform duration-500 ease-[cubic-bezier(0.34,1.6,0.5,1)] ${on ? "-translate-y-1" : "hover:-translate-y-0.5"}`}
               style={{ left: `${left}%`, width: `${right - left}%` }}
             >
               <div
-                className={`grow-x flex h-full items-center gap-2 overflow-hidden whitespace-nowrap rounded-full border-[1.5px] border-dashed border-ink-3 px-3 text-xs ${
-                  clipped ? "rounded-l-none border-l-0 justify-end" : ""
-                }`}
+                className={`grow-x flex h-full items-center gap-2 overflow-hidden whitespace-nowrap rounded-full border-[1.5px] px-3 text-xs transition-colors ${
+                  on ? "border-solid border-ink bg-cobalt/25" : "border-dashed border-ink-3 hover:border-ink"
+                } ${clipped ? "rounded-l-none border-l-0 justify-end" : ""}`}
                 style={{
                   ["--d" as string]: `${150 + i * 120}ms`,
                   maskImage: clipped ? "linear-gradient(to right, transparent, black 10%)" : undefined,
                 }}
               >
-                <span className="font-medium text-ink-2">{s.label}</span>
-                <span className="font-mono text-ink-3">{s.place}</span>
+                <span className="font-medium text-ink-2">{SHORT_DEGREE[s.role.split(" ")[0]] ?? s.role}</span>
+                <span className="font-mono text-ink-3">{s.organization}</span>
               </div>
-            </div>
+            </button>
           );
         })}
 
@@ -240,8 +265,8 @@ export function Experience() {
       <SectionHead
         index="03"
         title="Where I've"
-        flourish="worked"
-        note="Two internships shipping to production, and now teaching the fundamentals at Rutgers. Pick a stop on the timeline."
+        flourish="been"
+        note="Two internships shipping to production, two degrees, and now teaching the fundamentals at Rutgers. Pick a stop on the timeline."
       />
 
       <Reveal>
@@ -251,7 +276,12 @@ export function Experience() {
           <div role="tablist" aria-label="Roles" aria-orientation="vertical" className="-m-2 flex gap-2 overflow-x-auto p-2 pb-3 md:col-span-4 md:m-0 md:flex-col md:overflow-visible md:p-0" onKeyDown={onKey}>
             {entries.map((x, i) => {
               const on = i === active;
-              return (
+              return [
+                x.kind === "study" && entries[i - 1]?.kind === "work" ? (
+                  <p key="study-label" className="label hidden px-5 pt-4 md:block">
+                    Study
+                  </p>
+                ) : null,
                 <button
                   key={x.id}
                   ref={(el) => {
@@ -271,8 +301,8 @@ export function Experience() {
                   <span className="block pl-5 font-mono text-xs text-ink-3">{x.when}</span>
                   <span className="mt-2 block font-display text-xl font-semibold tracking-tight">{x.role}</span>
                   <span className="mt-1 block text-sm text-ink-2">{x.organization}</span>
-                </button>
-              );
+                </button>,
+              ];
             })}
           </div>
 
@@ -323,6 +353,23 @@ export function Experience() {
                 </li>
               ))}
             </ul>
+
+            {e.coursework.length ? (
+              <div className="mt-10">
+                <h4 className="label">Relevant coursework</h4>
+                <ul className="mt-4 flex flex-wrap gap-2">
+                  {e.coursework.map((c, i) => (
+                    <li
+                      key={c}
+                      className="rounded-lg border border-line px-3.5 py-2 text-sm text-ink-2 [animation:pop-in_0.5s_var(--ease-out-expo)_backwards]"
+                      style={{ animationDelay: `${120 + i * 50}ms` }}
+                    >
+                      {c}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
 
             {e.tech.length ? (
               <ul className="mt-8 flex flex-wrap gap-2">

@@ -68,9 +68,9 @@ export const stack: StackGroup[] = [
     items: ["Python", "TypeScript", "JavaScript", "Go", "Java", "C++", "SQL"],
   },
   {
-    name: "Backend",
-    blurb: "APIs that stay fast and stay secure.",
-    items: ["Django", "FastAPI", "Express.js", "Node.js", "REST APIs", "Pydantic", "JWT Auth", "OAuth2", "RBAC"],
+    name: "Backend & databases",
+    blurb: "APIs that stay fast, data that stays put.",
+    items: ["Django", "FastAPI", "Express.js", "Node.js", "REST APIs", "Pydantic", "JWT Auth", "OAuth2", "RBAC", "PostgreSQL", "pgvector", "MySQL", "MongoDB", "SQLite", "Redis", "Prisma"],
   },
   {
     name: "Frontend",
@@ -78,14 +78,9 @@ export const stack: StackGroup[] = [
     items: ["Next.js", "React", "Tailwind CSS", "Streamlit", "Bootstrap", "HTML5", "CSS3"],
   },
   {
-    name: "Databases",
-    blurb: "Where the data lives, indexed properly.",
-    items: ["PostgreSQL", "pgvector", "MySQL", "MongoDB", "SQLite", "Redis", "Prisma"],
-  },
-  {
-    name: "AI / ML",
-    blurb: "Training, tuning and shipping models.",
-    items: ["PyTorch", "TensorFlow", "Scikit-learn", "OpenCV", "YOLO", "Groq API", "Gemini"],
+    name: "AI & data science",
+    blurb: "Models, pipelines, and the numbers behind them.",
+    items: ["PyTorch", "TensorFlow", "Scikit-learn", "OpenCV", "YOLO", "Groq API", "Gemini", "Pandas", "NumPy", "SciPy", "Matplotlib", "Apache Spark", "Hadoop", "Tableau", "Power BI"],
   },
   {
     name: "AI tooling",
@@ -93,24 +88,9 @@ export const stack: StackGroup[] = [
     items: ["Claude Code", "Codex", "Cursor", "Kiro", "GitHub Copilot", "MCP"],
   },
   {
-    name: "Data science",
-    blurb: "Asking the data first, at any scale.",
-    items: ["Pandas", "NumPy", "SciPy", "Matplotlib", "Apache Spark", "Hadoop", "Tableau", "Power BI"],
-  },
-  {
-    name: "Cloud",
-    blurb: "Where it all runs.",
-    items: ["AWS", "GCP", "Azure", "Oracle Cloud", "Vercel", "Render"],
-  },
-  {
-    name: "DevOps & MLOps",
-    blurb: "Shipped, and kept shipped.",
-    items: ["Docker", "Kubernetes", "GitHub Actions", "Git", "Linux"],
-  },
-  {
-    name: "Testing",
-    blurb: "So deploys are boring.",
-    items: ["Pytest", "Vitest", "Playwright"],
+    name: "Cloud & DevOps",
+    blurb: "Shipped, tested, and kept shipped.",
+    items: ["AWS", "GCP", "Azure", "Oracle Cloud", "Vercel", "Render", "Docker", "Kubernetes", "GitHub Actions", "Git", "Linux", "Pytest", "Vitest", "Playwright"],
   },
 ];
 
