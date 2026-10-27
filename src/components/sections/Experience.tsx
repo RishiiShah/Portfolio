@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, type KeyboardEvent } from "react";
-import { experience, teaching } from "@/data";
+import { useEffect, useRef, useState, useSyncExternalStore, type KeyboardEvent } from "react";
+import { education, experience, teaching } from "@/data";
 import { SectionHead } from "@/components/SectionHead";
 import { Reveal } from "@/components/Reveal";
 import { TechChip } from "@/components/TechIcon";
@@ -61,15 +61,154 @@ const entries: Entry[] = [
   })),
 ];
 
-const axisStart = Math.min(...entries.map((e) => e.start)) - 2;
-const ongoingEnd = Math.max(...entries.map((e) => e.end ?? e.start)) + 3;
-const lastStart = Math.max(...entries.map((e) => e.start));
-const axisEnd = Math.max(ongoingEnd, lastStart + 6);
-const pct = (m: number) => ((m - axisStart) / (axisEnd - axisStart)) * 100;
-const years = Array.from(
-  { length: Math.floor(axisEnd / 12) - Math.ceil(axisStart / 12) + 1 },
-  (_, i) => Math.ceil(axisStart / 12) + i,
-);
+const study = education.map((ed) => ({
+  id: ed.degree,
+  label: ed.degree.startsWith("M.S.") ? "M.S. Computer Science" : "B.Tech AI & Data Sci.",
+  place: ed.institution.split(" - ")[0],
+  start: toMonth(ed.start),
+  end: toMonth(ed.end),
+}));
+const [masters, bachelors] = study;
+
+const axisStart = Math.min(...entries.map((e) => e.start)) - 3;
+const axisEnd = Math.max(...study.map((s) => s.end), ...entries.map((e) => e.end ?? 0)) + 2;
+const clamp = (n: number) => Math.min(100, Math.max(0, n));
+const pct = (m: number) => clamp(((m - axisStart) / (axisEnd - axisStart)) * 100);
+const months = Array.from({ length: axisEnd - axisStart + 1 }, (_, i) => axisStart + i);
+const duration = (start: number, end: number) => {
+  const n = end - start + 1;
+  return n < 12 ? `${n} mo` : `${Math.floor(n / 12)} yr${n % 12 ? ` ${n % 12} mo` : ""}`;
+};
+
+const noop = () => () => {};
+const useNowMonth = () =>
+  useSyncExternalStore(
+    noop,
+    () => {
+      const d = new Date();
+      return d.getFullYear() * 12 + d.getMonth();
+    },
+    () => null,
+  );
+
+function Timeline({ active, onPick }: { active: number; onPick: (i: number) => void }) {
+  const now = useNowMonth();
+  const movePct = (pct(bachelors.end) + pct(masters.start)) / 2;
+
+  return (
+    <div className="mb-16 hidden grid-cols-[4.5rem_1fr] md:grid" aria-hidden>
+      <div className="label relative">
+        <span className="absolute top-[3.6rem]">Work</span>
+        <span className="absolute top-[9.1rem]">Study</span>
+      </div>
+
+      <div className="relative h-[11.5rem]">
+        {months.map((m) => {
+          const year = m % 12 === 0;
+          return (
+            <div key={m} className="absolute top-6 h-full" style={{ left: `${pct(m)}%` }}>
+              {year ? (
+                <>
+                  <div className="absolute top-0 h-[calc(100%-1.5rem)] w-px bg-line" />
+                  <span className="absolute -top-6 left-2 font-mono text-xs text-ink-3">{m / 12}</span>
+                </>
+              ) : (
+                <div className="absolute top-0 size-[3px] -translate-x-1/2 rounded-full bg-line-2" />
+              )}
+            </div>
+          );
+        })}
+
+        {now !== null && now >= axisStart && now <= axisEnd ? (
+          <div className="absolute top-3 h-[calc(100%-0.75rem)]" style={{ left: `${pct(now)}%` }}>
+            <div className="absolute inset-y-0 w-px -translate-x-1/2 bg-accent/60" />
+            <span className="absolute -top-1 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-accent px-2 py-0.5 font-mono text-[0.62rem] uppercase tracking-wider text-accent-ink">
+              <span className="relative flex size-1.5">
+                <span className="absolute inset-0 animate-ping rounded-full bg-accent-ink/60" />
+                <span className="relative size-1.5 rounded-full bg-accent-ink" />
+              </span>
+              now
+            </span>
+          </div>
+        ) : null}
+
+        {entries.map((x, i) => {
+          const left = pct(x.start);
+          const end = x.end ?? axisEnd;
+          const right = pct(end);
+          const on = i === active;
+          const ongoing = x.end === null;
+          // An ongoing role stays solid up to today, then fades towards the end of the axis.
+          const solid = ongoing ? clamp((((now ?? x.start + 2) - x.start) / (end - x.start)) * 100) : 100;
+          return (
+            <button
+              key={x.id}
+              type="button"
+              tabIndex={-1}
+              onClick={() => onPick(i)}
+              data-cursor={on ? undefined : "view"}
+              className={`group absolute top-[3.25rem] h-8 transition-transform duration-500 ease-[cubic-bezier(0.34,1.6,0.5,1)] ${
+                on ? "-translate-y-1.5" : "hover:-translate-y-1"
+              }`}
+              style={{ left: `${left}%`, width: `${Math.max(right - left, 2)}%` }}
+            >
+              <span className="grow-x block h-full" style={{ ["--d" as string]: `${300 + (entries.length - i) * 120}ms` }}>
+                <span
+                  className={`block h-full rounded-full border-2 border-ink transition-[box-shadow,opacity] duration-500 ${x.color} ${
+                    on ? "shadow-[4px_4px_0_var(--color-ink)]" : "opacity-55 group-hover:opacity-100"
+                  } ${ongoing ? "rounded-r-none border-r-0" : ""}`}
+                  style={{ maskImage: ongoing ? `linear-gradient(to right, black ${solid}%, transparent)` : undefined }}
+                />
+              </span>
+              <span className="pointer-events-none absolute bottom-full left-0 mb-2 whitespace-nowrap rounded-lg bg-ink px-2.5 py-1 text-xs text-bg opacity-0 transition-[opacity,translate] duration-300 group-hover:-translate-y-0.5 group-hover:opacity-100">
+                {x.role}
+              </span>
+              <span className="absolute left-0 top-10 flex flex-col items-start whitespace-nowrap font-mono text-xs leading-relaxed">
+                <span className={`transition-colors ${on ? "font-semibold text-ink" : "text-ink-3"}`}>{x.organization}</span>
+                <span className="text-[0.65rem] text-ink-3">
+                  {ongoing ? `${duration(x.start, now ?? x.start)} so far` : duration(x.start, x.end!)}
+                </span>
+              </span>
+            </button>
+          );
+        })}
+
+        {study.map((s, i) => {
+          const left = pct(s.start);
+          const right = pct(s.end);
+          const clipped = s.start < axisStart;
+          return (
+            <div
+              key={s.id}
+              className="absolute top-[8.75rem] h-7"
+              style={{ left: `${left}%`, width: `${right - left}%` }}
+            >
+              <div
+                className={`grow-x flex h-full items-center gap-2 overflow-hidden whitespace-nowrap rounded-full border-[1.5px] border-dashed border-ink-3 px-3 text-xs ${
+                  clipped ? "rounded-l-none border-l-0 justify-end" : ""
+                }`}
+                style={{
+                  ["--d" as string]: `${150 + i * 120}ms`,
+                  maskImage: clipped ? "linear-gradient(to right, transparent, black 10%)" : undefined,
+                }}
+              >
+                <span className="font-medium text-ink-2">{s.label}</span>
+                <span className="font-mono text-ink-3">{s.place}</span>
+              </div>
+            </div>
+          );
+        })}
+
+        <span
+          className="flourish absolute top-[10.9rem] -translate-x-1/2 whitespace-nowrap text-sm text-ink-2"
+          style={{ left: `${movePct}%` }}
+        >
+          ✈ Mumbai → NJ
+        </span>
+      </div>
+    </div>
+  );
+}
 
 function CountUp({ value }: { value: string }) {
   const ref = useRef<HTMLSpanElement>(null);
@@ -123,40 +262,7 @@ export function Experience() {
       />
 
       <Reveal>
-        <div className="relative mb-14 hidden h-24 md:block" aria-hidden>
-          <div className="absolute inset-x-0 top-10 h-px bg-line-2" />
-          {years.map((y) => (
-            <div key={y} className="absolute top-0 h-full" style={{ left: `${pct(y * 12)}%` }}>
-              <div className="h-full w-px bg-line" />
-              <span className="absolute -top-1 left-2 font-mono text-xs text-ink-3">{y}</span>
-            </div>
-          ))}
-          {entries.map((x, i) => {
-            const left = pct(x.start);
-            const right = pct(x.end ?? axisEnd);
-            const on = i === active;
-            return (
-              <button
-                key={x.id}
-                type="button"
-                tabIndex={-1}
-                onClick={() => setActive(i)}
-                className={`group absolute top-7 h-7 rounded-full border-2 border-ink transition-all duration-500 ease-[cubic-bezier(0.34,1.6,0.5,1)] ${x.color} ${
-                  on ? "-translate-y-1.5 shadow-[4px_4px_0_var(--color-ink)]" : "opacity-60 hover:-translate-y-1 hover:opacity-100"
-                } ${x.end === null ? "rounded-r-none border-r-0 [mask-image:linear-gradient(to_right,black_70%,transparent)]" : ""}`}
-                style={{ left: `${left}%`, width: `${Math.max(right - left, 2)}%` }}
-              >
-                <span
-                  className={`absolute left-0 top-9 whitespace-nowrap font-mono text-xs transition-colors ${
-                    on ? "text-ink" : "text-ink-3"
-                  }`}
-                >
-                  {x.organization}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+        <Timeline active={active} onPick={setActive} />
 
         <div className="grid gap-10 md:grid-cols-12">
           <div role="tablist" aria-label="Roles" aria-orientation="vertical" className="flex gap-2 overflow-x-auto md:col-span-4 md:flex-col" onKeyDown={onKey}>

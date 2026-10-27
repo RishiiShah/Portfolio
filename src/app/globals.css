@@ -152,6 +152,14 @@
     background-size: 100% 1px;
   }
 
+  .grow-x {
+    transform-origin: left;
+    transition: transform 1.1s var(--ease-out-expo) var(--d, 0s);
+  }
+  .reveal:not([data-shown="true"]) .grow-x {
+    transform: scaleX(0);
+  }
+
   .has-cursor,
   .has-cursor * {
     cursor: none !important;
