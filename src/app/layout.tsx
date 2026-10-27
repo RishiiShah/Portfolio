@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Bricolage_Grotesque, Geist, Instrument_Serif, JetBrains_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { Cursor } from "@/components/Cursor";
 import { bio } from "@/data";
 import { buildStructuredData } from "@/lib/structured-data";
 import { getSiteUrl, sanitizeForMeta } from "@/lib/site";
@@ -92,6 +93,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="bg-bg font-sans text-ink antialiased">
         <div className="grain" aria-hidden />
+        <Cursor />
         {children}
         <Analytics />
       </body>

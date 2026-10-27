@@ -73,6 +73,7 @@ function Row({
         onClick={onToggle}
         aria-expanded={open}
         aria-controls={panelId}
+        data-cursor={open ? "close" : "read"}
         className="group grid w-full grid-cols-[3rem_1fr_auto] items-baseline gap-4 py-7 text-left md:grid-cols-[5rem_1fr_16rem_5rem_2rem] md:py-9"
       >
         <span className="font-mono text-sm text-ink-3 transition-colors group-hover:text-accent">
@@ -186,8 +187,8 @@ function CursorPreview({ project, visible, color }: { project: Project | null; v
       raf = Math.abs(tx - x) + Math.abs(ty - y) > 0.3 ? requestAnimationFrame(tick) : 0;
     };
     const onMove = (e: PointerEvent) => {
-      tx = e.clientX + 24;
-      ty = e.clientY + 24;
+      tx = e.clientX + 44;
+      ty = e.clientY + 44;
       if (x < -900) {
         x = tx;
         y = ty;

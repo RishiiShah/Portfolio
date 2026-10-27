@@ -152,6 +152,11 @@
     background-size: 100% 1px;
   }
 
+  .has-cursor,
+  .has-cursor * {
+    cursor: none !important;
+  }
+
   .tech-dark,
   [data-theme="dark"] .tech-light {
     display: none;
