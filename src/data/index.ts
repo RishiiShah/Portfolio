@@ -68,14 +68,24 @@ export const stack: StackGroup[] = [
     items: ["Python", "TypeScript", "JavaScript", "Go", "Java", "C++", "SQL"],
   },
   {
-    name: "AI / ML",
-    blurb: "Training, tuning and shipping models.",
-    items: ["PyTorch", "TensorFlow", "Scikit-learn", "OpenCV", "YOLO", "Groq API", "Gemini"],
-  },
-  {
     name: "Backend",
     blurb: "APIs that stay fast and stay secure.",
     items: ["Django", "FastAPI", "Express.js", "Node.js", "REST APIs", "Pydantic", "JWT Auth", "OAuth2", "RBAC"],
+  },
+  {
+    name: "Frontend",
+    blurb: "Interfaces people enjoy using.",
+    items: ["Next.js", "React", "Tailwind CSS", "Streamlit", "Bootstrap", "HTML5", "CSS3"],
+  },
+  {
+    name: "Databases",
+    blurb: "Where the data lives, indexed properly.",
+    items: ["PostgreSQL", "pgvector", "MySQL", "MongoDB", "SQLite", "Redis", "Prisma"],
+  },
+  {
+    name: "AI / ML",
+    blurb: "Training, tuning and shipping models.",
+    items: ["PyTorch", "TensorFlow", "Scikit-learn", "OpenCV", "YOLO", "Groq API", "Gemini"],
   },
   {
     name: "AI tooling",
@@ -86,16 +96,6 @@ export const stack: StackGroup[] = [
     name: "Data science",
     blurb: "Asking the data first, at any scale.",
     items: ["Pandas", "NumPy", "SciPy", "Matplotlib", "Apache Spark", "Hadoop", "Tableau", "Power BI"],
-  },
-  {
-    name: "Databases",
-    blurb: "Where the data lives, indexed properly.",
-    items: ["PostgreSQL", "pgvector", "MySQL", "MongoDB", "SQLite", "Redis", "Prisma"],
-  },
-  {
-    name: "Frontend",
-    blurb: "Interfaces people enjoy using.",
-    items: ["Next.js", "React", "Tailwind CSS", "Streamlit", "Bootstrap", "HTML5", "CSS3"],
   },
   {
     name: "Cloud",
@@ -111,81 +111,6 @@ export const stack: StackGroup[] = [
     name: "Testing",
     blurb: "So deploys are boring.",
     items: ["Pytest", "Vitest", "Playwright"],
-  },
-];
-
-export interface StackDomain {
-  name: string;
-  /** Every `tool` must also appear in `stack` so it lights up in the grid. */
-  lines: { tool: string; use: string; where: string }[];
-  total: { value: string; label: string; where: string };
-}
-
-export const stackDomains: StackDomain[] = [
-  {
-    name: "AI & LLM systems",
-    lines: [
-      { tool: "Gemini", use: "Strict-schema grading with exact-quote citations", where: "Composur" },
-      { tool: "pgvector", use: "RAG over a curated interview question corpus", where: "Composur" },
-      { tool: "MCP", use: "6 strict-schema tools serving context to coding agents", where: "CseGraph" },
-      { tool: "Groq API", use: "Llama 3.1 and Llama 4 Scout inference behind guard prompts", where: "JARVIS, Traffic" },
-    ],
-    total: { value: "−82.3%", label: "agent context at 100% recall", where: "CseGraph" },
-  },
-  {
-    name: "Vision & ML",
-    lines: [
-      { tool: "YOLO", use: "Fine-tuned YOLO12-X, the best of 5 variants", where: "Traffic" },
-      { tool: "OpenCV", use: "60 fps video with virtual-line triggers", where: "Traffic" },
-      { tool: "PyTorch", use: "A 264K-parameter conditional WGAN-GP", where: "Synthetic markets" },
-      { tool: "TensorFlow", use: "Bi-LSTM genre classifier, quantized for serving", where: "Genre classifier" },
-      { tool: "Scikit-learn", use: "Cosine-similarity recommendations over 5,000+ films", where: "Movie recs" },
-    ],
-    total: { value: "93.76%", label: "end-to-end accuracy, IEEE ICICIS 2025", where: "Traffic surveillance" },
-  },
-  {
-    name: "Backend & APIs",
-    lines: [
-      { tool: "Django", use: "Profiled request paths, rewrote ORM queries", where: "Aaditya" },
-      { tool: "Express.js", use: "P95 halved across 8 endpoints", where: "Creative Line" },
-      { tool: "FastAPI", use: "OpenAPI contract that types the React dashboard", where: "Cerevia" },
-      { tool: "Go", use: "Server-side weighted interview verdicts", where: "Composur" },
-      { tool: "JWT Auth", use: "JWT and RBAC across 4 backend components", where: "Aaditya" },
-    ],
-    total: { value: "−86%", label: "P95 latency, 3,100 → 420 ms", where: "Aaditya Technologies" },
-  },
-  {
-    name: "Data",
-    lines: [
-      { tool: "MySQL", use: "Targeted indexes and connection-pool tuning", where: "Aaditya" },
-      { tool: "PostgreSQL", use: "Append-only audit log for every staffing action", where: "Cerevia" },
-      { tool: "SQLite", use: "Transactional symbol graph with FTS5 search", where: "CseGraph" },
-      { tool: "Pandas", use: "Log-return and scaling pipeline for 6 market features", where: "Synthetic markets" },
-      { tool: "NumPy", use: "Audio and market feature arrays", where: "Genre classifier" },
-    ],
-    total: { value: "177K+", label: "symbols indexed across 12 repos", where: "CseGraph" },
-  },
-  {
-    name: "Frontend",
-    lines: [
-      { tool: "Next.js", use: "One-sentence trip planner on a 3D city", where: "PlaNYt" },
-      { tool: "React", use: "Coordinator dashboard for live coverage gaps", where: "Cerevia" },
-      { tool: "TypeScript", use: "In-browser recording with chunked S3 uploads", where: "Composur" },
-      { tool: "Streamlit", use: "Genre demo with per-class confidence", where: "Genre classifier" },
-      { tool: "Tailwind CSS", use: "Every pixel of this site", where: "Here" },
-    ],
-    total: { value: "2×", label: "hackathon winner, 2026", where: "Cerevia & PlaNYt" },
-  },
-  {
-    name: "Shipping",
-    lines: [
-      { tool: "Docker", use: "Containerized Django services", where: "Aaditya" },
-      { tool: "AWS", use: "EC2, S3, and presigned per-user upload keys", where: "Aaditya, Composur" },
-      { tool: "GitHub Actions", use: "PR and nightly evaluation suites gate every release", where: "CseGraph" },
-      { tool: "Pytest", use: "379 tests at 76% coverage", where: "CseGraph" },
-      { tool: "Vercel", use: "Hackathon build, deployed live", where: "PlaNYt" },
-    ],
-    total: { value: "0", label: "rollbacks across 9 production deploys", where: "Creative Line" },
   },
 ];
 
