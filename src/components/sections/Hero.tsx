@@ -65,7 +65,7 @@ export function Hero() {
           <div className="flex items-end gap-3 md:col-span-2 md:flex-col md:items-end md:justify-end">
             <a
               href="#work"
-              className="inline-flex h-11 items-center rounded-full bg-ink px-5 text-sm font-medium text-bg transition-all hover:-translate-y-0.5 hover:bg-accent hover:text-accent-ink"
+              className="inline-flex h-11 items-center whitespace-nowrap rounded-full bg-ink px-5 text-sm font-medium text-bg transition-all hover:-translate-y-0.5 hover:bg-accent hover:text-accent-ink"
             >
               See the work ↓
             </a>
@@ -73,7 +73,7 @@ export function Hero() {
               href={bio.resume}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex h-11 items-center rounded-full border border-line-2 px-5 text-sm transition-colors hover:border-ink"
+              className="inline-flex h-11 items-center whitespace-nowrap rounded-full border border-line-2 px-5 text-sm transition-colors hover:border-ink"
             >
               Résumé
             </a>

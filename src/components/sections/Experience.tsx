@@ -152,13 +152,23 @@ function Timeline({ active, onPick }: { active: number; onPick: (i: number) => v
               }`}
               style={{ left: `${left}%`, width: `${Math.max(right - left, 2)}%` }}
             >
-              <span className="grow-x block h-full" style={{ ["--d" as string]: `${300 + (entries.length - i) * 120}ms` }}>
+              <span className="grow-x relative block h-full" style={{ ["--d" as string]: `${300 + (entries.length - i) * 120}ms` }}>
+                {/* Bar and shadow share one masked layer, extended to cover the shadow, so they fade out together. */}
                 <span
-                  className={`block h-full rounded-full border-2 border-ink transition-[box-shadow,opacity] duration-500 ${x.color} ${
-                    on ? "shadow-[4px_4px_0_var(--color-ink)]" : "opacity-55 group-hover:opacity-100"
-                  } ${ongoing ? "rounded-r-none border-r-0" : ""}`}
+                  className="absolute -bottom-1 left-0 right-0 top-0"
                   style={{ maskImage: ongoing ? `linear-gradient(to right, black ${solid}%, transparent)` : undefined }}
-                />
+                >
+                  <span
+                    className={`absolute left-1 top-1 h-[calc(100%-0.25rem)] w-full rounded-full bg-ink transition-opacity duration-500 ${
+                      on ? "opacity-100" : "opacity-0"
+                    } ${ongoing ? "rounded-r-none" : ""}`}
+                  />
+                  <span
+                    className={`absolute left-0 top-0 h-[calc(100%-0.25rem)] w-full rounded-full border-2 border-ink transition-opacity duration-500 ${x.color} ${
+                      on ? "" : "opacity-55 group-hover:opacity-100"
+                    } ${ongoing ? "rounded-r-none border-r-0" : ""}`}
+                  />
+                </span>
               </span>
               <span className="pointer-events-none absolute bottom-full left-0 mb-2 whitespace-nowrap rounded-lg bg-ink px-2.5 py-1 text-xs text-bg opacity-0 transition-[opacity,translate] duration-300 group-hover:-translate-y-0.5 group-hover:opacity-100">
                 {x.role}
@@ -265,7 +275,7 @@ export function Experience() {
         <Timeline active={active} onPick={setActive} />
 
         <div className="grid gap-10 md:grid-cols-12">
-          <div role="tablist" aria-label="Roles" aria-orientation="vertical" className="flex gap-2 overflow-x-auto md:col-span-4 md:flex-col" onKeyDown={onKey}>
+          <div role="tablist" aria-label="Roles" aria-orientation="vertical" className="-m-2 flex gap-2 overflow-x-auto p-2 pb-3 md:col-span-4 md:m-0 md:flex-col md:overflow-visible md:p-0" onKeyDown={onKey}>
             {entries.map((x, i) => {
               const on = i === active;
               return (
