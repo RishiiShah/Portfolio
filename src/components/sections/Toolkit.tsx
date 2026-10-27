@@ -1,81 +1,150 @@
-import { education, skills, systemDesign } from "@/data";
+import { education, stack, type StackGroup } from "@/data";
 import { SectionHead } from "@/components/SectionHead";
 import { Reveal } from "@/components/Reveal";
 import { TechIcon } from "@/components/TechIcon";
 
-const WIDE = "Cloud & DevOps";
+function Tools({ group, dense = false }: { group: StackGroup; dense?: boolean }) {
+  return (
+    <ul className="flex flex-wrap content-start gap-1.5">
+      {group.items.map((item) => (
+        <li
+          key={item}
+          className={`inline-flex items-center gap-1.5 rounded-lg border border-line bg-bg-2 font-medium text-ink-2 transition-all duration-300 ease-[cubic-bezier(0.34,1.6,0.5,1)] hover:-translate-y-0.5 hover:border-ink hover:text-ink ${
+            dense ? "px-2 py-1 text-xs" : "px-2.5 py-1.5 text-sm"
+          }`}
+        >
+          <TechIcon name={item} size={dense ? 14 : 16} />
+          {item}
+        </li>
+      ))}
+      {group.patterns?.map((p) => (
+        <li
+          key={p.name}
+          title={p.detail}
+          className={`inline-flex items-center gap-1.5 rounded-lg border border-dashed border-accent/70 font-mono text-accent ${
+            dense ? "px-2 py-1 text-[0.65rem]" : "px-2.5 py-1.5 text-xs"
+          }`}
+        >
+          <span aria-hidden>◇</span>
+          {p.name}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function Label({ tag, group }: { tag: string; group: StackGroup }) {
+  return (
+    <div>
+      <span className="font-mono text-[0.65rem] uppercase tracking-wider text-accent">{tag}</span>
+      <h3 className="mt-1 font-display text-xl font-semibold tracking-tight">{group.name}</h3>
+      <p className="mt-0.5 text-xs leading-snug text-ink-3">{group.blurb}</p>
+    </div>
+  );
+}
+
+function Wire() {
+  return <span aria-hidden className="wire mx-auto block h-4 w-0.5" />;
+}
+
+const slab =
+  "slab rounded-2xl border-2 border-ink bg-bg p-4 transition-all duration-300 ease-[cubic-bezier(0.34,1.6,0.5,1)] hover:-translate-y-0.5 hover:shadow-[4px_4px_0_var(--color-accent)] md:p-5";
 
 export function Toolkit() {
+  const { tooling, layers, pillars, foundation } = stack;
+
   return (
     <section id="toolkit" className="shell scroll-mt-16 py-28 md:py-40">
-      <SectionHead index="05" title="My" flourish="toolbox" note="What I reach for when a new problem shows up, sorted by where it sits in the stack." />
+      <SectionHead index="05" title="My" flourish="stack" note="Drawn the way I'd draw any system: layers, the things that cut across them, and the patterns at each level." />
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {skills.map((group, i) => (
-          <Reveal
-            key={group.category}
-            delay={(i % 3) * 60}
-            className={`rounded-2xl border border-line bg-bg-2 p-6 md:p-7 ${group.category === WIDE ? "md:col-span-2" : ""}`}
-          >
-            <div className="flex items-baseline gap-3">
-              <span className="font-mono text-xs text-accent">0{i + 1}</span>
-              <h3 className="font-display text-2xl font-semibold tracking-tight">{group.category}</h3>
-            </div>
-            <p className="mt-1 text-sm text-ink-3">{group.blurb}</p>
-            <ul className="mt-6 flex flex-wrap gap-2">
-              {group.items.map((item) => (
-                <li
-                  key={item}
-                  className="inline-flex items-center gap-2 rounded-xl border border-line bg-bg px-3 py-2 text-sm font-medium text-ink-2 transition-all duration-300 ease-[cubic-bezier(0.34,1.6,0.5,1)] hover:-translate-y-1 hover:border-ink hover:text-ink hover:shadow-[3px_3px_0_var(--color-ink)]"
-                >
-                  <TechIcon name={item} size={18} />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </Reveal>
-        ))}
-
-        <Reveal delay={60} className="rounded-2xl border border-dashed border-line-2 p-6 md:col-span-2 md:p-7 lg:col-span-1">
-          <div className="flex items-baseline gap-3">
-            <span className="font-mono text-xs text-accent">0{skills.length + 1}</span>
-            <h3 className="font-display text-2xl font-semibold tracking-tight">Education</h3>
-          </div>
-          <ul className="mt-6 space-y-5">
-            {education.map((e) => (
-              <li key={e.degree}>
-                <p className="font-display text-lg font-medium leading-snug tracking-tight">{e.degree}</p>
-                <p className="mt-1 text-sm text-ink-2">{e.institution}</p>
-                <p className="mt-1 font-mono text-xs text-ink-3">
-                  {e.end.split(" ")[1]} · GPA {e.gpa}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </Reveal>
-      </div>
-
-      <Reveal className="mt-4 rounded-3xl border-2 border-ink bg-ink p-6 text-bg shadow-[6px_6px_0_var(--color-accent)] md:p-10">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="label !text-accent">System design</p>
-            <h3 className="mt-3 font-display text-3xl font-semibold tracking-tight md:text-4xl">
-              The parts you don&apos;t <span className="flourish font-normal text-accent">see</span>
-            </h3>
-          </div>
-          <p className="max-w-sm text-sm text-bg/60">Patterns I&apos;ve put into production, from the internships and the builds above.</p>
-        </div>
-        <ul className="mt-8 grid gap-px overflow-hidden rounded-2xl bg-bg/15 sm:grid-cols-2 lg:grid-cols-5">
-          {systemDesign.map((s, i) => (
-            <li key={s.name} className="group bg-ink p-5 transition-colors duration-300 hover:bg-bg/5">
-              <span className="font-mono text-xs text-bg/40 transition-colors group-hover:text-accent">
-                {String(i + 1).padStart(2, "0")}
+      <Reveal>
+        <figure className="stack relative rounded-3xl border-2 border-ink bg-bg-2 bg-[linear-gradient(var(--color-line)_1px,transparent_1px),linear-gradient(90deg,var(--color-line)_1px,transparent_1px)] bg-[size:28px_28px] p-3 shadow-[6px_6px_0_var(--color-ink)] md:p-6">
+          <figcaption className="mb-4 flex flex-wrap items-center justify-between gap-3 px-1 font-mono text-[0.65rem] uppercase tracking-wider text-ink-3">
+            <span>fig. 05 · rishabh.stack</span>
+            <span className="flex items-center gap-4">
+              <span className="flex items-center gap-1.5">
+                <span className="size-3 rounded border border-line bg-bg-2" /> tool
               </span>
-              <p className="mt-3 font-display text-lg font-semibold leading-tight tracking-tight">{s.name}</p>
-              <p className="mt-2 text-sm leading-snug text-bg/60">{s.detail}</p>
-            </li>
-          ))}
-        </ul>
+              <span className="flex items-center gap-1.5 text-accent">
+                <span className="size-3 rounded border border-dashed border-accent" /> system design pattern
+              </span>
+            </span>
+          </figcaption>
+
+          <div className={`${slab} border-dashed bg-bg/80`}>
+            <div className="grid gap-4 md:grid-cols-[11rem_1fr] md:items-center">
+              <Label tag="L0 · the dev loop" group={tooling} />
+              <Tools group={tooling} />
+            </div>
+          </div>
+          <Wire />
+
+          <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_13rem_13rem]">
+            <div className="flex flex-col">
+              {layers.map((layer, i) => (
+                <div key={layer.name} className="flex flex-col">
+                  {i > 0 ? <Wire /> : null}
+                  <div className={slab}>
+                    <div className="grid gap-4 md:grid-cols-[11rem_1fr] md:items-center">
+                      <Label tag={`L${i + 1}`} group={layer} />
+                      <Tools group={layer} />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {pillars.map((pillar, i) => (
+              <div key={pillar.name} className={`${slab} flex flex-col gap-4 bg-bg-3/60`}>
+                <div className="flex items-start justify-between gap-2">
+                  <Label tag={`P${i + 1} · cuts across`} group={pillar} />
+                  <span aria-hidden className="hidden font-mono text-lg text-ink-3 lg:block">
+                    ↕
+                  </span>
+                </div>
+                <Tools group={pillar} dense />
+                <div aria-hidden className="mt-auto hidden min-h-16 flex-1 flex-col items-center gap-2 pt-2 lg:flex">
+                  <span className="wire w-0.5 flex-1" />
+                  <span className="font-mono text-[0.6rem] uppercase tracking-wider text-ink-3">
+                    spans L1 → L{layers.length}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <Wire />
+          <div className={`${slab} !border-ink bg-ink text-bg`}>
+            <div className="grid gap-4 md:grid-cols-[11rem_1fr] md:items-center">
+              <div>
+                <span className="font-mono text-[0.65rem] uppercase tracking-wider text-accent">Foundation</span>
+                <h3 className="mt-1 font-display text-xl font-semibold tracking-tight">{foundation.name}</h3>
+                <p className="mt-0.5 text-xs leading-snug text-bg/60">{foundation.blurb}</p>
+              </div>
+              <ul className="flex flex-wrap gap-1.5">
+                {foundation.items.map((item) => (
+                  <li
+                    key={item}
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-bg px-2.5 py-1.5 text-sm font-medium text-ink transition-transform duration-300 hover:-translate-y-0.5"
+                  >
+                    <TechIcon name={item} size={16} />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </figure>
+      </Reveal>
+
+      <Reveal className="mt-10 flex flex-wrap items-baseline gap-x-10 gap-y-3 text-sm">
+        <span className="label">Formally trained</span>
+        {education.map((e) => (
+          <span key={e.degree} className="text-ink-2">
+            <span className="font-medium text-ink">{e.degree}</span>, {e.institution.split(" - ")[0]}
+            <span className="ml-2 font-mono text-xs text-ink-3">GPA {e.gpa}</span>
+          </span>
+        ))}
       </Reveal>
     </section>
   );

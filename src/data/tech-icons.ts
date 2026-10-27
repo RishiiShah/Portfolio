@@ -313,5 +313,38 @@ export const techIcons: Record<string, { src: string; dark?: string; ratio: numb
   "Google Model Renderer": {
     "src": "/tech/logos-google-icon.svg",
     "ratio": 0.977
+  },
+  "Claude Code": {
+    "src": "/tech/logos-claude-icon.svg",
+    "ratio": 0.996
+  },
+  "Claude": {
+    "src": "/tech/logos-claude-icon.svg",
+    "ratio": 0.996
+  },
+  "Codex": {
+    "src": "/tech/logos-openai-icon.svg",
+    "dark": "/tech/logos-openai-icon-dark.svg",
+    "ratio": 0.985
+  },
+  "ChatGPT": {
+    "src": "/tech/logos-openai-icon.svg",
+    "dark": "/tech/logos-openai-icon-dark.svg",
+    "ratio": 0.985
+  },
+  "Cursor": {
+    "src": "/tech/logos-cursor-icon.svg",
+    "dark": "/tech/logos-cursor-icon-dark.svg",
+    "ratio": 0.877
+  },
+  "GitHub Copilot": {
+    "src": "/tech/logos-github-copilot.svg",
+    "dark": "/tech/logos-github-copilot-dark.svg",
+    "ratio": 1.231
+  },
+  "Gemini": {
+    "src": "/tech/logos-google-gemini-icon.svg",
+    "dark": "/tech/logos-google-gemini-icon-dark.svg",
+    "ratio": 1
   }
 };

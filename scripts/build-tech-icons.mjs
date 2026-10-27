@@ -86,6 +86,13 @@ const MAP = {
   Bootstrap: "logos:bootstrap",
   "Google PaLM 2": "logos:google-palm",
   "Google Model Renderer": "logos:google-icon",
+  "Claude Code": "logos:claude-icon",
+  Claude: "logos:claude-icon",
+  Codex: "logos:openai-icon",
+  ChatGPT: "logos:openai-icon",
+  Cursor: "logos:cursor-icon",
+  "GitHub Copilot": "logos:github-copilot",
+  Gemini: "logos:google-gemini-icon",
 };
 
 function resolve(set, name) {

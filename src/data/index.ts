@@ -35,57 +35,91 @@ export const education = [
 
 // ─── Skills ──────────────────────────────────────────────────────────────────
 
-export const skills = [
-  {
-    category: "Languages",
-    blurb: "What I think in.",
+export interface StackGroup {
+  name: string;
+  blurb: string;
+  items: string[];
+  /** System design patterns applied at this layer, shown without logos. */
+  patterns?: { name: string; detail: string }[];
+}
+
+export const stack: {
+  tooling: StackGroup;
+  layers: StackGroup[];
+  pillars: StackGroup[];
+  foundation: StackGroup;
+} = {
+  tooling: {
+    name: "AI tooling",
+    blurb: "Agents in the loop, me on the review.",
+    items: ["Claude Code", "Codex", "Cursor", "Claude", "ChatGPT", "GitHub Copilot", "Gemini", "MCP"],
+  },
+  layers: [
+    {
+      name: "Frontend",
+      blurb: "Interfaces people enjoy using.",
+      items: ["Next.js", "React", "Tailwind CSS", "HTML", "CSS"],
+    },
+    {
+      name: "Backend",
+      blurb: "APIs that stay fast and stay secure.",
+      items: ["Django", "Django ORM", "FastAPI", "Express.js", "Node.js", "REST APIs", "JWT Auth", "OAuth2", "RBAC", "Zod"],
+      patterns: [
+        { name: "API contracts", detail: "Consistent schemas, errors and status codes across endpoints" },
+        { name: "Latency profiling", detail: "Finding the slow path before guessing at fixes" },
+        { name: "Payload shaping", detail: "Trimming responses so the wire is not the bottleneck" },
+        { name: "Event replay", detail: "Server-side state rebuilt from an event stream with an injected clock" },
+        { name: "Role-based access", detail: "JWT sessions and permissions per admin, staff and client" },
+      ],
+    },
+    {
+      name: "AI / ML",
+      blurb: "Training, tuning and shipping models.",
+      items: ["PyTorch", "TensorFlow", "Scikit-learn", "OpenCV", "YOLO", "NumPy", "Pandas", "Groq API"],
+      patterns: [
+        { name: "Retrieval for agents", detail: "Full-text indexes and ranking to cut context tokens" },
+        { name: "Multi-stage validation", detail: "Model output checked by regex and structural rules before use" },
+      ],
+    },
+    {
+      name: "Databases",
+      blurb: "Where the data lives, indexed properly.",
+      items: ["PostgreSQL", "MySQL", "MongoDB", "SQLite", "Redis", "Prisma"],
+      patterns: [
+        { name: "Indexing & query tuning", detail: "Targeted indexes and fewer ORM round trips" },
+        { name: "Connection pooling", detail: "Sizing pools so the database is never the queue" },
+        { name: "Append-only audit logs", detail: "Every privileged action traceable and reversible" },
+      ],
+    },
+    {
+      name: "Cloud",
+      blurb: "Where it all runs.",
+      items: ["AWS", "AWS EC2", "AWS S3", "Azure", "GCP", "Google Cloud Run", "Vercel"],
+    },
+  ],
+  pillars: [
+    {
+      name: "DevOps & MLOps",
+      blurb: "Getting it shipped, and keeping it shipped.",
+      items: ["Docker", "GitHub Actions", "CI/CD", "Git", "GitHub", "Linux", "Streamlit"],
+      patterns: [
+        { name: "Containerized deploys", detail: "Docker images with reproducible environments" },
+        { name: "Eval gates", detail: "Synthetic data and models validated on unseen data before use" },
+      ],
+    },
+    {
+      name: "Testing",
+      blurb: "So deploys are boring.",
+      items: ["Pytest", "unittest", "Vitest", "Playwright", "React Testing Library", "Postman"],
+      patterns: [{ name: "Regression gates", detail: "55+ tests, zero rollbacks across 9 releases" }],
+    },
+  ],
+  foundation: {
+    name: "Languages",
+    blurb: "What everything above is written in.",
     items: ["Python", "TypeScript", "JavaScript", "Java", "C++", "C", "SQL"],
   },
-  {
-    category: "AI / ML",
-    blurb: "Training, tuning and shipping models.",
-    items: ["PyTorch", "TensorFlow", "Scikit-learn", "OpenCV", "YOLO", "NumPy", "Pandas", "Groq API", "MCP", "Streamlit"],
-  },
-  {
-    category: "Backend",
-    blurb: "APIs that stay fast and stay secure.",
-    items: ["Django", "Django ORM", "FastAPI", "Express.js", "Node.js", "REST APIs", "JWT Auth", "OAuth2", "RBAC", "Zod"],
-  },
-  {
-    category: "Frontend",
-    blurb: "Interfaces people actually enjoy.",
-    items: ["Next.js", "React", "Tailwind CSS", "HTML", "CSS"],
-  },
-  {
-    category: "Databases",
-    blurb: "Where the data lives, indexed properly.",
-    items: ["PostgreSQL", "MySQL", "MongoDB", "SQLite", "Redis", "Prisma"],
-  },
-  {
-    category: "Testing",
-    blurb: "So deploys are boring.",
-    items: ["Pytest", "unittest", "Vitest", "Playwright", "React Testing Library", "Postman"],
-  },
-  {
-    category: "Cloud & DevOps",
-    blurb: "Getting it running, and keeping it running.",
-    items: ["AWS", "AWS EC2", "AWS S3", "Azure", "GCP", "Google Cloud Run", "Vercel", "Docker", "GitHub Actions", "CI/CD", "Linux", "Git", "GitHub"],
-  },
-] as const;
-
-/** Concepts, not libraries, so they render without logos. */
-export const systemDesign = [
-  { name: "API design & contracts", detail: "Versioned schemas, consistent errors and status codes" },
-  { name: "Latency profiling", detail: "Finding the slow path before guessing at fixes" },
-  { name: "Indexing & query tuning", detail: "Reading query plans, targeted indexes, fewer round trips" },
-  { name: "Connection pooling", detail: "Sizing pools so the database is never the queue" },
-  { name: "Payload shaping", detail: "Trimming responses so the wire isn't the bottleneck" },
-  { name: "Event-driven state", detail: "Server-side event replay with an injected clock" },
-  { name: "Search & retrieval", detail: "Full-text indexes and ranking for agent context" },
-  { name: "Auth & access control", detail: "JWT sessions, OAuth2 and role-based permissions" },
-  { name: "Audit logging", detail: "Append-only logs and reversible privileged actions" },
-  { name: "Containerized deploys", detail: "Docker images with reproducible environments" },
-] as const;
+};
 
 // ─── Experience ──────────────────────────────────────────────────────────────
 
