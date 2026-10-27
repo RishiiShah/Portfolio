@@ -18,7 +18,8 @@ export function Footer() {
           </p>
           <p className="flourish mt-4 text-2xl text-ink-2">Thanks for scrolling all the way down.</p>
           <p className="mt-8 inline-flex items-center rounded-xl border border-line-2 bg-bg px-3.5 py-2 text-sm">
-            Open to full-time SWE &amp; ML roles from {education[0].end}          </p>
+            Open to full-time SWE &amp; ML roles from {education[0].end}
+          </p>
         </div>
 
         <nav aria-label="Footer" className="md:col-span-2">
