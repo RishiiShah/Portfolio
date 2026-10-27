@@ -2,7 +2,8 @@ import { bio } from "@/data";
 import { Reveal } from "@/components/Reveal";
 
 const links = [
-  { label: "LinkedIn", href: bio.linkedin, note: "Fastest way to reach me" },
+  { label: "Email", href: `mailto:${bio.email}`, note: bio.email },
+  { label: "LinkedIn", href: bio.linkedin, note: "Let's connect" },
   { label: "GitHub", href: bio.github, note: "@RishiiShah" },];
 
 export function Contact() {
@@ -26,8 +27,7 @@ export function Contact() {
             <Reveal as="li" key={l.label} delay={i * 80} className="border-b border-line">
                 <a
                   href={l.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  {...(l.href.startsWith("mailto:") ? {} : { target: "_blank", rel: "noopener noreferrer" })}
                   className="group flex items-center justify-between gap-6 py-8"
                 >
                   <span className="font-display text-[clamp(2rem,5vw,4rem)] font-semibold tracking-tight transition-transform duration-500 ease-out-expo group-hover:translate-x-4 group-hover:text-accent">

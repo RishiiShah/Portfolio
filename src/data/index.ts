@@ -6,6 +6,7 @@ export const bio = {
   tagline: "Building at the intersection of engineering and intelligence.",
   description:
     "Rutgers M.S. Computer Science student and two-time hackathon winner building scalable backends, AI-enabled full-stack products, and computer vision research.",
+  email: "rish.shah@rutgers.edu",
   github: "https://github.com/RishiiShah",
   linkedin: "https://www.linkedin.com/in/rishabh-shah1/",
   location: "New Brunswick, NJ",

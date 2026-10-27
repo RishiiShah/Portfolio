@@ -3,6 +3,7 @@ import { bio, education, sections } from "@/data";
 const index = sections.map((s) => ({ href: `#${s.id}`, label: s.label }));
 
 const elsewhere = [
+  { href: `mailto:${bio.email}`, label: "Email" },
   { href: bio.linkedin, label: "LinkedIn" },
   { href: bio.github, label: "GitHub" },
 ];
@@ -46,8 +47,7 @@ export function Footer() {
               <li key={l.label}>
                 <a
                   href={l.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  {...(l.href.startsWith("mailto:") ? {} : { target: "_blank", rel: "noopener noreferrer" })}
                   className="group inline-flex items-center gap-1.5 text-ink-2 transition-colors hover:text-ink"
                 >
                   {l.label}

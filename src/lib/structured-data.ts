@@ -29,6 +29,7 @@ function personSchema(site: string): JsonLd {
       addressRegion: "NJ",
       addressCountry: "US",
     },
+    email: `mailto:${bio.email}`,
     sameAs: [bio.github, bio.linkedin].filter(Boolean),
     award: projects.filter((p) => p.award).map((p) => `${p.award} (${p.title})`),
     knowsAbout: [
