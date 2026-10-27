@@ -151,6 +151,14 @@
   .link-sweep:hover {
     background-size: 100% 1px;
   }
+
+  .tech-dark,
+  [data-theme="dark"] .tech-light {
+    display: none;
+  }
+  [data-theme="dark"] .tech-dark {
+    display: block;
+  }
 }
 
 @keyframes rise {

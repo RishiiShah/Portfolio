@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { experience, teaching } from "@/data";
 import { SectionHead } from "@/components/SectionHead";
 import { Reveal } from "@/components/Reveal";
+import { TechChip } from "@/components/TechIcon";
 
 const MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
 const toMonth = (s: string) => {
@@ -237,9 +238,7 @@ export function Experience() {
             {e.tech.length ? (
               <ul className="mt-8 flex flex-wrap gap-2">
                 {e.tech.map((t) => (
-                  <li key={t} className="rounded-full bg-bg-3 px-3 py-1 font-mono text-xs text-ink-2">
-                    {t}
-                  </li>
+                  <TechChip key={t} name={t} />
                 ))}
               </ul>
             ) : null}

@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { projects, type Project, type ProjectLink } from "@/data";
 import { SectionHead } from "@/components/SectionHead";
 import { Reveal } from "@/components/Reveal";
+import { TechChip, TechIcon } from "@/components/TechIcon";
+import { techIcons } from "@/data/tech-icons";
 
 const LINK_LABEL: Record<ProjectLink["type"], string> = {
   demo: "Live site",
@@ -25,6 +27,24 @@ const FILTERS = [
 ] as const;
 
 const PREVIEW_COLORS = ["bg-sun", "bg-mint", "bg-accent", "bg-cobalt !text-white"];
+
+function TechStack({ tech, className }: { tech: string[]; className: string }) {
+  const iconed = tech.filter((t) => techIcons[t]).slice(0, 6);
+  return (
+    <span aria-hidden className={`flex ${className}`}>
+      {iconed.map((t, i) => (
+        <span
+          key={t}
+          title={t}
+          className="-ml-2 grid size-9 place-items-center rounded-full border border-line-2 bg-bg-2 transition-all duration-500 ease-[cubic-bezier(0.34,1.6,0.5,1)] first:ml-0 group-hover:ml-1 group-hover:first:ml-0 group-hover:-translate-y-1 group-hover:rotate-[var(--tilt)]"
+          style={{ zIndex: iconed.length - i, transitionDelay: `${i * 35}ms`, "--tilt": `${i % 2 ? 8 : -8}deg` } as CSSProperties}
+        >
+          <TechIcon name={t} size={18} square />
+        </span>
+      ))}
+    </span>
+  );
+}
 
 function Row({
   project,
@@ -67,8 +87,12 @@ function Row({
               ✦ {project.award}
             </span>
           ) : null}
+          <TechStack tech={project.tech} className="mt-4 md:hidden" />
         </span>
-        <span className="hidden text-sm text-ink-2 md:block">{project.tags.join(" / ")}</span>
+        <span className="hidden md:block">
+          <span className="block text-sm text-ink-2">{project.tags.join(" / ")}</span>
+          <TechStack tech={project.tech} className="mt-4" />
+        </span>
         <span className="hidden font-mono text-sm text-ink-3 md:block">{project.year}</span>
         <span
           aria-hidden
@@ -118,9 +142,7 @@ function Row({
               <div className="mt-10 flex flex-wrap items-center justify-between gap-6">
                 <ul className="flex flex-wrap gap-2">
                   {project.tech.map((t) => (
-                    <li key={t} className="rounded-full bg-bg-3 px-3 py-1 font-mono text-xs text-ink-2">
-                      {t}
-                    </li>
+                    <TechChip key={t} name={t} />
                   ))}
                 </ul>
                 <div className="flex flex-wrap gap-3">
