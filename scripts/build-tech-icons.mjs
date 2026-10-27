@@ -93,6 +93,9 @@ const MAP = {
   Cursor: "logos:cursor-icon",
   "GitHub Copilot": "logos:github-copilot",
   Gemini: "logos:google-gemini-icon",
+  Kiro: "logos:kiro",
+  Matplotlib: "logos:matplotlib-icon",
+  SciPy: "si:scipy#8CAAE6",
 };
 
 function resolve(set, name) {

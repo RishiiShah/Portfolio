@@ -346,5 +346,19 @@ export const techIcons: Record<string, { src: string; dark?: string; ratio: numb
     "src": "/tech/logos-google-gemini-icon.svg",
     "dark": "/tech/logos-google-gemini-icon-dark.svg",
     "ratio": 1
+  },
+  "Kiro": {
+    "src": "/tech/logos-kiro.svg",
+    "dark": "/tech/logos-kiro-dark.svg",
+    "ratio": 0.821
+  },
+  "Matplotlib": {
+    "src": "/tech/logos-matplotlib-icon.svg",
+    "dark": "/tech/logos-matplotlib-icon-dark.svg",
+    "ratio": 1
+  },
+  "SciPy": {
+    "src": "/tech/si-scipy.svg",
+    "ratio": 1
   }
 };

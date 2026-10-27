@@ -52,7 +52,7 @@ export const stack: {
   tooling: {
     name: "AI tooling",
     blurb: "Agents in the loop, me on the review.",
-    items: ["Claude Code", "Codex", "Cursor", "Claude", "ChatGPT", "GitHub Copilot", "Gemini", "MCP"],
+    items: ["Claude Code", "Codex", "Cursor", "Kiro", "Claude", "ChatGPT", "GitHub Copilot", "Gemini", "MCP"],
   },
   layers: [
     {
@@ -75,7 +75,7 @@ export const stack: {
     {
       name: "AI / ML",
       blurb: "Training, tuning and shipping models.",
-      items: ["PyTorch", "TensorFlow", "Scikit-learn", "OpenCV", "YOLO", "NumPy", "Pandas", "Groq API"],
+      items: ["PyTorch", "TensorFlow", "Scikit-learn", "OpenCV", "YOLO", "NumPy", "Pandas", "SciPy", "Matplotlib", "Groq API"],
       patterns: [
         { name: "Retrieval for agents", detail: "Full-text indexes and ranking to cut context tokens" },
         { name: "Multi-stage validation", detail: "Model output checked by regex and structural rules before use" },
