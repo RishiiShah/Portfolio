@@ -13,6 +13,14 @@ export const bio = {
 
 // ─── Education ───────────────────────────────────────────────────────────────
 
+export const sections = [
+  { id: "work", label: "Work" },
+  { id: "experience", label: "Experience" },
+  { id: "research", label: "Research" },
+  { id: "toolkit", label: "Stack" },
+  { id: "contact", label: "Contact" },
+] as const;
+
 export const education = [
   {
     degree: "M.S. in Computer Science",
@@ -22,12 +30,14 @@ export const education = [
     end: "May 2027",
     gpa: "3.83 / 4.0",
     coursework: [
-      "Machine Learning",
-      "Natural Language Processing",
-      "Massive Data Mining",
-      "Data Structures & Algorithms",
-      "Operating System Design",
-      "Database Systems for Data Science",
+      {
+        area: "Machine learning",
+        courses: ["Machine Learning", "Natural Language Processing", "Massive Data Mining"],
+      },
+      {
+        area: "Systems",
+        courses: ["Data Structures & Algorithms", "Operating System Design", "Database Systems for Data Science"],
+      },
     ],
   },
   {
@@ -40,14 +50,49 @@ export const education = [
     college: "Dwarkadas J. Sanghvi College of Engineering",
     honors: "Honors in Computational Biology",
     coursework: [
-      "Deep Learning",
-      "Large Language Models",
-      "Natural Language Processing",
-      "Computer Vision",
-      "Time Series Forecasting",
-      "MLOps",
-      "Cloud Computing",
-      "Advanced Algorithms",
+      {
+        area: "AI & machine learning",
+        courses: [
+          "Artificial Intelligence",
+          "Machine Learning",
+          "Deep Learning",
+          "Large Language Models",
+          "Natural Language Processing",
+          "Computer Vision I & II",
+          "Reinforcement Learning",
+          "Probabilistic Models",
+        ],
+      },
+      {
+        area: "Data",
+        courses: [
+          "Foundations of Data Science",
+          "Statistics for Engineers",
+          "Time Series Analysis",
+          "Data Engineering & Visualization",
+          "Text, Web & Social Analytics",
+          "Advanced Business Intelligence",
+        ],
+      },
+      {
+        area: "Computer science",
+        courses: [
+          "Data Structures & Algorithms",
+          "Advanced Algorithms",
+          "Database Management Systems",
+          "Operating Systems",
+          "Computer Networks & Security",
+          "Secure Software Systems",
+        ],
+      },
+      {
+        area: "Systems & deployment",
+        courses: ["Cloud Computing", "High Performance Computing", "DevOps", "MLOps", "IoT & Edge Computing"],
+      },
+      {
+        area: "Honors: computational biology",
+        courses: ["Algorithms for Computational Biology", "Big Data in Bioinformatics", "Genomic Data Science"],
+      },
     ],
   },
 ] as const;
@@ -623,126 +668,53 @@ export const projects: Project[] = [
 
 // ─── AI/ML lab ────────────────────────────────────────────────────────────────
 
-export interface LabModel {
-  slug: Project["slug"];
-  name: string;
-  kind: string;
-  stages: { label: string; detail: string }[];
-  stats: { value: string; label: string }[];
-  /** Index into the project's `lessons` for the pull quote. */
-  lesson: number;
-}
+export type PipelineStage = { label: string; detail: string };
 
-export const labModels: LabModel[] = [
-  {
-    slug: "traffic-violation-detection",
-    name: "Traffic surveillance",
-    kind: "Computer vision",
-    stages: [
-      { label: "Live video", detail: "60 fps feeds; checks fire only when a vehicle crosses a virtual line" },
-      { label: "YOLO12-X", detail: "Best of 5 YOLO11/12 variants for red lights, helmets and speeding" },
-      { label: "ByteTrack", detail: "Per-vehicle state and duplicate-ticket suppression" },
-      { label: "Llama 4 Scout", detail: "Plate OCR, retried on the next sharpest frame, regex-checked" },
-      { label: "Challan", detail: "PDF evidence to S3, delivered by Twilio SMS" },
-    ],
-    stats: [
-      { value: "93.76%", label: "End-to-end accuracy" },
-      { value: "90.61%", label: "mAP@50-95, YOLO12-X" },
-      { value: "92.7%", label: "Plate OCR accuracy" },
-    ],
-    lesson: 0,
-  },
-  {
-    slug: "wgan-gp-financial-timeseries",
-    name: "Synthetic markets",
-    kind: "Generative model",
-    stages: [
-      { label: "Market windows", detail: "6 AAPL features modeled as conditional sequences" },
-      { label: "Causal TCN", detail: "Temporal convolutions that never see the future" },
-      { label: "Stacked LSTM", detail: "Long-range structure in a 264K-parameter generator" },
-      { label: "WGAN-GP critic", detail: "Gradient penalty plus mean-variance matching" },
-      { label: "Augment", detail: "Synthetic sequences join the LSTM forecaster's training" },
-    ],
-    stats: [
-      { value: "1.15%", label: "Forecast MAPE, down from 2.07%" },
-      { value: "0.7624", label: "Hurst exponent, real is 0.7626" },
-      { value: "264K", label: "Generator parameters" },
-    ],
-    lesson: 0,
-  },
-  {
-    slug: "music-genre-detection",
-    name: "Genre classifier",
-    kind: "Audio",
-    stages: [
-      { label: "Audio clip", detail: "Uploaded track, features extracted on the fly" },
-      { label: "Librosa", detail: "MFCCs plus spectral centroid and rolloff" },
-      { label: "Bi-LSTM", detail: "Two bidirectional layers with dropout" },
-      { label: "Quantize", detail: "Post-training quantization for cheap serving" },
-      { label: "Streamlit", detail: "Per-genre probabilities and confidence" },
-    ],
-    stats: [
-      { value: "98.73%", label: "Accuracy across 10 genres" },
-      { value: "−15%", label: "Model size" },
-      { value: "+22%", label: "Inference speed" },
-    ],
-    lesson: 0,
-  },
-  {
-    slug: "jarvis-voice-assistant",
-    name: "JARVIS",
-    kind: "Voice + LLM",
-    stages: [
-      { label: "Wake word", detail: "“JARVIS”, after noise filtering" },
-      { label: "Speech to text", detail: "Spectral filtering for accents and noisy rooms" },
-      { label: "Fast path", detail: "Math, reminders and apps skip the LLM entirely" },
-      { label: "Llama 3.1 8B", detail: "On Groq, behind guard prompts for privacy" },
-      { label: "Home", detail: "Azure IoT Hub to Raspberry Pi GPIO" },
-    ],
-    stats: [
-      { value: "4", label: "Modules" },
-      { value: "0", label: "Voice commands stored" },
-      { value: "ISTE", label: "Published 2025" },
-    ],
-    lesson: 0,
-  },
-  {
-    slug: "csegraph",
-    name: "CseGraph",
-    kind: "Retrieval for agents",
-    stages: [
-      { label: "Repository", detail: "Python, JavaScript and TypeScript sources" },
-      { label: "Tree-sitter", detail: "Symbols, imports, calls and tests into a SQLite graph" },
-      { label: "FTS5 · BM25", detail: "Keyword search fused with graph proximity" },
-      { label: "Token budget", detail: "Only the context the task actually needs" },
-      { label: "MCP tools", detail: "Served to coding agents over 6 tools and a CLI" },
-    ],
-    stats: [
-      { value: "−82.3%", label: "Median context, 1,540 → 273 tokens" },
-      { value: "100%", label: "Target recall over 364 tasks" },
-      { value: "177K+", label: "Symbols across 12 repos" },
-    ],
-    lesson: 0,
-  },
-  {
-    slug: "composur",
-    name: "Composur",
-    kind: "LLM evaluation",
-    stages: [
-      { label: "Question corpus", detail: "Curated questions, ingested idempotently into pgvector" },
-      { label: "RAG", detail: "Grounded questions retrieved per interview type" },
-      { label: "Live interview", detail: "Recorded in 5 MiB chunks straight to S3" },
-      { label: "Prompt budget", detail: "Older exchanges dropped whole to fit 256 KiB" },
-      { label: "Verdict", detail: "Gemini strict schema, exact quotes, weighted in Go" },
-    ],
-    stats: [
-      { value: "8", label: "Interview types" },
-      { value: "256", label: "KiB prompt budget" },
-      { value: "32", label: "MiB recording memory cap" },
-    ],
-    lesson: 1,
-  },
-];
+/** How data moves through a project, stage by stage. Keyed by project slug. */
+export const pipelines: Partial<Record<Project["slug"], PipelineStage[]>> = {
+  "traffic-violation-detection": [
+    { label: "Live video", detail: "60 fps feeds; checks fire only when a vehicle crosses a virtual line" },
+    { label: "YOLO12-X", detail: "Best of 5 YOLO11/12 variants for red lights, helmets and speeding" },
+    { label: "ByteTrack", detail: "Per-vehicle state and duplicate-ticket suppression" },
+    { label: "Llama 4 Scout", detail: "Plate OCR, retried on the next sharpest frame, regex-checked" },
+    { label: "Challan", detail: "PDF evidence to S3, delivered by Twilio SMS" },
+  ],
+  "wgan-gp-financial-timeseries": [
+    { label: "Market windows", detail: "6 AAPL features modeled as conditional sequences" },
+    { label: "Causal TCN", detail: "Temporal convolutions that never see the future" },
+    { label: "Stacked LSTM", detail: "Long-range structure in a 264K-parameter generator" },
+    { label: "WGAN-GP critic", detail: "Gradient penalty plus mean-variance matching" },
+    { label: "Augment", detail: "Synthetic sequences join the LSTM forecaster's training" },
+  ],
+  "music-genre-detection": [
+    { label: "Audio clip", detail: "Uploaded track, features extracted on the fly" },
+    { label: "Librosa", detail: "MFCCs plus spectral centroid and rolloff" },
+    { label: "Bi-LSTM", detail: "Two bidirectional layers with dropout" },
+    { label: "Quantize", detail: "Post-training quantization for cheap serving" },
+    { label: "Streamlit", detail: "Per-genre probabilities and confidence" },
+  ],
+  "jarvis-voice-assistant": [
+    { label: "Wake word", detail: "“JARVIS”, after noise filtering" },
+    { label: "Speech to text", detail: "Spectral filtering for accents and noisy rooms" },
+    { label: "Fast path", detail: "Math, reminders and apps skip the LLM entirely" },
+    { label: "Llama 3.1 8B", detail: "On Groq, behind guard prompts for privacy" },
+    { label: "Home", detail: "Azure IoT Hub to Raspberry Pi GPIO" },
+  ],
+  "csegraph": [
+    { label: "Repository", detail: "Python, JavaScript and TypeScript sources" },
+    { label: "Tree-sitter", detail: "Symbols, imports, calls and tests into a SQLite graph" },
+    { label: "FTS5 · BM25", detail: "Keyword search fused with graph proximity" },
+    { label: "Token budget", detail: "Only the context the task actually needs" },
+    { label: "MCP tools", detail: "Served to coding agents over 6 tools and a CLI" },
+  ],
+  "composur": [
+    { label: "Question corpus", detail: "Curated questions, ingested idempotently into pgvector" },
+    { label: "RAG", detail: "Grounded questions retrieved per interview type" },
+    { label: "Live interview", detail: "Recorded in 5 MiB chunks straight to S3" },
+    { label: "Prompt budget", detail: "Older exchanges dropped whole to fit 256 KiB" },
+    { label: "Verdict", detail: "Gemini strict schema, exact quotes, weighted in Go" },
+  ],
+};
 
 // ─── Publications ─────────────────────────────────────────────────────────────
 

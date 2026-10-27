@@ -29,7 +29,7 @@ type Entry = {
   bullets: string[];
   highlights: { value: string; label: string }[];
   tech: string[];
-  coursework: string[];
+  coursework: { area: string; courses: readonly string[] }[];
   color: string;
 };
 
@@ -263,7 +263,7 @@ export function Experience() {
   return (
     <section id="experience" className="shell scroll-mt-16 py-28 md:py-40">
       <SectionHead
-        index="03"
+        index="02"
         title="Where I've"
         flourish="been"
         note="Two internships shipping to production, two degrees, and now teaching the fundamentals at Rutgers. Pick a stop on the timeline."
@@ -357,17 +357,24 @@ export function Experience() {
             {e.coursework.length ? (
               <div className="mt-10">
                 <h4 className="label">Relevant coursework</h4>
-                <ul className="mt-4 flex flex-wrap gap-2">
-                  {e.coursework.map((c, i) => (
-                    <li
-                      key={c}
-                      className="rounded-lg border border-line px-3.5 py-2 text-sm text-ink-2 [animation:pop-in_0.5s_var(--ease-out-expo)_backwards]"
-                      style={{ animationDelay: `${120 + i * 50}ms` }}
+                <div className="mt-5 grid gap-x-8 gap-y-6 sm:grid-cols-2">
+                  {e.coursework.map((g, gi) => (
+                    <div
+                      key={g.area}
+                      className="[animation:pop-in_0.5s_var(--ease-out-expo)_backwards]"
+                      style={{ animationDelay: `${120 + gi * 70}ms` }}
                     >
-                      {c}
-                    </li>
+                      <p className="font-display text-base font-semibold tracking-tight">{g.area}</p>
+                      <ul className="mt-2.5 flex flex-wrap gap-1.5">
+                        {g.courses.map((c) => (
+                          <li key={c} className="rounded-lg border border-line px-3 py-1.5 text-sm text-ink-2">
+                            {c}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   ))}
-                </ul>
+                </div>
               </div>
             ) : null}
 

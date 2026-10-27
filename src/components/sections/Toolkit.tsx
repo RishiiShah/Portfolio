@@ -7,7 +7,7 @@ import { techIcons } from "@/data/tech-icons";
 export function Toolkit() {
   return (
     <section id="toolkit" className="shell scroll-mt-16 py-28 md:py-40">
-      <SectionHead index="05" title="My" flourish="stack" note="The tools I work with, grouped the way job posts list them." />
+      <SectionHead index="04" title="My" flourish="stack" note="The tools I work with, grouped the way job posts list them." />
 
       <dl className="border-b border-line">
         {stack.map((g) => (

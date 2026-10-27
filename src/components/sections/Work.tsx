@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { projects, type Project, type ProjectLink } from "@/data";
+import { pipelines, projects, type Project, type ProjectLink } from "@/data";
+import { Pipeline } from "@/components/Pipeline";
 import { SectionHead } from "@/components/SectionHead";
 import { Reveal } from "@/components/Reveal";
 import { TechChip, TechIcon } from "@/components/TechIcon";
@@ -188,6 +189,18 @@ function Row({
                     </div>
                   ))}
                 </dl>
+              ) : null}
+
+              {pipelines[project.slug] ? (
+                <div className="mt-10">
+                  <div className="flex flex-wrap items-baseline justify-between gap-2">
+                    <p className="flourish text-2xl text-ink">How the data flows</p>
+                    <p className="hidden text-sm text-ink-3 md:block">Hover a stage to pause it</p>
+                  </div>
+                  <div className="mt-5">
+                    <Pipeline stages={pipelines[project.slug]!} />
+                  </div>
+                </div>
               ) : null}
 
               <DeepDive project={project} />

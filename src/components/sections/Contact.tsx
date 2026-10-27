@@ -10,7 +10,7 @@ export function Contact() {
     <section id="contact" className="relative scroll-mt-16 overflow-hidden border-t border-line">
       <div className="shell pb-28 pt-28 md:pb-40 md:pt-40">
         <Reveal>
-          <p className="label">06 · Say hi</p>
+          <p className="label">05 · Say hi</p>
           <h2 className="display mt-8 text-[clamp(3.5rem,11vw,11rem)]">
             Got a problem
             <br />

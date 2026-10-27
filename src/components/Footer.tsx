@@ -1,17 +1,11 @@
-import { bio, education } from "@/data";
+import { bio, education, sections } from "@/data";
 
-const index = [
-  { href: "#work", label: "Work" },
-  { href: "#lab", label: "AI/ML lab" },
-  { href: "#experience", label: "Experience" },
-  { href: "#research", label: "Research" },
-  { href: "#toolkit", label: "Toolkit" },
-  { href: "#contact", label: "Contact" },
-];
+const index = sections.map((s) => ({ href: `#${s.id}`, label: s.label }));
 
 const elsewhere = [
   { href: bio.linkedin, label: "LinkedIn" },
-  { href: bio.github, label: "GitHub" },];
+  { href: bio.github, label: "GitHub" },
+];
 
 export function Footer() {
   return (
