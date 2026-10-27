@@ -297,8 +297,7 @@ export function Experience() {
                     on ? "border-ink bg-bg-2 shadow-[4px_4px_0_var(--color-ink)]" : "border-transparent hover:border-line-2 hover:bg-bg-2/60"
                   }`}
                 >
-                  <span className={`absolute left-5 top-5 size-2.5 rounded-full ${x.color} ${on ? "" : "opacity-50"}`} />
-                  <span className="block pl-5 font-mono text-xs text-ink-3">{x.when}</span>
+                  <span className="block font-mono text-xs text-ink-3">{x.when}</span>
                   <span className="mt-2 block font-display text-xl font-semibold tracking-tight">{x.role}</span>
                   <span className="mt-1 block text-sm text-ink-2">{x.organization}</span>
                 </button>,
