@@ -31,20 +31,33 @@ export function ThemeToggle() {
       aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
       className="group relative grid size-9 place-items-center overflow-hidden rounded-full border border-line-2 transition-colors hover:border-ink"
     >
-      <span
+      <svg
         aria-hidden
-        className={`absolute size-4 rounded-full bg-sun transition-all duration-500 ease-[cubic-bezier(0.34,1.6,0.5,1)] ${
-          dark ? "translate-y-6 scale-50 opacity-0" : "group-hover:rotate-90"
+        viewBox="0 0 24 24"
+        className={`absolute size-[1.15rem] text-ink transition-all duration-500 ease-[cubic-bezier(0.34,1.6,0.5,1)] ${
+          dark ? "translate-y-6 scale-50 opacity-0" : "group-hover:rotate-45"
         }`}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={2}
+        strokeLinecap="round"
       >
-        <span className="absolute inset-[-5px] rounded-full border-2 border-dotted border-sun" />
-      </span>
-      <span
+        <circle cx="12" cy="12" r="4" className="fill-sun stroke-ink" />
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+      </svg>
+      <svg
         aria-hidden
-        className={`absolute size-4 rounded-full shadow-[inset_-5px_-2px_0_0_var(--color-ink)] transition-all duration-500 ease-[cubic-bezier(0.34,1.6,0.5,1)] ${
+        viewBox="0 0 24 24"
+        className={`absolute size-[1.15rem] text-ink transition-all duration-500 ease-[cubic-bezier(0.34,1.6,0.5,1)] ${
           dark ? "group-hover:-rotate-12" : "-translate-y-6 scale-50 opacity-0"
         }`}
-      />
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={2}
+        strokeLinejoin="round"
+      >
+        <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z" className="fill-sun" />
+      </svg>
     </button>
   );
 }
