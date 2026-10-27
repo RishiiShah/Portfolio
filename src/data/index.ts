@@ -38,66 +38,53 @@ export const education = [
 export const skills = [
   {
     category: "Languages",
-    items: ["Python", "Java", "C++", "C", "TypeScript", "JavaScript", "SQL"],
+    blurb: "What I think in.",
+    items: ["Python", "TypeScript", "JavaScript", "Java", "C++", "C", "SQL"],
   },
   {
-    category: "Frameworks & Tools",
-    items: [
-      "Django",
-      "Django ORM",
-      "FastAPI",
-      "Express.js",
-      "Next.js",
-      "React",
-      "REST APIs",
-      "JWT Auth",
-      "OAuth2",
-      "RBAC",
-      "Zod",
-      "Tailwind CSS",
-      "HTML",
-      "CSS",
-      "Docker",
-      "Git",
-      "GitHub",
-      "GitHub Actions",
-      "CI/CD",
-      "Linux",
-    ],
+    category: "AI / ML",
+    blurb: "Training, tuning and shipping models.",
+    items: ["PyTorch", "TensorFlow", "Scikit-learn", "OpenCV", "YOLO", "NumPy", "Pandas", "Groq API", "MCP", "Streamlit"],
   },
   {
-    category: "Databases & Cloud",
-    items: [
-      "PostgreSQL",
-      "MySQL",
-      "MongoDB",
-      "SQLite",
-      "Redis",
-      "Prisma",
-      "AWS",
-      "AWS EC2",
-      "AWS S3",
-      "Azure",
-      "GCP",
-      "Google Cloud Run",
-      "Vercel",
-    ],
+    category: "Backend",
+    blurb: "APIs that stay fast and stay secure.",
+    items: ["Django", "Django ORM", "FastAPI", "Express.js", "Node.js", "REST APIs", "JWT Auth", "OAuth2", "RBAC", "Zod"],
+  },
+  {
+    category: "Frontend",
+    blurb: "Interfaces people actually enjoy.",
+    items: ["Next.js", "React", "Tailwind CSS", "HTML", "CSS"],
+  },
+  {
+    category: "Databases",
+    blurb: "Where the data lives, indexed properly.",
+    items: ["PostgreSQL", "MySQL", "MongoDB", "SQLite", "Redis", "Prisma"],
   },
   {
     category: "Testing",
-    items: [
-      "Pytest",
-      "unittest",
-      "Vitest",
-      "Playwright",
-      "React Testing Library",
-      "Postman",
-    ],
+    blurb: "So deploys are boring.",
+    items: ["Pytest", "unittest", "Vitest", "Playwright", "React Testing Library", "Postman"],
   },
   {
-    category: "AI/ML",
-    items: ["TensorFlow", "PyTorch", "Scikit-learn", "OpenCV", "YOLO", "NumPy", "Pandas", "Groq API", "MCP", "Streamlit"],
+    category: "Cloud & DevOps",
+    blurb: "Getting it running, and keeping it running.",
+    items: ["AWS", "AWS EC2", "AWS S3", "Azure", "GCP", "Google Cloud Run", "Vercel", "Docker", "GitHub Actions", "CI/CD", "Linux", "Git", "GitHub"],
   },
+] as const;
+
+/** Concepts, not libraries, so they render without logos. */
+export const systemDesign = [
+  { name: "API design & contracts", detail: "Versioned schemas, consistent errors and status codes" },
+  { name: "Latency profiling", detail: "Finding the slow path before guessing at fixes" },
+  { name: "Indexing & query tuning", detail: "Reading query plans, targeted indexes, fewer round trips" },
+  { name: "Connection pooling", detail: "Sizing pools so the database is never the queue" },
+  { name: "Payload shaping", detail: "Trimming responses so the wire isn't the bottleneck" },
+  { name: "Event-driven state", detail: "Server-side event replay with an injected clock" },
+  { name: "Search & retrieval", detail: "Full-text indexes and ranking for agent context" },
+  { name: "Auth & access control", detail: "JWT sessions, OAuth2 and role-based permissions" },
+  { name: "Audit logging", detail: "Append-only logs and reversible privileged actions" },
+  { name: "Containerized deploys", detail: "Docker images with reproducible environments" },
 ] as const;
 
 // ─── Experience ──────────────────────────────────────────────────────────────
@@ -434,6 +421,7 @@ export const projects: Project[] = [
       "Generative adversarial network for realistic stock market data synthesis with 98.83% downstream accuracy.",
     tech: ["Python", "PyTorch", "NumPy", "Pandas"],
     tags: ["MLOps", "Research"],
+    links: [{ type: "paper", url: "https://onlinelibrary.wiley.com/doi/10.1002/9781394357789.ch34" }],
     impact:
       "Generative model producing statistically valid synthetic market data that augments training sets, improving downstream prediction from 97.93% to 98.83% accuracy.",
     featured: false,
@@ -784,7 +772,7 @@ export const publications: Publication[] = [
       "Bridging Financial Data Gaps with WGAN-GP: Generating Synthetic Time Series for Robust Models",
     venue:
       "Explainable Artificial Intelligence, Volume 2: Bridging Concepts, Applications, and Future Challenges (Ch. 34, pp. 739-754)",
-    publisher: "Scrivener Publishing",
+    publisher: "Wiley · Scrivener Publishing",
     year: 2026,
     publishedAt: "2026",
     authors: [
@@ -799,7 +787,7 @@ export const publications: Publication[] = [
       "We propose a methodology to synthesize financial time series data using a Wasserstein Generative Adversarial Network with Gradient Penalty (WGAN-GP), demonstrating the ability to recreate real-world data and augment available datasets. The framework enhances predictive model capabilities by 0.9% in accuracy, leading to more reliable forecasting and improved event classification, including identification of rare events such as recessions or pandemics.",
     projectSlug: "wgan-gp-financial-timeseries",
     featured: true,
-    links: [],
+    links: [{ type: "paper", url: "https://onlinelibrary.wiley.com/doi/10.1002/9781394357789.ch34" }],
   },
   {
     title: "JARVIS: Voice Assistant with Smart Home Automation",
