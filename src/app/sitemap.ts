@@ -12,11 +12,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 1,
       images: [`${site}/og-image.png`],
     },
-    {
-      url: `${site}/resume.pdf`,
-      lastModified: now,
-      changeFrequency: "monthly",
-      priority: 0.8,
-    },
   ];
 }

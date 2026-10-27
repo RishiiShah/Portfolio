@@ -11,9 +11,7 @@ const index = [
 
 const elsewhere = [
   { href: bio.linkedin, label: "LinkedIn" },
-  { href: bio.github, label: "GitHub" },
-  { href: bio.resume, label: "Résumé" },
-];
+  { href: bio.github, label: "GitHub" },];
 
 export function Footer() {
   return (

@@ -8,7 +8,6 @@ export const bio = {
     "Rutgers M.S. Computer Science student and two-time hackathon winner building scalable backends, AI-enabled full-stack products, and computer vision research.",
   github: "https://github.com/RishiiShah",
   linkedin: "https://www.linkedin.com/in/rishabh-shah1/",
-  resume: "/resume.pdf",
   location: "New Brunswick, NJ",
 } as const;
 

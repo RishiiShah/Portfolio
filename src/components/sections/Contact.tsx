@@ -3,9 +3,7 @@ import { Reveal } from "@/components/Reveal";
 
 const links = [
   { label: "LinkedIn", href: bio.linkedin, note: "Fastest way to reach me" },
-  { label: "GitHub", href: bio.github, note: "@RishiiShah" },
-  { label: "Résumé", href: bio.resume, note: "One page, PDF" },
-];
+  { label: "GitHub", href: bio.github, note: "@RishiiShah" },];
 
 export function Contact() {
   return (

@@ -70,12 +70,10 @@ export function Hero() {
               See the work ↓
             </a>
             <a
-              href={bio.resume}
-              target="_blank"
-              rel="noopener noreferrer"
+              href="#contact"
               className="inline-flex h-11 items-center whitespace-nowrap rounded-xl border border-line-2 px-5 text-sm transition-colors hover:border-ink"
             >
-              Résumé
+              Say hi
             </a>
           </div>
         </div>
