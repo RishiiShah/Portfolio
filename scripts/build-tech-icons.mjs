@@ -94,6 +94,12 @@ const MAP = {
   "GitHub Copilot": "logos:github-copilot",
   Gemini: "logos:google-gemini-icon",
   Kiro: "logos:kiro",
+  Go: "logos:go",
+  Pydantic: "logos:pydantic-icon",
+  Clerk: "logos:clerk-icon",
+  pgvector: "logos:postgresql",
+  Render: "si:render#000000",
+  Keras: "si:keras#D00000",
   Matplotlib: "logos:matplotlib-icon",
   SciPy: "si:scipy#8CAAE6",
 };

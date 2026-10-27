@@ -352,6 +352,32 @@ export const techIcons: Record<string, { src: string; dark?: string; ratio: numb
     "dark": "/tech/logos-kiro-dark.svg",
     "ratio": 0.821
   },
+  "Go": {
+    "src": "/tech/logos-go.svg",
+    "ratio": 2.667
+  },
+  "Pydantic": {
+    "src": "/tech/logos-pydantic-icon.svg",
+    "ratio": 1.153
+  },
+  "Clerk": {
+    "src": "/tech/logos-clerk-icon.svg",
+    "ratio": 0.79
+  },
+  "pgvector": {
+    "src": "/tech/logos-postgresql.svg",
+    "dark": "/tech/logos-postgresql-dark.svg",
+    "ratio": 0.97
+  },
+  "Render": {
+    "src": "/tech/si-render.svg",
+    "dark": "/tech/si-render-dark.svg",
+    "ratio": 1
+  },
+  "Keras": {
+    "src": "/tech/si-keras.svg",
+    "ratio": 1
+  },
   "Matplotlib": {
     "src": "/tech/logos-matplotlib-icon.svg",
     "dark": "/tech/logos-matplotlib-icon-dark.svg",

@@ -13,6 +13,7 @@ const LINK_LABEL: Record<ProjectLink["type"], string> = {
   source: "Source",
   paper: "Paper",
   blog: "Write-up",
+  package: "PyPI",
 };
 
 const caseStudies = projects.filter((p): p is Project & Required<Pick<Project, "caseStudy">> => !!p.caseStudy);

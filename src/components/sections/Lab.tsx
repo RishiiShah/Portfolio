@@ -6,7 +6,7 @@ import { SectionHead } from "@/components/SectionHead";
 import { Reveal } from "@/components/Reveal";
 import { CountUp } from "@/components/CountUp";
 
-const LINK_LABEL = { demo: "Live site", video: "Watch demo", source: "Source", paper: "Paper", blog: "Write-up" } as const;
+const LINK_LABEL = { demo: "Live site", video: "Watch demo", source: "Source", paper: "Paper", blog: "Write-up", package: "PyPI" } as const;
 const STEP_MS = 1100;
 
 export function Lab() {

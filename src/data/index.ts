@@ -22,6 +22,17 @@ export const education = [
     start: "September 2025",
     end: "May 2027",
     gpa: "3.83 / 4.0",
+    coursework: [
+      "Machine Learning I",
+      "Natural Language Processing",
+      "Intro to Artificial Intelligence",
+      "Brain-Inspired Computing",
+      "Massive Data Mining",
+      "Data Structures & Algorithms",
+      "Operating System Design",
+      "Database Systems for Data Science",
+      "Programming Finance",
+    ],
   },
   {
     degree: "B.Tech. in Artificial Intelligence & Data Science",
@@ -30,6 +41,20 @@ export const education = [
     start: "December 2021",
     end: "June 2025",
     gpa: "7.76 / 10.0",
+    honors: "Honors in Computational Biology",
+    coursework: [
+      "Large Language Models",
+      "Deep Learning",
+      "Computer Vision",
+      "MLOps",
+      "Time Series Analysis & Forecasting",
+      "Foundations of Data Science",
+      "Data Engineering & Visualisation",
+      "Advanced Algorithms",
+      "Cloud Computing",
+      "DevOps",
+      "Computer Networks & Security",
+    ],
   },
 ] as const;
 
@@ -63,38 +88,56 @@ export const stack: {
     {
       name: "Backend",
       blurb: "APIs that stay fast and stay secure.",
-      items: ["Django", "Django ORM", "FastAPI", "Express.js", "Node.js", "REST APIs", "JWT Auth", "OAuth2", "RBAC", "Zod"],
+      items: ["Django", "Django ORM", "FastAPI", "Express.js", "Node.js", "REST APIs", "Pydantic", "Zod", "JWT Auth", "OAuth2", "Clerk", "RBAC"],
       patterns: [
         { name: "API contracts", detail: "Consistent schemas, errors and status codes across endpoints" },
         { name: "Latency profiling", detail: "Finding the slow path before guessing at fixes" },
         { name: "Payload shaping", detail: "Trimming responses so the wire is not the bottleneck" },
         { name: "Event replay", detail: "Server-side state rebuilt from an event stream with an injected clock" },
         { name: "Role-based access", detail: "JWT sessions and permissions per admin, staff and client" },
+        { name: "Rate limiting", detail: "Postgres-backed limits, CSRF checks and presigned per-user keys" },
+        { name: "Chunked uploads", detail: "5 MiB multipart parts straight to S3, with retry and reconciliation" },
       ],
     },
     {
       name: "AI / ML",
       blurb: "Training, tuning and shipping models.",
-      items: ["PyTorch", "TensorFlow", "Scikit-learn", "OpenCV", "YOLO", "NumPy", "Pandas", "SciPy", "Matplotlib", "Groq API"],
+      items: ["PyTorch", "TensorFlow", "Keras", "Scikit-learn", "OpenCV", "YOLO", "Groq API", "Gemini"],
       patterns: [
-        { name: "Retrieval for agents", detail: "Full-text indexes and ranking to cut context tokens" },
+        { name: "RAG & embeddings", detail: "Grounded generation over pgvector with a retrieval verification script" },
+        { name: "BM25 + graph ranking", detail: "Keyword search fused with symbol-graph proximity under a token budget" },
+        { name: "Strict-schema output", detail: "JSON Schema responses with exact-quote citations" },
+        { name: "Prompt budgeting", detail: "Whole exchanges dropped, omissions flagged to the model" },
         { name: "Multi-stage validation", detail: "Model output checked by regex and structural rules before use" },
+      ],
+    },
+    {
+      name: "Data science",
+      blurb: "Asking the data first, modeling second.",
+      items: ["Pandas", "NumPy", "SciPy", "Matplotlib", "SQL"],
+      patterns: [
+        { name: "Hypothesis testing", detail: "Deciding whether a difference is real before acting on it" },
+        { name: "Regression", detail: "Simple, explainable baselines before anything deep" },
+        { name: "Time-series forecasting", detail: "LSTM and TCN forecasters, judged on MAPE" },
+        { name: "Correlation analysis", detail: "Pearson, Spearman and correlation-matrix distance" },
       ],
     },
     {
       name: "Databases",
       blurb: "Where the data lives, indexed properly.",
-      items: ["PostgreSQL", "MySQL", "MongoDB", "SQLite", "Redis", "Prisma"],
+      items: ["PostgreSQL", "pgvector", "MySQL", "MongoDB", "SQLite", "Redis", "Prisma"],
       patterns: [
         { name: "Indexing & query tuning", detail: "Targeted indexes and fewer ORM round trips" },
         { name: "Connection pooling", detail: "Sizing pools so the database is never the queue" },
         { name: "Append-only audit logs", detail: "Every privileged action traceable and reversible" },
+        { name: "Atomic index swaps", detail: "SHA-256 change detection, then a crash-safe swap" },
+        { name: "Idempotent ingestion", detail: "Re-running a load never duplicates a row" },
       ],
     },
     {
       name: "Cloud",
       blurb: "Where it all runs.",
-      items: ["AWS", "AWS EC2", "AWS S3", "Azure", "GCP", "Google Cloud Run", "Vercel"],
+      items: ["AWS", "AWS EC2", "AWS S3", "Azure", "GCP", "Google Cloud Run", "Vercel", "Render"],
     },
   ],
   pillars: [
@@ -104,7 +147,7 @@ export const stack: {
       items: ["Docker", "GitHub Actions", "CI/CD", "Git", "GitHub", "Linux", "Streamlit"],
       patterns: [
         { name: "Containerized deploys", detail: "Docker images with reproducible environments" },
-        { name: "Eval gates", detail: "Synthetic data and models validated on unseen data before use" },
+        { name: "Eval-gated releases", detail: "PR and nightly evaluation suites must hold 100% recall to ship" },
       ],
     },
     {
@@ -117,7 +160,7 @@ export const stack: {
   foundation: {
     name: "Languages",
     blurb: "What everything above is written in.",
-    items: ["Python", "TypeScript", "JavaScript", "Java", "C++", "C", "SQL"],
+    items: ["Python", "TypeScript", "JavaScript", "Go", "Java", "C++", "C", "SQL"],
   },
 };
 
@@ -163,6 +206,7 @@ export const experience: ExperienceItem[] = [
     bullets: [
       "Reduced P95 API latency by 86% (3,100 ms to 420 ms) by profiling Django request paths, optimizing ORM-generated MySQL queries, adding targeted indexes, tuning connection pooling, and trimming response payloads.",
       "Reduced recurring API integration defects by 30% across 12+ REST endpoints by standardizing Django serializer validation, request and response schemas, error handling, and HTTP status codes.",
+      "Delivered 5+ features on schedule as infrastructure lead for a 4-person team by running sprint planning and system design.",
       "Secured 4 Django backend components by implementing JWT authentication and RBAC for admin, staff, and client roles.",
       "Reduced deployment setup effort by 65% for a 4-person team by containerizing Django services with Docker and standardizing AWS EC2, S3, and environment configuration.",
     ],
@@ -195,7 +239,7 @@ export const experience: ExperienceItem[] = [
 // ─── Projects ────────────────────────────────────────────────────────────────
 
 export interface ProjectLink {
-  type: "demo" | "video" | "source" | "paper" | "blog";
+  type: "demo" | "video" | "source" | "paper" | "blog" | "package";
   url: string;
 }
 
@@ -304,7 +348,7 @@ export const projects: Project[] = [
     caseStudy: {
       problem: "Coding agents burn tokens and tool calls hunting through a repository for context.",
       built: "A Tree-sitter symbol graph in SQLite, queried with BM25 and graph walks under a token budget.",
-      result: "82% less context per task (1,540 → 273 tokens), served over a CLI and 6 MCP tools.",
+      result: "82.3% less context (1,540 → 273 tokens) over 364 tasks at 100% recall. Shipped to PyPI.",
     },
     year: "2026",
     title: "CseGraph",
@@ -314,13 +358,18 @@ export const projects: Project[] = [
     tags: ["Systems", "Backend", "Developer Tools"],
     impact:
       "Adaptive FTS/BM25 and graph-proximity retrieval with token budgets and strict schemas, serving task-scoped context across 9 CLI commands and 6 MCP tools.",
-    links: [{ type: "source", url: "https://github.com/RishiiShah/Csegraph" }],
+    links: [
+      { type: "source", url: "https://github.com/RishiiShah/Csegraph" },
+      { type: "package", url: "https://pypi.org/project/csegraph/" },
+    ],
     featured: true,
     metrics: [
-      { label: "CLI Commands", value: "9" },
-      { label: "MCP Tools", value: "6" },
-      { label: "Languages Indexed", value: "Python, JS, TS" },
-      { label: "Index Store", value: "SQLite" },
+      { label: "Median context", value: "−82.3%" },
+      { label: "Target recall", value: "100%" },
+      { label: "Agent tasks", value: "364" },
+      { label: "Symbols indexed", value: "177K+" },
+      { label: "Open-source repos", value: "12" },
+      { label: "Tests, 76% coverage", value: "379" },
     ],
     problem:
       "Coding agents waste tool calls and prompt tokens searching repositories for context. Brute-force file reads miss dependencies, and embedding-only approaches lose structural relationships between symbols.",
@@ -328,7 +377,9 @@ export const projects: Project[] = [
     architectureNotes: [
       "Tree-sitter indexing pipeline for Python, JavaScript, and TypeScript extracts files, symbols, imports, calls, inheritance, tests, and source references into a transactional SQLite graph.",
       "Adaptive retrieval combines FTS/BM25, graph proximity, token budgets, and strict schemas to return task-scoped context.",
-      "Surfaces compact context through 9 CLI commands and 6 MCP tools for agent workflows.",
+      "Surfaces compact context through 9 CLI commands and 6 strict-schema MCP tools, shipped as a PyPI package.",
+      "Crash-safe re-indexing: SHA-256 change detection re-parses only what changed, then swaps the index atomically so agents never read a half-built graph.",
+      "Every release is gated on PR and nightly evaluation suites across 12 open-source repos (12,245 files), including Django, pandas, and Transformers.",
     ],
     challenges: [
       "Keeping a single retrieval pipeline accurate across Python, JavaScript, and TypeScript while preserving structural fidelity in the graph.",
@@ -342,53 +393,53 @@ export const projects: Project[] = [
     ],
   },
   {
-    slug: "snap-interview",
+    slug: "composur",
     caseStudy: {
-      problem: "Interview practice tools grade answers but miss communication and per-skill signal.",
-      built: "A layered Next.js and Prisma platform: resume parsing, streamed Groq interviews, S3 recordings.",
-      result: "Scores from 0 to 100 per skill across 28 role prompts, with shareable results.",
+      problem: "Mock interview tools give vague feedback that drifts from one session to the next.",
+      built: "RAG over a curated question corpus, Gemini strict-schema grading, and a Go verdict engine.",
+      result: "Grades 8 interview types with exact-quote citations and server-side weighted verdicts.",
     },
     year: "2026",
-    title: "SnapInterview",
+    title: "Composur",
     tagline:
-      "Backend-heavy full-stack AI interview platform with layered APIs, Prisma/PostgreSQL persistence, and secure account lifecycle features.",
-    tech: ["Next.js", "TypeScript", "PostgreSQL", "Prisma", "Groq API", "AWS S3", "ElevenLabs", "BetterAuth"],
-    tags: ["Full-stack", "AI/ML"],
+      "AI mock interview platform that grades like a panel would: grounded questions, cited evidence, and weighted verdicts computed on the server.",
+    tech: ["Go", "TypeScript", "Next.js", "PostgreSQL", "pgvector", "Gemini", "AWS S3"],
+    tags: ["Full-stack", "Backend", "AI/ML"],
     impact:
-      "End-to-end interview pipeline for resume PDF parsing, streaming LLM responses via Groq, transcript and evaluation persistence, shareable results, and S3 multipart recording uploads.",
-    links: [
-      { type: "demo", url: "https://snapinterview.app" },
-    ],
+      "Live AI interviews grounded in a curated question corpus via pgvector RAG, graded on structure, clarity, depth, and ownership with exact-quote citations, and recorded straight to S3 in 5 MiB chunks.",
+    links: [{ type: "demo", url: "https://composur.tech" }],
     featured: true,
     metrics: [
-      { label: "Eval Scale", value: "0 to 100" },
-      { label: "Role Prompts", value: "28" },
-      { label: "Rate-Limited Endpoint Types", value: "4" },
+      { label: "Interview types", value: "8" },
+      { label: "Prompt budget", value: "256 KiB" },
+      { label: "Recording memory cap", value: "32 MiB" },
+      { label: "Upload chunk", value: "5 MiB" },
+      { label: "Rate-limited endpoint types", value: "4" },
     ],
     problem:
-      "Early-career engineers practicing for interviews get either generic AI feedback or nothing at all. Existing tools grade correctness but miss communication, structure, and per-skill signal.",
-    role: "Architected a full-stack Next.js and TypeScript platform using layered API routes, service logic, repository modules, Prisma models, and PostgreSQL persistence for interview sessions, transcripts, feedback, users, and admin operations.",
+      "Interview practice tools either give generic AI feedback or none at all. Scores drift between sessions, and nothing ties a verdict back to what the candidate actually said.",
     architectureNotes: [
-      "Secure account lifecycle with Better Auth, Google OAuth, OTP email verification, password reset, account lockout, protected route gating, and admin-only access controls.",
-      "Interview pipeline covers resume PDF parsing, streaming LLM responses via Groq, transcript and evaluation persistence, shareable results, and S3 multipart recording uploads for reviewable mock interviews.",
-      "Hardened upload and auth surface: presigned S3 keys scoped to per-user prefixes, origin-based CSRF protection and Postgres-backed rate limits across 4 endpoint types.",
+      "Questions come from a curated corpus through RAG over pgvector, with idempotent ingestion and a retrieval verification script, so interviews stay grounded instead of improvised.",
+      "Gemini returns strict JSON Schema output with exact-quote citations; the Go server computes weighted verdicts across structure, clarity, depth, and ownership, and a cleanup job removes invalid scores.",
+      "Recordings upload directly to S3 as 5 MiB multipart chunks with retry and part reconciliation, capping in-browser memory at 32 MiB per recording.",
+      "Postgres-backed rate limits, CSRF checks, and per-user presigned S3 keys protect 4 endpoint types.",
     ],
     challenges: [
-      "Coordinating resume parsing, LLM streaming, evaluation persistence, and multipart S3 uploads without race conditions.",
-      "Open-ended answers drift between sessions; calibration with role-specific prompts and schema enforcement was essential for consistency.",
-      "Security surface spans login, OTP, eval, and upload endpoints, and each required independent rate limiting and CSRF hardening.",
+      "Long interviews overflow the model context. Fitting them into a 256 KiB prompt budget meant keeping current evidence, dropping whole older exchanges, and telling the model what was omitted.",
+      "Model graders drift. Strict schemas plus a required exact quote for every claim made scores checkable rather than vibes.",
+      "Browser recording of a long session can exhaust memory; streaming chunks straight to S3 kept the footprint flat.",
     ],
     lessons: [
-      "Layered API, service, and repository boundaries keep a backend-heavy Next.js app maintainable as auth and interview flows grow.",
       "Schema-enforced AI outputs are dramatically more reliable than parsing free-text prose.",
-      "Account lockout, OTP, and admin gating belong in the core auth design, not as afterthought middleware.",
+      "Citations make AI grading auditable: a quote either exists in the transcript or it doesn't.",
+      "Drop whole exchanges, never half of one. A truncated answer is worse evidence than a missing one, as long as the model knows it is missing.",
     ],
   },
   {
     slug: "traffic-violation-detection",
     caseStudy: {
       problem: "Ticketing traffic violations by hand does not scale and leaves weak evidence.",
-      built: "A YOLOv12x and ByteTrack pipeline for red-light, helmet and speeding, with OCR on plates.",
+      built: "YOLO12-X and ByteTrack, firing checks only when a vehicle crosses a virtual line, with LLM plate OCR.",
       result: "93.76% end to end, with PDF challans sent by SMS. Published at IEEE ICICIS 2025.",
     },
     year: "2025",
@@ -420,15 +471,15 @@ export const projects: Project[] = [
       { label: "Vehicle Detection", value: "97.56%" },
       { label: "Helmet Detection", value: "93.26%" },
       { label: "Plate Extraction", value: "92.7%" },
-      { label: "ANPR Localization", value: "98%" },
-      { label: "Indexing", value: "Scopus" },
+      { label: "Plate Detection", value: "98%" },
+      { label: "YOLO12-X mAP@50-95", value: "90.61%" },
     ],
     problem:
       "Automate traffic violation detection and evidence-backed ticketing at scale by detecting multiple violation types from live video feeds and delivering verifiable digital challans.",
-    role: "Orchestrated a modular Python processing pipeline coordinating red-light, helmet, and speeding detection before routing violation data through OCR, validation, PDF generation, cloud storage, and SMS delivery.",
+    role: "Co-author. Built the OCR step (Llama 4 Scout vision, a retry on the next sharpest frame, and regex checks for Indian plates) and helped fine-tune YOLO12-X, the best of 5 YOLO11/YOLO12 variants.",
     architectureNotes: [
       "Integrated Llama 4 Scout via Groq for license plate OCR, regex-based plate validation, vehicle registration verification, Jinja2/pdfkit document generation, AWS S3 storage, and Twilio messaging.",
-      "Stateful video-processing with ByteTrack object tracking, per-vehicle state management, duplicate-ticket suppression, and frame-skipping for automated speeding enforcement.",
+      "Violation checks fire only when a tracked vehicle crosses a virtual line instead of on every frame of 60 fps video, cutting wasted compute and duplicate tickets. ByteTrack keeps per-vehicle state across frames.",
       "YOLOv12x fine-tuned on a custom traffic dataset covering red light jumping, speeding, helmet-less riding, missing insurance, and pollution non-compliance.",
     ],
     challenges: [
@@ -446,30 +497,33 @@ export const projects: Project[] = [
     slug: "wgan-gp-financial-timeseries",
     caseStudy: {
       problem: "Financial series are scarce and noisy, so forecasters overfit and miss rare events.",
-      built: "A WGAN-GP with attention, temporal convolutions and LSTMs that generates realistic market series.",
-      result: "Synthetic data lifted downstream accuracy from 97.93% to 98.83%.",
+      built: "A 264K-parameter conditional WGAN-GP, causal TCN plus stacked LSTM, generating AAPL market series.",
+      result: "Forecast error fell from 2.07% to 1.15% MAPE. First-author chapter, Wiley 2026.",
     },
     year: "2025",
     title: "Synthetic Financial Time Series via WGAN-GP",
     tagline:
-      "Generative adversarial network for realistic stock market data synthesis with 98.83% downstream accuracy.",
+      "Conditional WGAN-GP that synthesizes realistic stock market sequences, nearly halving a forecaster's error when mixed into its training set.",
     tech: ["Python", "PyTorch", "NumPy", "Pandas"],
     tags: ["MLOps", "Research"],
     links: [{ type: "paper", url: "https://onlinelibrary.wiley.com/doi/10.1002/9781394357789.ch34" }],
     impact:
-      "Generative model producing statistically valid synthetic market data that augments training sets, improving downstream prediction from 97.93% to 98.83% accuracy.",
+      "Augmenting a real-data-only LSTM with GAN-generated OHLC, adjusted-close and volume sequences cut AAPL forecasting error from 2.07% to 1.15% MAPE, while matching the real series' Hurst exponent (0.7624 vs. 0.7626).",
     featured: false,
     metrics: [
-      { label: "Accuracy Gain", value: "97.93% to 98.83%" },
-      { label: "Pearson Correlation", value: ">0.80" },
-      { label: "R-squared", value: ">0.63" },
-      { label: "Training Epochs", value: "3000" },
+      { label: "Forecast MAPE", value: "2.07% → 1.15%" },
+      { label: "Hurst exponent, real 0.7626", value: "0.7624" },
+      { label: "Correlation-matrix distance", value: "0.0107" },
+      { label: "Generator parameters", value: "264K" },
+      { label: "Pearson correlation", value: ">0.80" },
+      { label: "Training epochs", value: "3,000" },
     ],
     problem:
       "Financial time-series datasets are scarce, noisy, and often proprietary. Training robust forecasters on limited historical data produces overfit models that miss regime changes and rare events.",
     role: "First author. Designed and implemented the full pipeline: WGAN-GP architecture, 3000-epoch training, synthetic-data filtering, and downstream prediction evaluation on unseen data.",
     architectureNotes: [
-      "Wasserstein GAN with gradient penalty, not vanilla GAN. WGAN-GP stabilizes training on high-variance time-series data where vanilla GANs collapse.",
+      "Conditional Wasserstein GAN with gradient penalty plus mean-variance matching, not a vanilla GAN. It stabilizes 3,000 epochs of adversarial training on high-variance series where vanilla GANs collapse.",
+      "Causal TCN layers feed stacked LSTMs, so the generator never sees the future while still learning long-range structure across 6 market features modeled as conditional sequences.",
       "Generator concatenates past market windows with noise, then runs multi-head attention, temporal convolution blocks, two LSTM layers, and a GRU before a dense head. The critic is a Conv1D plus LeakyReLU stack trained 5 times per generator step with AdamW.",
       "Trained on AAPL daily data (Open, High, Low, Close, Adjusted Close, Volume) preprocessed with log returns and a hybrid standard plus min-max scaling scheme. Synthetic sequences are validated with Pearson, Spearman, and R-squared before being mixed into training sets.",
     ],
@@ -479,7 +533,7 @@ export const projects: Project[] = [
       "Volume barely correlates with price features, making it the hardest series to synthesize; it had to be scaled and processed separately from the price columns.",
     ],
     lessons: [
-      "Synthetic data augmentation is real and measurable: downstream accuracy moved from 97.93% to 98.83% with no change to the classifier architecture.",
+      "Synthetic data augmentation is real and measurable: forecasting error fell from 2.07% to 1.15% MAPE with no change to the forecaster itself.",
       "GANs are temperamental. Training the critic 5 times per generator step with AdamW and Wasserstein loss made training dramatically more stable than the defaults.",
       "Spearman correlation exceeding Pearson was the tell that the generator produced varied scales while preserving trend, which is exactly what augmentation needs.",
     ],
@@ -655,16 +709,16 @@ export const labModels: LabModel[] = [
     name: "Traffic surveillance",
     kind: "Computer vision",
     stages: [
-      { label: "Live video", detail: "Roadside camera feeds, frame-skipped for speed" },
-      { label: "YOLOv12x", detail: "Fine-tuned on red lights, helmets and speeding" },
+      { label: "Live video", detail: "60 fps feeds; checks fire only when a vehicle crosses a virtual line" },
+      { label: "YOLO12-X", detail: "Best of 5 YOLO11/12 variants for red lights, helmets and speeding" },
       { label: "ByteTrack", detail: "Per-vehicle state and duplicate-ticket suppression" },
-      { label: "Llama 4 Scout", detail: "Plate OCR, then regex and registry checks" },
+      { label: "Llama 4 Scout", detail: "Plate OCR, retried on the next sharpest frame, regex-checked" },
       { label: "Challan", detail: "PDF evidence to S3, delivered by Twilio SMS" },
     ],
     stats: [
       { value: "93.76%", label: "End-to-end accuracy" },
-      { value: "97.56%", label: "Vehicle detection" },
-      { value: "92.7%", label: "Plate extraction" },
+      { value: "90.61%", label: "mAP@50-95, YOLO12-X" },
+      { value: "92.7%", label: "Plate OCR accuracy" },
     ],
     lesson: 0,
   },
@@ -673,16 +727,16 @@ export const labModels: LabModel[] = [
     name: "Synthetic markets",
     kind: "Generative model",
     stages: [
-      { label: "Market windows", detail: "AAPL daily OHLCV as log returns, plus noise" },
-      { label: "Attention", detail: "Multi-head attention over the past window" },
-      { label: "TCN · LSTM · GRU", detail: "Temporal convolutions into recurrent layers" },
-      { label: "WGAN-GP critic", detail: "Conv1D critic, 5 steps per generator step" },
-      { label: "Filter & mix", detail: "Pearson, Spearman and R² gate what joins training" },
+      { label: "Market windows", detail: "6 AAPL features modeled as conditional sequences" },
+      { label: "Causal TCN", detail: "Temporal convolutions that never see the future" },
+      { label: "Stacked LSTM", detail: "Long-range structure in a 264K-parameter generator" },
+      { label: "WGAN-GP critic", detail: "Gradient penalty plus mean-variance matching" },
+      { label: "Augment", detail: "Synthetic sequences join the LSTM forecaster's training" },
     ],
     stats: [
-      { value: "98.83%", label: "Downstream accuracy, from 97.93%" },
-      { value: ">0.80", label: "Pearson correlation" },
-      { value: "3000", label: "Training epochs" },
+      { value: "1.15%", label: "Forecast MAPE, down from 2.07%" },
+      { value: "0.7624", label: "Hurst exponent, real is 0.7626" },
+      { value: "264K", label: "Generator parameters" },
     ],
     lesson: 0,
   },
@@ -734,27 +788,27 @@ export const labModels: LabModel[] = [
       { label: "MCP tools", detail: "Served to coding agents over 6 tools and a CLI" },
     ],
     stats: [
-      { value: "−82%", label: "Context per task, 1,540 → 273 tokens" },
-      { value: "177K+", label: "Symbols indexed" },
-      { value: "379", label: "Tests passing" },
+      { value: "−82.3%", label: "Median context, 1,540 → 273 tokens" },
+      { value: "100%", label: "Target recall over 364 tasks" },
+      { value: "177K+", label: "Symbols across 12 repos" },
     ],
     lesson: 0,
   },
   {
-    slug: "snap-interview",
-    name: "SnapInterview",
+    slug: "composur",
+    name: "Composur",
     kind: "LLM evaluation",
     stages: [
-      { label: "Résumé PDF", detail: "Parsed into skills and experience" },
-      { label: "Role prompt", detail: "One of 28 role-specific interview scripts" },
-      { label: "Groq stream", detail: "Questions streamed live, answers recorded to S3" },
-      { label: "Schema scoring", detail: "Structured output, scored 0 to 100 per skill" },
-      { label: "Shareable report", detail: "Transcript and feedback, saved in Postgres" },
+      { label: "Question corpus", detail: "Curated questions, ingested idempotently into pgvector" },
+      { label: "RAG", detail: "Grounded questions retrieved per interview type" },
+      { label: "Live interview", detail: "Recorded in 5 MiB chunks straight to S3" },
+      { label: "Prompt budget", detail: "Older exchanges dropped whole to fit 256 KiB" },
+      { label: "Verdict", detail: "Gemini strict schema, exact quotes, weighted in Go" },
     ],
     stats: [
-      { value: "28", label: "Role prompts" },
-      { value: "0–100", label: "Per-skill scoring" },
-      { value: "4", label: "Rate-limited endpoint types" },
+      { value: "8", label: "Interview types" },
+      { value: "256", label: "KiB prompt budget" },
+      { value: "32", label: "MiB recording memory cap" },
     ],
     lesson: 1,
   },
@@ -825,7 +879,7 @@ export const publications: Publication[] = [
   },
   {
     title: "JARVIS: Voice Assistant with Smart Home Automation",
-    venue: "International Conference on STEM for Sustainable Development 2025",
+    venue: "ISTE Journal, Vol. 48 (2025), p. 130 · International Conference on STEM for Sustainable Development",
     year: 2025,
     publishedAt: "June 2025",
     authors: ["Rishabh Shah", "Alan George", "Yukta Saraf", "Rujuta Jariwala"],
