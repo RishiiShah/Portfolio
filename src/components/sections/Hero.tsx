@@ -1,4 +1,4 @@
-import { bio, education } from "@/data";
+import { education } from "@/data";
 import { HeroBackdrop } from "@/components/HeroBackdrop";
 import { SplitText } from "@/components/SplitText";
 import { Sticker } from "@/components/Sticker";
@@ -60,7 +60,7 @@ export function Hero() {
             to a stroke-consult scheduler, and I sweat the details nobody asked about.
           </p>
           <p className="text-ink-2 md:col-span-3">
-            {ms.degree} at Rutgers, graduating {ms.end}. Based in {bio.location}, open to SWE &amp; ML roles.
+            {ms.degree} at Rutgers, graduating {ms.end}. Open to SWE &amp; ML roles and relocating, with the <span className="text-ink">West Coast</span> first.
           </p>
           <div className="flex items-end gap-3 md:col-span-2 md:flex-col md:items-end md:justify-end">
             <a
