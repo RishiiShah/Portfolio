@@ -35,6 +35,12 @@
   color-scheme: dark;
 }
 
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
 @layer base {
   html {
     background: var(--color-bg);
