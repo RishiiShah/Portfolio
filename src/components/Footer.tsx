@@ -67,7 +67,7 @@ export function Footer() {
 
       <div className="shell flex flex-wrap items-center justify-between gap-4 border-t border-line py-6 text-sm text-ink-3">
         <p>
-          © {new Date().getFullYear()} {bio.name}
+          © {new Date().getFullYear()} {bio.name} · Made with <span className="text-accent">♥</span> in {bio.location}
         </p>
         <a
           href="#top"
@@ -78,17 +78,6 @@ export function Footer() {
           <span className="transition-transform duration-300 group-hover:-translate-y-1">↑</span>
         </a>
       </div>
-
-      <p aria-hidden className="display select-none whitespace-nowrap text-center text-[22vw] leading-[0.75] text-bg-3">
-        {"Rishabh".split("").map((ch, i) => (
-          <span
-            key={i}
-            className="inline-block transition-[transform,color] duration-500 ease-[cubic-bezier(0.34,1.6,0.5,1)] hover:-translate-y-[0.08em] hover:text-accent"
-          >
-            {ch}
-          </span>
-        ))}
-      </p>
     </footer>
   );
 }
