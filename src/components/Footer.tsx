@@ -59,7 +59,7 @@ export function Footer() {
         <div className="md:col-span-3">
           <p className="label">Colophon</p>
           <p className="mt-5 text-sm leading-relaxed text-ink-2">
-            Designed and built from scratch in {bio.location}. Set in Bricolage Grotesque, Geist and Instrument Serif. Made
+            Designed and built from scratch. Set in Bricolage Grotesque, Geist and Instrument Serif. Made
             with Next.js and Tailwind, every pixel on purpose.
           </p>
         </div>
@@ -67,7 +67,7 @@ export function Footer() {
 
       <div className="shell flex flex-wrap items-center justify-between gap-4 border-t border-line py-6 text-sm text-ink-3">
         <p>
-          © {new Date().getFullYear()} {bio.name} · Made with <span className="text-accent">♥</span> in {bio.location}
+          © {new Date().getFullYear()} {bio.name} · Made with <span className="text-accent">♥</span>
         </p>
         <a
           href="#top"
