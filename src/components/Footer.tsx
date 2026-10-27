@@ -17,11 +17,7 @@ export function Footer() {
             Rishabh Shah<span className="text-accent">.</span>
           </p>
           <p className="flourish mt-4 text-2xl text-ink-2">Thanks for scrolling all the way down.</p>
-          <p className="mt-8 inline-flex items-center gap-2.5 rounded-xl border border-line-2 bg-bg px-3.5 py-2 text-sm">
-            <span className="relative flex size-2">
-              <span className="absolute inset-0 animate-ping rounded-full bg-mint" />
-              <span className="relative size-2 rounded-full bg-mint" />
-            </span>
+          <p className="mt-8 inline-flex items-center rounded-xl border border-line-2 bg-bg px-3.5 py-2 text-sm">
             Open to SWE &amp; ML roles from {education[0].end}
           </p>
         </div>
