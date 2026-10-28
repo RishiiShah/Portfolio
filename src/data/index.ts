@@ -116,7 +116,7 @@ export const stack: StackGroup[] = [
   {
     name: "Backend & databases",
     blurb: "APIs that stay fast, data that stays put.",
-    items: ["Django", "FastAPI", "Express.js", "Node.js", "REST APIs", "Pydantic", "JWT Auth", "OAuth2", "RBAC", "PostgreSQL", "pgvector", "MySQL", "MongoDB", "SQLite", "Redis", "Prisma"],
+    items: ["Django", "FastAPI", "Express.js", "Node.js", "REST APIs", "Pydantic", "JWT Auth", "OAuth2", "Clerk", "RBAC", "PostgreSQL", "pgvector", "MySQL", "MongoDB", "SQLite", "Redis", "Celery", "Prisma"],
   },
   {
     name: "Frontend",
@@ -126,7 +126,7 @@ export const stack: StackGroup[] = [
   {
     name: "AI & data science",
     blurb: "Models, pipelines, and the numbers behind them.",
-    items: ["PyTorch", "TensorFlow", "Scikit-learn", "OpenCV", "YOLO", "Groq API", "Gemini", "Pandas", "NumPy", "SciPy", "Matplotlib", "Apache Spark", "Hadoop", "Tableau", "Power BI"],
+    items: ["PyTorch", "TensorFlow", "Scikit-learn", "OpenCV", "YOLO", "RAG", "Embeddings", "Groq API", "Gemini", "Pandas", "NumPy", "SciPy", "Matplotlib", "Apache Spark", "Hadoop", "Tableau", "Power BI"],
   },
   {
     name: "AI tooling",
@@ -136,7 +136,7 @@ export const stack: StackGroup[] = [
   {
     name: "Cloud & DevOps",
     blurb: "Shipped, tested, and kept shipped.",
-    items: ["AWS", "GCP", "Azure", "Oracle Cloud", "Vercel", "Render", "Docker", "Kubernetes", "GitHub Actions", "Git", "Linux", "Pytest", "Vitest", "Playwright"],
+    items: ["AWS", "GCP", "Azure", "Oracle Cloud", "Vercel", "Render", "Docker", "Kubernetes", "GitHub Actions", "Git", "Linux", "Pytest", "Vitest", "Playwright", "Postman"],
   },
 ];
 
@@ -164,50 +164,48 @@ export const teaching = {
   course: "CS205: Introduction to Discrete Structures I",
   courseShort: "CS205 Discrete Structures I",
   bullets: [
-    "Lead weekly recitations for 50+ undergraduates on set notation, propositional logic, truth tables, and Boolean circuits.",
-    "Teach first-order logic, predicates, quantifiers, and induction proofs for program correctness, trees, and grammars.",
-    "Cover relations and closures, orders, equivalence relations, functions, and finite-state machines with CS applications.",
+    "Teach weekly recitations for 50+ undergraduates on logic, induction proofs, relations, and finite-state machines.",
   ],
 } as const;
 
 export const experience: ExperienceItem[] = [
   {
-    role: "Software Engineering Intern",
+    role: "Full-Stack Software Engineer Intern",
     organization: "Aaditya Technologies",
     location: "Mumbai, India",
     start: "January 2025",
     end: "July 2025",
-    summary:
-      "Django backend performance, API contracts, JWT/RBAC security, and Dockerized AWS deployments.",
+    summary: "Multi-tenant CRM and workflow automation for 3 sales teams, shipped on AWS ECS.",
     bullets: [
-      "Reduced P95 API latency by 86% (3,100 ms to 420 ms) by profiling Django request paths, optimizing ORM-generated MySQL queries, adding targeted indexes, tuning connection pooling, and trimming response payloads.",
-      "Reduced recurring API integration defects by 30% across 12+ REST endpoints by standardizing Django serializer validation, request and response schemas, error handling, and HTTP status codes.",
-      "Delivered 5+ features on schedule as infrastructure lead for a 4-person team by running sprint planning and system design.",
-      "Secured 4 Django backend components by implementing JWT authentication and RBAC for admin, staff, and client roles.",
-      "Reduced deployment setup effort by 65% for a 4-person team by containerizing Django services with Docker and standardizing AWS EC2, S3, and environment configuration.",
+      "Built a multi-tenant CRM and workflow automation platform (Next.js, TypeScript, Django REST Framework, PostgreSQL) serving 3 sales teams and 800+ leads through interactive dashboards and RESTful APIs.",
+      "Cut API response times by 21% through Django ORM query optimization and PostgreSQL composite indexing.",
+      "Enforced tenant-level data isolation and role-based access control across client workspaces.",
+      "Automated 3 lead assignment and follow-up workflows sending 150+ daily notifications via Celery, Redis, and Amazon SES, using retries and idempotent tasks to prevent duplicate sends.",
+      "Wrote 45+ unit, integration, and end-to-end tests (pytest, Vitest, Playwright) and ran them in GitHub Actions and Jenkins pipelines for Dockerized deployments on AWS ECS Fargate.",
     ],
-    tech: ["Django", "Django ORM", "MySQL", "REST APIs", "JWT", "RBAC", "Docker", "AWS"],
+    tech: ["Next.js", "TypeScript", "Django", "PostgreSQL", "Celery", "Redis", "AWS", "Docker", "Pytest", "Vitest", "Playwright", "GitHub Actions"],
     highlights: [
-      { value: "−86%", label: "P95 latency, 3,100 → 420 ms" },
-      { value: "−30%", label: "API integration defects" },
+      { value: "800+", label: "Leads served across 3 sales teams" },
+      { value: "−21%", label: "API response times" },
     ],
   },
   {
-    role: "Web Developer Intern",
+    role: "Full-Stack Developer Intern",
     organization: "Creative Line",
     location: "Mumbai, India",
     start: "June 2024",
     end: "September 2024",
-    summary: "Next.js features on Express.js services, MySQL performance work, and test-gated releases.",
+    summary: "Student management portal that cut enrollment work by 66%, with payments and S3.",
     bullets: [
-      "Reduced P95 API latency by 50% (620 ms to 310 ms) across 8 endpoints by optimizing Express.js handlers, indexing MySQL queries, and eliminating redundant database calls.",
-      "Shipped 4 customer-facing features across 10+ REST API endpoints by building Next.js interfaces, Express.js services, and validated MySQL CRUD workflows.",
-      "Achieved zero rollbacks across 9 production deployments by writing 55+ automated tests and enforcing regression testing, defect fixes, and pre-release validation.",
+      "Reduced manual enrollment processing time by 66% with a student management portal (React, TypeScript, Node.js, Express.js, MongoDB) for course registration, batch scheduling, and attendance.",
+      "Designed 15+ RESTful API endpoints in Express.js and Mongoose with JWT authentication, role-based access control, and Zod schema validation, securing student and instructor workflows against unauthorized access and malformed input.",
+      "Integrated Razorpay payments with HMAC-SHA256 webhook verification to reject forged callbacks and idempotent writes to block duplicate charges on retried deliveries, automating enrollment confirmations end to end.",
+      "Shipped secure course material distribution using AWS S3 presigned URLs, enabling authenticated uploads and access-controlled downloads.",
     ],
-    tech: ["Next.js", "Express.js", "MySQL", "REST APIs"],
+    tech: ["React", "TypeScript", "Node.js", "Express.js", "MongoDB", "JWT Auth", "RBAC", "AWS"],
     highlights: [
-      { value: "−50%", label: "P95 latency, 620 → 310 ms" },
-      { value: "0", label: "Rollbacks in 9 deploys" },
+      { value: "−66%", label: "Manual enrollment processing time" },
+      { value: "15+", label: "REST endpoints with JWT, RBAC, Zod" },
     ],
   },
 ];

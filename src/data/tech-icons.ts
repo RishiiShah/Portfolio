@@ -170,6 +170,10 @@ export const techIcons: Record<string, { src: string; dark?: string; ratio: numb
     "src": "/tech/logos-redis.svg",
     "ratio": 1.164
   },
+  "Celery": {
+    "src": "/tech/si-celery.svg",
+    "ratio": 1
+  },
   "Prisma": {
     "src": "/tech/logos-prisma.svg",
     "dark": "/tech/logos-prisma-dark.svg",

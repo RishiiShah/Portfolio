@@ -52,6 +52,7 @@ const MAP = {
   SQLite: "si:sqlite#0F80CC",
   FTS5: "si:sqlite#0F80CC",
   Redis: "logos:redis",
+  Celery: "si:celery#37814A",
   Prisma: "logos:prisma",
   AWS: "logos:aws",
   "AWS EC2": "logos:aws-ec2",
