@@ -37,29 +37,50 @@ const mono = JetBrains_Mono({
 const themeScript = `try{var t=localStorage.getItem("theme");if(t!=="light"&&t!=="dark")t=matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";document.documentElement.dataset.theme=t}catch(e){}`;
 
 const siteUrl = getSiteUrl();
-const description = sanitizeForMeta(bio.description);
-const title = sanitizeForMeta(`${bio.name} | ${bio.title}`);
+const title = sanitizeForMeta(bio.seoTitle);
+const description = sanitizeForMeta(bio.seoDescription);
+const siteName = `${bio.name} Portfolio`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: { default: title, template: `%s | ${bio.name}` },
   description,
+  applicationName: siteName,
   authors: [{ name: bio.name, url: siteUrl }],
   creator: bio.name,
+  publisher: bio.name,
+  keywords: [...bio.keywords],
+  category: "portfolio",
   alternates: { canonical: "/" },
   openGraph: {
     type: "profile",
     locale: "en_US",
     url: siteUrl,
-    siteName: `${bio.name} Portfolio`,
+    siteName,
     title,
     description,
-    firstName: "Rishabh",
-    lastName: "Shah",
+    firstName: bio.givenName,
+    lastName: bio.familyName,
+    username: "RishiiShah",
     images: [{ url: "/og-image.png", width: 1200, height: 630, alt: title }],
   },
-  twitter: { card: "summary_large_image", title, description, images: ["/og-image.png"] },
-  robots: { index: true, follow: true },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: ["/og-image.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },

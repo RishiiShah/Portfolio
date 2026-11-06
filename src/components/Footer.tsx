@@ -43,7 +43,9 @@ export function Footer() {
               <li key={l.label}>
                 <a
                   href={l.href}
-                  {...(l.href.startsWith("mailto:") ? {} : { target: "_blank", rel: "noopener noreferrer" })}
+                  {...(l.href.startsWith("mailto:")
+                    ? {}
+                    : { target: "_blank", rel: "me noopener noreferrer" })}
                   className="group inline-flex items-center gap-1.5 text-ink-2 transition-colors hover:text-ink"
                 >
                   {l.label}

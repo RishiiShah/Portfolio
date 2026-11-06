@@ -19,10 +19,14 @@ function personSchema(site: string): JsonLd {
     "@type": "Person",
     "@id": `${site}/#person`,
     name: bio.name,
+    givenName: bio.givenName,
+    familyName: bio.familyName,
+    additionalName: bio.additionalName,
+    alternateName: [...bio.alternateNames],
     url: site,
     image: `${site}/og-image.png`,
     jobTitle: bio.title,
-    description: sanitizeForMeta(bio.description),
+    description: sanitizeForMeta(bio.seoDescription),
     address: {
       "@type": "PostalAddress",
       addressLocality: "New Brunswick",
@@ -30,7 +34,7 @@ function personSchema(site: string): JsonLd {
       addressCountry: "US",
     },
     email: `mailto:${bio.email}`,
-    sameAs: [bio.github, bio.linkedin].filter(Boolean),
+    sameAs: [bio.github, bio.linkedin, ...bio.profiles].filter(Boolean),
     award: projects.filter((p) => p.award).map((p) => `${p.award} (${p.title})`),
     knowsAbout: [
       "Software Engineering",
@@ -49,8 +53,16 @@ function personSchema(site: string): JsonLd {
         ? { sameAs: UNIVERSITY_SAMEAS[edu.institution] }
         : {}),
     })),
-    hasOccupation: { "@type": "Occupation", name: teaching.role, description: `${teaching.role}, ${teaching.course}` },
-    worksFor: { "@type": "CollegeOrUniversity", name: teaching.organization, address: teaching.location },
+    hasOccupation: {
+      "@type": "Occupation",
+      name: teaching.role,
+      description: `${teaching.role}, ${teaching.course}`,
+    },
+    worksFor: {
+      "@type": "CollegeOrUniversity",
+      name: teaching.organization,
+      address: teaching.location,
+    },
   };
 }
 
@@ -60,10 +72,17 @@ function websiteSchema(site: string): JsonLd {
     "@id": `${site}/#website`,
     url: site,
     name: `${bio.name} Portfolio`,
-    description: sanitizeForMeta(bio.description),
+    alternateName: [
+      bio.name,
+      `${bio.name} | ${bio.title}`,
+      ...bio.alternateNames.map((n) => `${n} Portfolio`),
+    ],
+    description: sanitizeForMeta(bio.seoDescription),
     inLanguage: "en-US",
     author: { "@id": `${site}/#person` },
     publisher: { "@id": `${site}/#person` },
+    about: { "@id": `${site}/#person` },
+    keywords: bio.keywords.join(", "),
   };
 }
 
@@ -72,12 +91,16 @@ function profilePageSchema(site: string): JsonLd {
     "@type": "ProfilePage",
     "@id": `${site}/#profile`,
     url: site,
-    name: sanitizeForMeta(`${bio.name} | ${bio.title}`),
-    description: sanitizeForMeta(bio.description),
+    name: sanitizeForMeta(bio.seoTitle),
+    description: sanitizeForMeta(bio.seoDescription),
     mainEntity: { "@id": `${site}/#person` },
     about: { "@id": `${site}/#person` },
     inLanguage: "en-US",
     isPartOf: { "@id": `${site}/#website` },
+    primaryImageOfPage: {
+      "@type": "ImageObject",
+      url: `${site}/og-image.png`,
+    },
   };
 }
 

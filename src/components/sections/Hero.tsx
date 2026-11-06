@@ -1,4 +1,4 @@
-import { education } from "@/data";
+import { bio, education } from "@/data";
 import { HeroBackdrop } from "@/components/HeroBackdrop";
 import { SplitText } from "@/components/SplitText";
 import { Sticker } from "@/components/Sticker";
@@ -33,8 +33,13 @@ export function Hero() {
               Hey there, I&apos;m
             </p>
             <h1 className="relative mt-12 w-fit">
+              {/* Crawlable name; animated letters are decorative only. */}
+              <span className="sr-only">{bio.name}.</span>
               <Redline />
-              <span className="display block text-[clamp(4rem,min(15vw,26svh),15rem)]">
+              <span
+                aria-hidden
+                className="display block text-[clamp(4rem,min(15vw,26svh),15rem)]"
+              >
                 <SplitText text="Rishabh" />
                 <br />
                 <SplitText text="Shah" offset={7} />
