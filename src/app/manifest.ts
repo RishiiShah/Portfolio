@@ -4,9 +4,9 @@ import { sanitizeForMeta } from "@/lib/site";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: sanitizeForMeta(`${bio.name} | ${bio.title}`),
+    name: sanitizeForMeta(bio.seoTitle),
     short_name: bio.name,
-    description: sanitizeForMeta(bio.description),
+    description: sanitizeForMeta(bio.seoDescription),
     start_url: "/",
     display: "standalone",
     background_color: "#f5f1e8",

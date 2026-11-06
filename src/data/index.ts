@@ -2,13 +2,36 @@
 
 export const bio = {
   name: "Rishabh Shah",
+  givenName: "Rishabh",
+  familyName: "Shah",
+  additionalName: "Sanjeev",
+  alternateNames: ["Rishabh Sanjeev Shah", "Rishii Shah"] as const,
   title: "Software Engineer & ML Researcher",
   tagline: "Building at the intersection of engineering and intelligence.",
   description:
     "Rutgers M.S. Computer Science student and two-time hackathon winner building scalable backends, AI-enabled full-stack products, and computer vision research.",
+  seoTitle: "Rishabh Shah Portfolio | Software Engineer & ML Researcher",
+  seoDescription:
+    "Rishabh Shah. Rutgers M.S. Computer Science student and two-time hackathon winner building scalable backends, AI-enabled full-stack products, and computer vision research.",
+  keywords: [
+    "Rishabh Shah",
+    "Rishabh Shah portfolio",
+    "Rishabh Shah software engineer",
+    "Rishabh Shah Rutgers",
+    "Rishabh Sanjeev Shah",
+    "Rishii Shah",
+    "software engineer",
+    "ML researcher",
+    "Rutgers Computer Science",
+  ] as const,
   email: "rish.shah@rutgers.edu",
   github: "https://github.com/RishiiShah",
   linkedin: "https://www.linkedin.com/in/rishabh-shah1/",
+  /** Extra identity URLs for sameAs / entity linking (not shown in UI). */
+  profiles: [
+    "https://devpost.com/rishabh-shah",
+    "https://www.cs.rutgers.edu/people/directory.php?netid=rs2780&type=grad",
+  ] as const,
   location: "New Brunswick, NJ",
 } as const;
 
