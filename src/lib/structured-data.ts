@@ -3,17 +3,11 @@ import { getSiteUrl, sanitizeForMeta } from "@/lib/site";
 
 type JsonLd = Record<string, unknown>;
 
-const UNIVERSITY_SAMEAS: Record<string, string[]> = {
-  "Rutgers University - New Brunswick": [
-    "https://en.wikipedia.org/wiki/Rutgers_University",
-    "https://www.rutgers.edu/",
-  ],
-  "University of Mumbai": [
-    "https://en.wikipedia.org/wiki/University_of_Mumbai",
-    "https://mu.ac.in/",
-  ],
-};
-
+/**
+ * Person + WebSite only. ProfilePage rich results are aimed at social/creator
+ * profiles with interaction stats; stuffing a full resume into ProfilePage was
+ * what GSC flagged as "Invalid object type" (11x) on rishabhshah.me.
+ */
 function personSchema(site: string): JsonLd {
   return {
     "@type": "Person",
@@ -27,41 +21,25 @@ function personSchema(site: string): JsonLd {
     image: `${site}/og-image.png`,
     jobTitle: bio.title,
     description: sanitizeForMeta(bio.seoDescription),
-    address: {
-      "@type": "PostalAddress",
-      addressLocality: "New Brunswick",
-      addressRegion: "NJ",
-      addressCountry: "US",
-    },
-    email: `mailto:${bio.email}`,
+    email: bio.email,
     sameAs: [bio.github, bio.linkedin, ...bio.profiles].filter(Boolean),
-    award: projects.filter((p) => p.award).map((p) => `${p.award} (${p.title})`),
-    knowsAbout: [
-      "Software Engineering",
-      "Machine Learning",
-      "Computer Vision",
-      "Backend Systems",
-      "MLOps",
-      "Full-Stack Development",
-      "Generative Adversarial Networks",
-      "Natural Language Processing",
-    ],
+    homeLocation: {
+      "@type": "Place",
+      name: bio.location,
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "New Brunswick",
+        addressRegion: "NJ",
+        addressCountry: "US",
+      },
+    },
     alumniOf: education.map((edu) => ({
       "@type": "CollegeOrUniversity",
       name: edu.institution,
-      ...(UNIVERSITY_SAMEAS[edu.institution]
-        ? { sameAs: UNIVERSITY_SAMEAS[edu.institution] }
-        : {}),
     })),
-    hasOccupation: {
-      "@type": "Occupation",
-      name: teaching.role,
-      description: `${teaching.role}, ${teaching.course}`,
-    },
     worksFor: {
-      "@type": "CollegeOrUniversity",
+      "@type": "Organization",
       name: teaching.organization,
-      address: teaching.location,
     },
   };
 }
@@ -72,35 +50,12 @@ function websiteSchema(site: string): JsonLd {
     "@id": `${site}/#website`,
     url: site,
     name: `${bio.name} Portfolio`,
-    alternateName: [
-      bio.name,
-      `${bio.name} | ${bio.title}`,
-      ...bio.alternateNames.map((n) => `${n} Portfolio`),
-    ],
+    alternateName: bio.name,
     description: sanitizeForMeta(bio.seoDescription),
     inLanguage: "en-US",
     author: { "@id": `${site}/#person` },
     publisher: { "@id": `${site}/#person` },
     about: { "@id": `${site}/#person` },
-    keywords: bio.keywords.join(", "),
-  };
-}
-
-function profilePageSchema(site: string): JsonLd {
-  return {
-    "@type": "ProfilePage",
-    "@id": `${site}/#profile`,
-    url: site,
-    name: sanitizeForMeta(bio.seoTitle),
-    description: sanitizeForMeta(bio.seoDescription),
-    mainEntity: { "@id": `${site}/#person` },
-    about: { "@id": `${site}/#person` },
-    inLanguage: "en-US",
-    isPartOf: { "@id": `${site}/#website` },
-    primaryImageOfPage: {
-      "@type": "ImageObject",
-      url: `${site}/og-image.png`,
-    },
   };
 }
 
@@ -110,11 +65,11 @@ function publicationSchemas(site: string): JsonLd[] {
       ? parseMonthYear(pub.publishedAt)
       : `${pub.year}`;
     const primaryLink = pub.links?.find((l) => l.type === "paper" || l.type === "journal")?.url;
-    const authors = pub.authors.map((name) => ({
-      "@type": "Person",
-      name,
-      ...(name === bio.name ? { "@id": `${site}/#person` } : {}),
-    }));
+    const authors = pub.authors.map((name) =>
+      name === bio.name
+        ? { "@id": `${site}/#person` }
+        : { "@type": "Person", name },
+    );
     return {
       "@type": "ScholarlyArticle",
       "@id": `${site}/#publication-${i}`,
@@ -122,18 +77,10 @@ function publicationSchemas(site: string): JsonLd[] {
       name: pub.title,
       ...(pub.abstract ? { abstract: sanitizeForMeta(pub.abstract) } : {}),
       datePublished,
-      isPartOf: {
-        "@type": "PublicationIssue",
-        isPartOf: {
-          "@type": "Periodical",
-          name: pub.venue,
-        },
-      },
       author: authors,
       inLanguage: "en-US",
       ...(primaryLink ? { url: primaryLink, sameAs: [primaryLink] } : {}),
-      mainEntityOfPage: { "@id": `${site}/#profile` },
-      publisher: { "@id": `${site}/#person` },
+      about: { "@id": `${site}/#person` },
     };
   });
 }
@@ -150,17 +97,13 @@ function projectSchemas(site: string): JsonLd[] {
         "@type": "SoftwareSourceCode",
         "@id": `${site}/#project-${project.slug}`,
         name: project.title,
-        headline: project.title,
         description: sanitizeForMeta(project.tagline),
         ...(source ? { codeRepository: source } : {}),
         ...(project.award ? { award: project.award } : {}),
         programmingLanguage: project.tech,
-        keywords: [...project.tags, ...project.tech].join(", "),
         author: { "@id": `${site}/#person` },
-        creator: { "@id": `${site}/#person` },
         url: `${site}/#work`,
         sameAs: [source, demo, video, paper].filter(Boolean),
-        mainEntityOfPage: { "@id": `${site}/#profile` },
       };
     });
 }
@@ -188,15 +131,13 @@ function parseMonthYear(s: string): string {
 
 export function buildStructuredData(): string {
   const site = getSiteUrl();
-  const graph: JsonLd[] = [
-    personSchema(site),
-    websiteSchema(site),
-    profilePageSchema(site),
-    ...publicationSchemas(site),
-    ...projectSchemas(site),
-  ];
   return JSON.stringify({
     "@context": "https://schema.org",
-    "@graph": graph,
+    "@graph": [
+      personSchema(site),
+      websiteSchema(site),
+      ...publicationSchemas(site),
+      ...projectSchemas(site),
+    ],
   });
 }
